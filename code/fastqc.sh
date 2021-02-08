@@ -10,7 +10,7 @@ mkdir -p ${OUTDIR}
 
 fastqc -o ${OUTDIR} \
        --threads 8 \
-       ../extdata/NN206/Fastq/*Kinkel*fastq.gz
+       ../extdata/NN206/*Kinkel*fastq.gz
 
 multiqc --title C086_Kinkel \
         --outdir ${OUTDIR} \
