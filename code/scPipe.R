@@ -1,6 +1,6 @@
 # Process C086 (NN206) with scPipe
 # Peter Hickey
-# 2021-02-05
+# 2021-02-09
 
 # Setup ------------------------------------------------------------------------
 
@@ -92,8 +92,9 @@ dir.create(outdir, recursive = TRUE)
 extdir <- here("extdata", sequencing_runs, "scPipe", plates)
 names(extdir) <- plates
 sapply(extdir, dir.create, recursive = TRUE)
+# NOTE: Only using first 7 nt of barcode.
 read_structure <- get_read_str("CEL-Seq2")
-read_structure$bl2 <- 8
+read_structure$bl2 <- 7
 # NOTE: Must be an element of biomaRt::listDatasets(), e.g.,
 #       biomaRt::listDatasets(biomaRt::useEnsembl("ensembl"))[["dataset"]]
 organism <- "mmusculus_gene_ensembl"
@@ -107,7 +108,7 @@ gene_id_type <- "ensembl_gene_id"
 r1_fq <- grep(
   pattern = "LCE504",
   x = list.files(
-    path = here("extdata", "NN206", "Fastq"),
+    path = here("extdata", "NN206"),
     full.names = TRUE,
     pattern = glob2rx("*R1*.fastq.gz")),
   invert = FALSE,
@@ -150,7 +151,10 @@ for (plate in plates) {
   tmp <- sample_sheet[sample_sheet$plate_number == plate, ]
   barcode_df <- data.frame(
     cell_id = row.names(tmp),
-    barcode = tmp$rd1_index_cell_index_index_sequence_as_in_c_rt1_primer)
+    # NOTE: Only using first 7 nt of barcode.
+    barcode = strtrim(
+      tmp$rd1_index_cell_index_index_sequence_as_in_c_rt1_primer,
+      7))
   stopifnot(!anyDuplicated(barcode_df$barcode))
   write.csv(
     x = barcode_df,
