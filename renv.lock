@@ -599,6 +599,13 @@
       "Repository": "CRAN",
       "Hash": "24b224366f9c2e7534d2344d10d59211"
     },
+    "highr": {
+      "Package": "highr",
+      "Version": "0.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4dc5bb88961e347a0f4d8aad597cbfac"
+    },
     "hms": {
       "Package": "hms",
       "Version": "1.0.0",
@@ -661,6 +668,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "98138e0994d41508c7a6b84a0600cfcb"
+    },
+    "knitr": {
+      "Package": "knitr",
+      "Version": "1.31",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c3994c036d19fc22c5e2a209c8298bfb"
     },
     "labeling": {
       "Package": "labeling",
@@ -730,6 +744,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "41287f1ac7d28a92f0a286ed507928d3"
+    },
+    "markdown": {
+      "Package": "markdown",
+      "Version": "1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "61e4a10781dd00d7d81dd06ca9b94e95"
     },
     "matrixStats": {
       "Package": "matrixStats",
@@ -965,6 +986,13 @@
       "Repository": "CRAN",
       "Hash": "599df23c40a4fce9c7b4764f28c37857"
     },
+    "rmarkdown": {
+      "Package": "rmarkdown",
+      "Version": "2.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bc4bac38960b446c183957bfd563e763"
+    },
     "robustbase": {
       "Package": "robustbase",
       "Version": "0.93-7",
@@ -1113,6 +1141,13 @@
       "Repository": "CRAN",
       "Hash": "6ea435c354e8448819627cf686f66e0a"
     },
+    "tinytex": {
+      "Package": "tinytex",
+      "Version": "0.29",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f0b0ba735febac9a8344253ae6fa93f5"
+    },
     "utf8": {
       "Package": "utf8",
       "Version": "1.1.4",
@@ -1161,6 +1196,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "caf4781c674ffa549a4676d2d77b13cc"
+    },
+    "xfun": {
+      "Package": "xfun",
+      "Version": "0.20",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d7222684dc02327871e3b1da0aba7089"
     },
     "xml2": {
       "Package": "xml2",
