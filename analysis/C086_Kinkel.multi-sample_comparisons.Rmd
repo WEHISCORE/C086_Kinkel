@@ -1,0 +1,292 @@
+---
+title: "Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"
+description: |
+author:
+  - name: Peter Hickey
+    url: https://peterhickey.org
+    affiliation: WEHI SCORE
+    affiliation_url: https://www.wehi.edu.au/people/shalin-naik/3310/score
+date: "`r Sys.Date()`"
+editor_options:
+  chunk_output_type: console
+bibliography: ref.bib
+---
+
+```{r setup}
+library(SingleCellExperiment)
+library(here)
+library(edgeR)
+library(BiocParallel)
+library(scales)
+library(ggplot2)
+library(cowplot)
+library(patchwork)
+library(pheatmap)
+
+# NOTE: Using >= 4 cores seizes up my laptop. Can use more on RStudio server.
+options(
+  "mc.cores" = 
+    ifelse(Sys.info()[["nodename"]] == "rstudio-1.hpc.wehi.edu.au", 8L, 2L))
+
+register(MulticoreParam(workers = getOption("mc.cores")))
+
+source(here("code", "helper_functions.R"))
+
+knitr::opts_chunk$set(
+  fig.path = "C086_Kinkel.multi-sample_comparisons_files/")
+```
+
+# Preparing the data
+
+We start from the preprocessed *SingleCellExperiment* object created in ['Preprocessing the Hayman/Pasricha (C084) ZIPT mini-bulk data sett'](C086_Kinkel.preprocess.html).
+
+```{r}
+sce <- readRDS(
+  here("data", "SCEs", "C086_Kinkel.preprocessed.SCE.rds"))
+
+# Some useful colours
+sex_colours <- setNames(
+  unique(sce$sex_colours),
+  unique(names(sce$sex_colours)))
+smchd1_genotype_updated_colours <- setNames(
+  unique(sce$smchd1_genotype_updated_colours),
+  unique(names(sce$smchd1_genotype_updated_colours)))
+mouse_number_colours <- setNames(
+  unique(sce$mouse_number_colours),
+  unique(names(sce$mouse_number_colours)))
+
+# Some useful gene sets
+mito_set <- rownames(sce)[any(rowData(sce)$ENSEMBL.SEQNAME == "MT")]
+ribo_set <- grep("^Rp(s|l)", rownames(sce), value = TRUE)
+# NOTE: A more curated approach for identifying ribosomal protein genes 
+#       (https://github.com/Bioconductor/OrchestratingSingleCellAnalysis-base/blob/ae201bf26e3e4fa82d9165d8abf4f4dc4b8e5a68/feature-selection.Rmd#L376-L380)
+library(msigdbr)
+c2_sets <- msigdbr(species = "Mus musculus", category = "C2")
+ribo_set <- union(
+  ribo_set,
+  c2_sets[c2_sets$gs_name == "KEGG_RIBOSOME", ]$gene_symbol)
+sex_set <- rownames(sce)[any(rowData(sce)$ENSEMBL.SEQNAME %in% c("X", "Y"))]
+pseudogene_set <- rownames(sce)[
+  any(grepl("pseudogene", rowData(sce)$ENSEMBL.GENEBIOTYPE))]
+
+hemo_set <- rownames(sce)[
+  any(grepl("hemoglobin subunit", rowData(sce)$NCBI.GENENAME))]
+```
+
+We convert the data to a *DGEList* object in preparation for analysis with `r BiocStyle::Biocpkg("edgeR")`.
+
+```{r}
+x <- DGEList(
+  counts = as.matrix(counts(sce)),
+  samples = colData(sce),
+  group = factor(sce$smchd1_genotype_updated),
+  genes = flattenDF(rowData(sce)))
+x_lc476 <- x[, x$samples$plate_number == "LC476"]
+```
+
+# Data pre-processing
+
+## Transformations from the raw-scale
+
+For differential expression and related analyses, gene expression is rarely considered at the level of raw counts since libraries sequenced at a greater depth will result in higher counts.
+Rather, it is common practice to transform raw counts onto a scale that accounts for such library size differences.
+Popular transformations include counts per million (CPM), log2-counts per million (log-CPM), reads per kilobase of transcript per million (RPKM), and fragments per kilobase of transcript per million (FPKM).
+
+In our analyses, CPM and log-CPM transformations are used regularly although they do not account for gene length differences as RPKM and FPKM values do. 
+Whilst RPKM and FPKM values can just as well be used, CPM and log-CPM values can be calculated using a counts matrix alone and will suffice for the type of comparisons we are interested in^[Furthermore, the 3'-tag sequencing of SCORE's mini-bulk protocol basically negates the need to account for gene length differences.].
+Assuming that there are no differences in isoform usage between conditions, differential expression analyses look at gene expression changes between conditions rather than comparing expression across multiple genes or drawing conclusions on absolute levels of expression.
+In other words, gene lengths remain constant for comparisons of interest and any observed differences are a result of changes in condition rather than changes in gene length.
+
+```{r}
+cpm <- cpm(x)
+lcpm <- cpm(x, log = TRUE)
+```
+
+A CPM value of 1 for a gene equates to having `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the lowest sequencing depth (`r colnames(x)[which.min(x$samples$sum)]`, library size approx. `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` million) or `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the greatest sequencing depth (`r colnames(x)[which.max(x$samples$sum)]`, library size approx. `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` million).
+
+```{r}
+L <- mean(x$samples$lib.size) * 1e-6
+M <- median(x$samples$lib.size) * 1e-6
+```
+
+The log-CPM values will be used for exploratory plots.
+The log-CPM values use an offset to the CPM values before converting to the log2-scale.
+By default, the offset is $2/L$ where 2 is the 'prior count' and $L$ is the average library size in millions, so the log-CPM values are related to the CPM values by $log_{2}(CPM + 2/L)$.
+This calculation ensures that any two read counts with identical CPM values will also have identical log-CPM values.
+The prior count avoids taking the logarithm of zero, and also reduces spurious variability for genes with very low counts by shrinking all the inter-sample log-fold-changes towards zero, something that is helpful for exploratory plotting.
+
+For this dataset, the average library size is about `r number(L, accuracy = 0.01)` million for the entire dataset , so $L \approx$ `r number(L, accuracy = 0.01)` and the minimum log-CPM value for each sample becomes $log_{2}(CPM + 2/L) \approx$ `r number(log2(2 / L), accuracy = 0.01)`.
+In other words, a count of zero for this data maps to a log-CPM value of `r number(log2(2 / L), accuracy = 0.01)` after adding the prior count or offset.
+
+## Removing genes that are lowly expressed
+
+```{r}
+stopifnot(sum(matrixStats::rowAlls(x$counts == 0)) == 0)
+```
+
+All datasets will include a mix of genes that are expressed and those that are not expressed.
+Whilst it is of interest to examine genes that are expressed in one condition but not in another, some genes are unexpressed throughout all samples.
+We have already removed all genes in this dataset that have zero counts across all `r ncol(x)` samples.
+
+Figure \@ref(fig:lcpm-density) plots the distribution log-CPM values and shows that a sizeable proportion of genes within each sample are either unexpressed or lowly-expressed with log-CPM values that are small.
+Genes that do not have a worthwhile number of reads in any sample should be filtered out of the downstream analyses.
+There are several reasons for this.
+From a biological point of view, genes that not expressed at a biologically meaningful level in any condition are not of interest and are therefore best ignored.
+From a statistical point of view, removing low count genes allows the mean-variance relationship in the data to be estimated with greater reliability and also reduces the number of statistical tests that need to be carried out in downstream analyses looking at differential expression.
+
+The `filterByExpr()` function in the `r BiocStyle::Biocpkg("edgeR")` package provides an automatic way to filter genes, while keeping as many genes as possible with worthwhile counts.
+
+```{r}
+lcpm <- cpm(x, log = TRUE)
+keep_exprs <- filterByExpr(x, group = x$samples$group)
+x <- x[keep_exprs, , keep.lib.sizes = FALSE]
+```
+
+By default, `filterByExpr()` keeps genes with about 10 read counts or more in a minimum number of samples, where the number of samples is chosen according to the minimum group sample size^[The actual filtering uses CPM values rather than counts in order to avoid giving preference to samples with large library sizes.].
+For this dataset, the median library size is about `r number(M, accuracy = 0.01)` million (resp. `r number(M_lc476, accuracy = 0.01)` million) and 10 / `r number(M, accuracy = 0.01)` approx. `r number(10 / M, accuracy = 0.1)` (resp. 10 / `r number(M_lc476, accuracy = 0.01)` approx. `r number(10 / M_lc476, accuracy = 0.1)`), so the `filterByExpr()` function keeps genes that have a CPM of `r number(10 / M, accuracy = 0.1)` (resp. `r number(10 / M_lc476, accuracy = 0.1)`) or more in at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) samples.
+A biologically interesting gene should be expressed in at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) samples because all the groups have at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) replicates within each plate.
+The cutoffs used depend on the sequencing depth and on the experimental design. If the library sizes had been larger then a lower CPM cutoff would have been chosen, because larger library sizes provide better resolution to explore more genes at lower expression levels.
+Alternatively, smaller library sizes decrease our ability to explore marginal genes and hence would have led to a higher CPM cutoff.
+
+<aside>
+The values in parenthesis refer to those for just [Using LC476].
+</aside>
+
+Using this criterion, the number of genes is reduced to `r number(sum(keep_exprs), big.mark = ",")` (resp. `r number(sum(keep_exprs_lc476), big.mark = ",")`), about `r percent(sum(keep_exprs) / length(keep_exprs))` (resp. `r percent(sum(keep_exprs_lc476) / length(keep_exprs_lc476))`) of the number that we started with (right panels of Figure \@ref(fig:lcpm-density)).
+
+<aside>
+The values in parenthesis refer to those for just [Using LC476].
+</aside>
+
+```{r lcpm-density, fig.cap = "The density of log-CPM values for raw pre-filtered data (left) and post-filtered data (right) are shown for 12 randomly chosen samples. Dotted vertical lines mark the log-CPM threshold used in the filtering step.", fig.asp = 1}
+f <- function(lcpm, x, j, samplenames, col, lcpm_cutoff) {
+  plot(
+    density(lcpm[, j[1]]),
+    col = col[1],
+    lwd = 2,
+    ylim = c(0, 2.6),
+    las = 2,
+    main = "",
+    xlab = "",
+    xlim = c(0, 14))
+  title(main = "Raw data", xlab = "Log-cpm")
+  abline(v = lcpm_cutoff, lty = 3)
+  for (i in seq_along(j)[-1]) {
+    den <- density(lcpm[, j[i]])
+    lines(den$x, den$y, col = col[i], lwd = 2)
+  }
+  legend("topright", samplenames, text.col = col, bty = "n", cex = 0.5, ncol = 2)
+  
+  lcpm <- cpm(x, log = TRUE)
+  plot(
+    density(lcpm[, 1]),
+    col = col[1],
+    lwd = 2,
+    ylim = c(0, 2.6),
+    las = 2,
+    main = "",
+    xlab = "",
+    xlim = c(0, 14))
+  title(main = "Filtered data", xlab = "Log-cpm")
+  abline(v = lcpm_cutoff, lty = 3)
+  for (i in seq_along(j)[-1]) {
+    den <- density(lcpm[, j[i]])
+    lines(den$x, den$y, col = col[i], lwd = 2)
+  }
+  legend("topright", samplenames, text.col = col, bty = "n", cex = 0.5, ncol = 2)
+}
+
+set.seed(666)
+nsamples <- 12
+col <- palette.colors(nsamples, "Polychrome 36")
+j <- sort(sample(ncol(x), nsamples))
+samplenames <- colnames(x)[j]
+lcpm_cutoff <- log2(10 / M + 2 / L)
+
+par(mfrow = c(1, 2))
+f(lcpm, x, j, samplenames, col, lcpm_cutoff)
+```
+
+## Normalising gene expression distributions
+
+During the sample preparation or sequencing process, external factors that are not of biological interest can affect the expression of individual samples.
+For example, samples processed in the first batch of an experiment can have higher expression overall when compared to samples processed in a second batch. 
+It is assumed that all samples should have a similar range and distribution of expression values.
+Normalisation is required to ensure that the expression distributions of each sample are similar across the entire experiment.
+
+Any plot showing the per sample expression distributions, such as a density or boxplot, is useful in determining whether any samples are dissimilar to others. 
+Distributions of log-CPM values appear to be similar throughout all samples within this dataset (right panels of Figure \@ref(fig:lcpm-density)).
+
+Nonetheless, normalisation by the method of trimmed mean of M-values (TMM) [@robinson2010scaling] is performed using the `calcNormFactors()` function in `r BiocStyle::Biocpkg("edgeR")`.
+The normalisation factors calculated here are used as a scaling factor for the library sizes.
+
+```{r}
+x <- calcNormFactors(x, method = "TMM")
+```
+
+For this dataset the effect of TMM-normalisation is mild, as evident in the magnitude of the scaling factors, which are all relatively close to 1 in both the overall dataset (median = `r number(median(x$samples$norm.factors), 0.01)`, IQR = `r number(iqr(x$samples$norm.factors), 0.01)`, 5% and 95% quantiles = `r glue::glue_collapse(number(quantile(x$samples$norm.factors, c(0.05, 0.95)), accuracy = 0.01), sep = " and ")`).
+
+Figure \@ref(fig:lcpm-boxplot) shows the expression distribution of 12 randomly chosen samples for unnormalised and normalised data, where distributions are noticeably different pre-normalisation and are similar post-normalisation.
+
+```{r lcpm-boxplot, fig.cap = "Boxplots of log-CPM values showing expression distributions for unnormalised data (left) and normalised data (right) for 12 randomly chosen samples.", fig.asp = 1}
+g <- function(lcpm, x, j, samplenames, col) {
+  boxplot(lcpm[, j], las = 2, col = col, main = "", cex = 0.1, xaxt = "n")
+  title(main = "Unnormalised data", ylab = "Log-cpm")
+  
+  lcpm <- cpm(x, log = TRUE)
+  boxplot(lcpm[, j], las = 2, col = col, main = "", cex = 0.1, xaxt = "n")
+  title(main = "Normalised data", ylab = "Log-cpm")
+}
+
+col <- palette.colors(nsamples, "Polychrome 36")
+nsamples <- 12
+set.seed(666)
+j <- sort(sample(ncol(x), nsamples))
+samplenames <- colnames(x)[j]
+
+par(mfrow = c(1, 2))
+g(lcpm, x, j, samplenames, col)
+```
+
+## Unsupervised clustering of samples
+
+In our opinion, one of the most important exploratory plots to examine for gene expression analyses is the multi-dimensional scaling (MDS) plot, or similar.
+The plot shows similarities and dissimilarities between samples in an unsupervised manner so that one can have an idea of the extent to which differential expression can be detected before carrying out formal tests.
+Ideally, samples would cluster well within the primary condition of interest, and any sample straying far from its group could be identified and followed up for sources of error or extra variation.
+If present, technical replicates should lie very close to one another.
+
+Such a plot can be made in `r BiocStyle::Biocpkg("limma")` using the `plotMDS()` function.
+The first dimension represents the leading-fold-change that best separates samples and explains the largest proportion of variation in the data, with subsequent dimensions having a smaller effect and being orthogonal to the ones before it. 
+When experimental design involves multiple factors, it is recommended that each factor is examined over several dimensions.
+If samples cluster by a given factor in any of these dimensions, it suggests that the factor contributes to expression differences and is worth including in the linear modelling.
+On the other hand, factors that show little or no effect may be left out of downstream analysis.
+
+Figure \@ref(fig:mds) shows that samples can be seen to cluster strongly by plate number over dimension 1.
+This dominates any variation due to timepoint or treatment.
+
+```{r mds, fig.cap = "MDS plots of log-CPM values over dimensions 1 and 2 and dimensioned 3 and 4 with samples coloured by batch, treatment, and timepoint. Distances on the plot correspond to the leading fold-change, which is the average (root-mean-square) log2-fold-change for the 500 genes most divergent between each pair of samples by default.", fig.asp = 3 / 2}
+h <- function(lcpm, col_list, location) {
+  for (i in seq_along(col_list)) {
+    plotMDS(lcpm, pch = 16, col = col_list[[i]])
+    legend(
+      location,
+      col = unique(col_list[[i]]),
+      legend = unique(names(col_list[[i]])),
+      pch = 16,
+      title = names(col_list)[i])
+    plotMDS(lcpm, pch = 16, col = col_list[[i]], dim = c(3, 4))
+  }
+}
+
+lcpm <- cpm(x, log = TRUE)
+col_list <- list(
+  "smchd1_genotype_updated" = smchd1_genotype_updated_colours[x$samples$smchd1_genotype_updated],
+  "sex" = sex_colours[x$samples$sex],
+  "mouse_number" = mouse_number_colours[x$samples$mouse_number])
+par(mfrow = c(3, 2))
+h(lcpm, col_list, "bottom")
+```
+
+# TODOs
+
+- [ ] Consider making colnames (i.e. sample names) to be mouse-genotype-rep combination.
