@@ -81,7 +81,6 @@ x <- DGEList(
   samples = colData(sce),
   group = factor(sce$smchd1_genotype_updated),
   genes = flattenDF(rowData(sce)))
-x_lc476 <- x[, x$samples$plate_number == "LC476"]
 ```
 
 # Data pre-processing
