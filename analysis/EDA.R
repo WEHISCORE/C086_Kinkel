@@ -1,128 +1,99 @@
-# EDA of C086_Kinkel
-# 2021-02-09
-# Peter Hickey
+# Run after multi-sample comparisons.
 
-library(SingleCellExperiment)
-library(here)
+par(mfrow = c(1, 3))
+plotMDS(x, col = x$samples$sex_colours, main = "Sex", cex = 0.7)
+legend("topright", legend = names(sex_colours), col = sex_colours, pch = 16, bty = "n", cex = 0.7)
+plotMDS(x, col = x$samples$mouse_number_colours, main = "Mouse", cex = 0.7)
+plotMDS(x, col = x$samples$smchd1_genotype_updated_colours, main = "smchd1_genotype_updated", cex = 0.7)
+legend("topright", legend = names(smchd1_genotype_updated_colours), col = smchd1_genotype_updated_colours, pch = 16, bty = "n", cex = 0.7)
 
-# Using the non-deduped data
-sce <- readRDS(here("data/SCEs/C086_Kinkel.not_UMI_deduped.scPipe.SCE.rds"))
+y <- sumTechReps(x, x$samples$genotype.mouse)
 
-# Add gene metadata
-# Extract rownames (Ensembl IDs) to use as key in database lookups.
-ensembl <- rownames(sce)
-# Pull out useful gene-based annotations from the Ensembl-based database.
-library(EnsDb.Mmusculus.v79)
-library(ensembldb)
-# NOTE: These columns were customised for this project.
-ensdb_columns <- c(
-  "GENEBIOTYPE", "GENENAME", "GENESEQSTART", "GENESEQEND", "SEQNAME", "SYMBOL")
-names(ensdb_columns) <- paste0("ENSEMBL.", ensdb_columns)
-stopifnot(all(ensdb_columns %in% columns(EnsDb.Mmusculus.v79)))
-ensdb_df <- DataFrame(
-  lapply(ensdb_columns, function(column) {
-    mapIds(
-      x = EnsDb.Mmusculus.v79,
-      # NOTE: Need to remove gene version number prior to lookup.
-      keys = gsub("\\.[0-9]+$", "", ensembl),
-      keytype = "GENEID",
-      column = column,
-      multiVals = "CharacterList")
-  }),
-  row.names = ensembl)
-# NOTE: Can't look up GENEID column with GENEID key, so have to add manually.
-ensdb_df$ENSEMBL.GENEID <- ensembl
-# NOTE: Mus.musculus combines org.Mm.eg.db and
-#       TxDb.Mmusculus.UCSC.mm10.knownGene (as well as others) and therefore
-#       uses entrez gene and RefSeq based data.
-library(Mus.musculus)
-# NOTE: These columns were customised for this project.
-ncbi_columns <- c(
-  # From TxDB: None required
-  # From OrgDB
-  "ALIAS", "ENTREZID", "GENENAME", "REFSEQ", "SYMBOL")
-names(ncbi_columns) <- paste0("NCBI.", ncbi_columns)
-stopifnot(all(ncbi_columns %in% columns(Mus.musculus)))
-ncbi_df <- DataFrame(
-  lapply(ncbi_columns, function(column) {
-    mapIds(
-      x = Mus.musculus,
-      # NOTE: Need to remove gene version number prior to lookup.
-      keys = gsub("\\.[0-9]+$", "", ensembl),
-      keytype = "ENSEMBL",
-      column = column,
-      multiVals = "CharacterList")
-  }),
-  row.names = ensembl)
-rowData(sce) <- cbind(ensdb_df, ncbi_df)
-# Replace the row names of the SCE by the gene symbols (where available).
-rownames(sce) <- uniquifyFeatureNames(
-  ID = rownames(sce),
-  # NOTE: An Ensembl ID may map to 0, 1, 2, 3, ... gene symbols.
-  #       When there are multiple matches only the 1st match is used.
-  names = sapply(rowData(sce)$ENSEMBL.SYMBOL, function(x) {
-    if (length(x)) {
-      x[[1]]
-    } else {
-      NA_character_
-    }
-  }))
+par(mfrow = c(1, 3))
+plotMDS(y, col = y$samples$sex_colours, main = "Sex", cex = 0.7)
+legend("topright", legend = names(sex_colours), col = sex_colours, pch = 16, bty = "n", cex = 0.7)
+plotMDS(y, col = y$samples$mouse_number_colours, main = "Mouse", cex = 0.7)
+plotMDS(y, col = y$samples$smchd1_genotype_updated_colours, main = "smchd1_genotype_updated", cex = 0.7)
+legend("topright", legend = names(smchd1_genotype_updated_colours), col = smchd1_genotype_updated_colours, pch = 16, bty = "n", cex = 0.7)
 
-# Add sample metadata
-library(readxl)
-sample_sheet <- read_excel(
-  here("data/sample_sheets/C086_Kinkel_slamLSK_MB_NNXXX_Seqprimer11Dec2020.xlsx"),
-  sheet = "Pool info",
-  range = "A21:G33")
-library(janitor)
-sample_sheet <- clean_names(sample_sheet)
-sample_sheet$mouse_number <- as.character(sample_sheet$mouse_number)
-library(dplyr)
-colData(sce) <- left_join(
-  as.data.frame(colData(sce)),
-  sample_sheet,
-  by = c("mouse_number" = "mouse_number")) %>%
-  DataFrame()
-sce$smchd1_genotype_3[is.na(sce$smchd1_genotype_3)] <- "NA"
-sce$genotype.mouse <- paste0(sce$smchd1_genotype_3, ".", sce$mouse_number)
+y2 <- y[setdiff(rownames(y), sex_set), ]
+par(mfrow = c(1, 3))
+plotMDS(y2, col = y2$samples$sex_colours, main = "Sex", cex = 0.7)
+legend("topright", legend = names(sex_colours), col = sex_colours, pch = 16, bty = "n", cex = 0.7)
+plotMDS(y2, col = y2$samples$mouse_number_colours, main = "Mouse", cex = 0.7)
+plotMDS(y2, col = y2$samples$smchd1_genotype_updated_colours, main = "smchd1_genotype_updated", cex = 0.7)
+legend("topright", legend = names(smchd1_genotype_updated_colours), col = smchd1_genotype_updated_colours, pch = 16, bty = "n", cex = 0.7)
 
-count(as.data.frame(colData(sce)), mouse_number, sex, smchd1_genotype_3)
+z <- y[, !y$samples$mouse_number %in% c("1282", "1248")]
+par(mfrow = c(1, 3))
+plotMDS(z, col = z$samples$sex_colours, main = "Sex", cex = 0.7)
+legend("topright", legend = names(sex_colours), col = sex_colours, pch = 16, bty = "n", cex = 0.7)
+plotMDS(z, col = z$samples$mouse_number_colours, main = "Mouse", cex = 0.7)
+plotMDS(z, col = z$samples$smchd1_genotype_updated_colours, main = "smchd1_genotype_updated", cex = 0.7)
+legend("topright", legend = names(smchd1_genotype_updated_colours), col = smchd1_genotype_updated_colours, pch = 16, bty = "n", cex = 0.7)
 
-# Quick QC
-library(scater)
-sce <- addPerCellQC(sce)
+z2 <- y2[, !y2$samples$mouse_number %in% c("1282", "1248")]
+par(mfrow = c(1, 3))
+plotMDS(z2, col = z2$samples$sex_colours, main = "Sex", cex = 0.7)
+legend("bottomright", legend = names(sex_colours), col = sex_colours, pch = 16, bty = "n", cex = 0.7)
+plotMDS(z2, col = z2$samples$mouse_number_colours, main = "Mouse", cex = 0.7)
+plotMDS(z2, col = z2$samples$smchd1_genotype_updated_colours, main = "smchd1_genotype_updated", cex = 0.7)
+legend("bottomright", legend = names(smchd1_genotype_updated_colours), col = smchd1_genotype_updated_colours, pch = 16, bty = "n", cex = 0.7)
 
-plotColData(
-  sce,
-  "sum",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_3") +
-  geom_hline(yintercept = 5e6, lty = 2, col = "red")
-plotColData(
-  sce,
-  "detected",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_3")
-plotExpression(sce, "Xist", x = "mouse_number", colour_by = "sex", exprs_values = "counts")
-plotExpression(sce, "Smchd1", x = "genotype.mouse", colour_by = "smchd1_genotype_3", exprs_values = "counts")
+# DE of summed tech reps -------------------------------------------------------
 
-sce <- logNormCounts(sce)
+y <- y[, order(colnames(y))]
+y$samples$tmp <- relevel(y$samples$smchd1_genotype_updated, "WT")
+design <- model.matrix(~tmp + sex, y$samples)
+colnames(design) <- sub("tmp|sex", "", colnames(design))
 
-keep <- !isOutlier(sce$sum, log = TRUE)
-sce <- sce[, keep]
+v <- voomWithQualityWeights(y, design = design, plot = TRUE, col = y$samples$smchd1_genotype_updated_colours)
+colnames(v)
 
-library(scran)
-stats <- modelGeneVar(sce)
-hvgs <- getTopHVGs(stats, n = 1000)
-str(hvgs)
+con <- limma::makeContrasts(Del - Het, levels = design)
+fit <- lmFit(v, design)
+fit <- contrasts.fit(fit, con)
+fit <- eBayes(fit)
+plotSA(fit, main="Final model: Mean-variance trend")
+dt <- decideTests(fit)
+summary(dt)
+par(mfrow = c(1, 1))
+plotMD(fit, status = dt[, 1])
+topTable(fit)
 
-sce <- runMDS(sce, subset_row = hvgs)
-plotMDS(sce, colour_by = "smchd1_genotype_3")
-plotMDS(sce, colour_by = "sex")
-plotMDS(sce, colour_by = "mouse_number")
+# DE of summed tech reps (excl. WT) --------------------------------------------
 
-sex_set <- rownames(sce)[any(rowData(sce)$ENSEMBL.SEQNAME %in% c("X", "Y"))]
-sce <- runMDS(sce, subset_row = setdiff(hvgs, sex_set))
-plotMDS(sce, colour_by = "smchd1_genotype_3")
-plotMDS(sce, colour_by = "sex")
-plotMDS(sce, colour_by = "mouse_number")
+y3 <- y[, y$samples$smchd1_genotype_updated != "WT"]
+y3$samples <- droplevels(y3$samples)
+design <- model.matrix(~0 + tmp, y3$samples)
+colnames(design) <- sub("tmp|sex", "", colnames(design))
+v <- voomWithQualityWeights(y3, design = design, plot = TRUE, col = y$samples$smchd1_genotype_updated_colours)
+colnames(v)
+
+con <- limma::makeContrasts(Del - Het, levels = design)
+fit <- lmFit(v, design)
+fit <- contrasts.fit(fit, con)
+fit <- eBayes(fit)
+plotSA(fit, main="Final model: Mean-variance trend")
+dt <- decideTests(fit)
+summary(dt)
+par(mfrow = c(1, 1))
+plotMD(fit, status = dt[, 1])
+topTable(fit)
+
+# DE of tech reps --------------------------------------------------------------
+
+x$samples$tmp <- relevel(x$samples$smchd1_genotype_updated, "WT")
+design <- model.matrix(~tmp + sex, x$samples)
+colnames(design) <- sub("tmp|sex", "", colnames(design))
+fit <- voomLmFit(x, design, block = x$samples$mouse_number, plot = TRUE)
+
+con <- limma::makeContrasts(Del - Het, levels = design)
+fit <- contrasts.fit(fit, con)
+fit <- eBayes(fit)
+plotSA(fit, main="Final model: Mean-variance trend")
+dt <- decideTests(fit)
+summary(dt)
+par(mfrow = c(1, 1))
+plotMD(fit, status = dt[, 1])
+topTable(fit)
