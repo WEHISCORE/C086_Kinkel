@@ -67,6 +67,112 @@ sce$UMI_deduped <- NULL
 
 We combine these into a single object^[In the terminology of Bioconductor this is called a *SingleCellExperiment* object.] containing both the UMI counts and the read counts for `r nrow(sce)` genes and `r ncol(sce)` samples.
 
+# Read mapping metrics
+
+## Motivation
+
+We aimed to sequence 5 million reads/sample and hoped that the majority of these reads would be exonic.
+
+## Analysis
+
+```{r}
+library(scPipe)
+library(tidyr)
+library(dplyr)
+
+qc_df <- as.data.frame(QC_metrics(sce_deduped)) %>%
+  tibble::rownames_to_column(var = "rowname") %>%
+  pivot_longer(!rowname) %>%
+  mutate(
+    well_position = sub("LCE[0-9]+_", "", rowname),
+    plate_number = substr(rowname, 1, 6)) %>%
+  inner_join(
+    as.data.frame(colData(sce_deduped)) %>%
+      tibble::rownames_to_column(var = "rowname")) %>%
+  mutate(well_position = factor(
+    well_position,
+    unlist(
+      lapply(LETTERS[1:16], function(x) paste0(x, 1:24)),
+      use.names = TRUE)))
+```
+
+Figure \@ref(fig:nreads) shows that we generated more than 5 million reads for the majority of samples and that most of these reads are exonic.
+As expected, the negative control sample generated very few reads.
+
+```{r nreads, fig.cap = "Number of reads generated per sample. The dashed horizional line denotes 5 million reads."}
+mapped_category_colours <- setNames(
+  RColorBrewer::brewer.pal(
+    length(unique(qc_df$name)), 
+    "Dark2"),
+  sort(unique(qc_df$name)))
+ggplot(qc_df) +
+  geom_col(aes(x = well_position, fill = name, y = value)) +
+  cowplot::theme_cowplot(font_size = 8) +
+  ylab("Number of reads") +
+  xlab("Well position") +
+  geom_hline(yintercept = 5e6, lty = 2) +
+  scale_fill_manual(values = mapped_category_colours) +
+  facet_grid(sample_name ~ .) +
+  ggtitle(
+    "C086_Kinkel: Read mapping metrics",
+    subtitle = "Number of reads per category") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  theme(axis.text.x = element_text(size = 6)) +
+  guides(fill = guide_legend(title = "Mapping category"))
+```
+
+Figure \@ref(fig:prop-reads) shows for each sample that around 60% of reads are exonic and a further 20% are intronic.
+
+```{r prop-reads, fig.cap = "Proportion of reads generated in each mapping category per sample."}
+ggplot(qc_df) +
+  geom_col(aes(x = well_position, fill = name, y = value), position = "fill") +
+  cowplot::theme_cowplot(font_size = 8) +
+  ylab("Proportion of reads") +
+  xlab("Well position") +
+  scale_fill_manual(values = mapped_category_colours) +
+  facet_grid(plate_number + sample_name ~ .) +
+  ggtitle(
+    "C086_Kinkel: Read mapping metrics",
+    subtitle = "Proportion of reads per category") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  theme(axis.text.x = element_text(size = 6)) +
+  guides(fill = guide_legend(title = "Mapping category"))
+```
+
+Figure \@ref(fig:nreads-exonic-intronic) shows for each sample that on average 4 million reads are exonic and a further 1 million are intronic
+
+```{r nreads-exonic-intronic, fig.cap = "Number of exonic and intronic reads generated per sample."}
+qc_df %>%
+  ggplot() +
+  geom_boxplot(aes(x = name, y = value, fill = name)) +
+  cowplot::theme_cowplot(font_size = 12) +
+  ylab("Number of reads") +
+  xlab("Mapping category") +
+  scale_fill_manual(values = mapped_category_colours) +
+  ggtitle(
+    "C086_Kinkel: Number of reads per category",
+    subtitle = "Includes negative control sample") +
+  guides(fill = FALSE) +
+  scale_x_discrete(guide = guide_axis(angle = 45))
+```
+
+## Summary
+
+We largely achieved our aim of sequencing ~5 million reads/sample and with the majority of reads being exonic.
+**Henceforth, we only use the exonic reads.**
+Although the intronic reads are potentially useful, to do so would require substantial changes to the data analysis workflow and additional analysis.
+
+We now remove the negative control sample.
+
+```{r}
+sce <- sce[, sce$sample_name != "negative control"]
+colData(sce) <- droplevels(colData(sce))
+```
+
+We look more closely at which samples have smaller numbers of exonic reads in [Have we sequenced enough?] and [Quality control of samples].
+
+# Incorporating metadata
+
 ## Incorporating gene-based annotation
 
 We obtain gene-based annotations from the NCBI/RefSeq and Ensembl databases, such as the chromosome and gene symbol, using the `r BiocStyle::Biocpkg("Mus.musculus")` and `r BiocStyle::Biocpkg("EnsDb.Mmusculus.v79")` packages.
@@ -214,7 +320,7 @@ colnames(sce) <- paste0(sce$genotype.mouse, ".", sce$rep)
 Sarah aimed for technical triplicates of each sample as a 100-cell mini-bulk, but this was not always achievable, as shown in the table below.
 
 ```{r}
-as.data.frame(colData(sce)) %>%
+x <- as.data.frame(colData(sce)) %>%
   dplyr::count(
     smchd1_genotype_updated,
     genotyping_bm_cells,
@@ -223,8 +329,25 @@ as.data.frame(colData(sce)) %>%
     dob,
     dod,
     age_days,
-    sample_type) %>%
-  knitr::kable(caption = "Number of samples per mouse and associated metadata.")
+    sample_type)
+
+library(gt)
+x %>%
+  dplyr::group_by(smchd1_genotype_updated) %>%
+  gt(rowname_col = "mouse_number") %>%
+  tab_spanner(
+    label = "Sample metadata",
+    columns = vars(genotyping_bm_cells, sex, dob, dod, age_days)) %>%
+  tab_header(
+    title = md("**Samples in C086_Kinkel dataset**"),
+    subtitle = md("*Rownames are mouse number IDs*")) %>%
+  tab_source_note(source_note = md("Source: [`data/sample_sheets/Minibulk_RNAseq_samples.xlsx`](../data/sample_sheets/Minibulk_RNAseq_samples.xlsx)")) %>% 
+  summary_rows(
+    groups = TRUE,
+    columns = vars(n),
+    fns = list(total = "sum"),
+    formatter = fmt_number,
+    decimals = 0) 
 ```
 
 The complete sample metadata is shown below.
@@ -275,7 +398,6 @@ reads_ls <- log10(colSums(assay(sce, "read_counts")))
 ```
 
 Figure \@ref(fig:read-library-size) plots the distribution of the number of reads mapped to exons in each sample^[I.e. the 'library size' when using read counts].
-Due to the additional sequencing, we see that we obtained more reads/sample on average for samples on the `LC476` plate (median = `r number(median(10 ^ reads_ls[sce$plate_number == "LC476"]), big.mark = ",")`) than for samples on the `LC475` (median = `r number(median(10 ^ reads_ls[sce$plate_number == "LC475"]), big.mark = ",")`).
 
 ```{r read-library-size, fig.cap = "Distribution of the number of reads mapped to exons in each sample."}
 plot(
@@ -315,23 +437,13 @@ plot(
 
 ## Summary
 
-**TODO** Re-write
-
-These results show that the libraries are massively enriched for sequences from hemoglobin subunit genes and we have consequently over-sequenced these genes and likely under-sequenced the rest of the transcriptome.
-Further sequencing of these samples may therefore be necessary.
-
-<aside>
-We would likely pick just one of `LC475` and `LC476` for further sequencing.
-</aside>
+These results show that the libraries are sequenced to near-saturation.
 
 One way to think of sequencing saturation is [provided by 10x Genomics](https://kb.10xgenomics.com/hc/en-us/articles/115002474263-How-much-sequencing-saturation-should-I-aim-for-):
 
 > The inverse of the sequencing saturation can be interpreted as roughly the number of new transcripts you expect to find with one new read. If sequencing saturation is at 50%, it means that every 2 new reads will result in 1 new UMI count (unique transcript) detected. In contrast, 90% sequencing saturation means that 10 new reads are necessary to obtain one new UMI count. If the sequencing saturation is high, additional sequencing would not recover much new information for the library.
 
-However, remember that in doing further sequencing we will still be 'paying the price' of further sequencing the hemoglobin subunit genes, i.e. the new transcripts we identify are likely to include a large proportion of additional hemoglobin subunit transcripts.
-
-An alternative to simply re-sequencing the existing library may be to first perform a technique like 'DASH', which uses "recombinant Cas9 protein complexed with a library of guide RNAs targeting unwanted species for cleavage, thus preventing them from consuming sequencing space" [@gu2016depletion].
-The feasibility/suitability of using such a technique for this project would require further discussion with SCORE.
+**At this stage, it is not necessary to perform additional sequencing of the library.**
 
 # UMI counts vs. read counts
 
@@ -369,16 +481,19 @@ To investigate whether expression measurements are being 'truncated' in this dat
 
 ## Analysis
 
+```{r}
+n <- apply(assay(sce, "read_counts"), 1, function(x) sum(x > 4 ^ 6))
+g <- names(n[n > 0])
+```
+
 Figure \@ref(fig:read-distribution) plots the distribution of the logarithm of the read counts.
 From this we see that the vast majority of read counts are small. 
 In fact:
 
 - `r percent(sum(as.vector(assay(sce, "read_counts")) == 0) / prod(dim(sce)), accuracy = 0.1)` of read counts are 0
-- 95% of the read counts are no greater than `r quantile(as.vector(assay(sce, "read_counts")), 0.95)` 
-- 99% of the read counts are no greater than `r quantile(as.vector(assay(sce, "read_counts")), 0.99)` 
-- 99.9% of the read counts are no greater than `r quantile(as.vector(assay(sce, "read_counts")), 0.999)`
-
-Most importantly, only (`r percent(sum(as.vector(assay(sce, "read_counts")) > 4^6) / prod(dim(sce)), accuracy = 0.001)`) of read counts exceed the $4^6 = 4096$ threshold.
+- 95% of the read counts are no greater than `r number(quantile(as.vector(assay(sce, "read_counts")), 0.95), big.mark = ",")` 
+- 99% of the read counts are no greater than `r number(quantile(as.vector(assay(sce, "read_counts")), 0.99), big.mark = ",")` 
+- 99.9% of the read counts are no greater than `r number(quantile(as.vector(assay(sce, "read_counts")), 0.999), big.mark = ",")`
 
 ```{r read-distribution, fig.cap = "Distribution of the logarithm of the read counts as density plot (left) and empirical cumulative distribution function (right). A count of 1 is added to each UMI count to avoid taking the logarithm of zero. The orange vertical line denotes $4^6 = 4096$.", fig.asp = 1 / 2}
 x <- as.vector(assay(sce, "read_counts")) + 1L
@@ -399,19 +514,13 @@ plot(
 abline(v = log2(4 ^ 6), col = "orange")
 ```
 
-The only genes with read counts exceeding the $4^6=4096$ threshold are shown in the table below.
+Only `r percent(sum(as.vector(assay(sce, "read_counts")) > 4^6) / prod(dim(sce)), accuracy = 0.001)` of read counts exceed the $4^6 = 4096$ threshold.
+However there are `r number(length(g), big.mark = ",")` genes for which at least one sample exceeds the $4^6=4096$ threshold; these genes are shown in the table below.
 If we were to use the UMI counts, the genes in this list may have their expression measurements artificially truncated in those samples where the number of copies of the transcript exceed the $4^6=4096$ threshold.
-There are a few points worth drawing attention to based on this table:
 
-**TODO** Re-write
-
-1. The 3 worst offenders are all hemoglobin subunits
-2. There are several mitochondrial and ribosomal protein genes on the list
-3. There are some key immune genes on the list, e.g., *PTPRC* (encoding CD45), *B2M*, and *HLA-B*
+This table shows that many of these genes are mitochondrial and ribosomal protein genes.
 
 ```{r}
-n <- apply(assay(sce, "read_counts"), 1, function(x) sum(x > 4 ^ 6))
-g <- names(n[n > 0])
 read_e <- as.matrix(assay(sce, "read_counts")[g, ])
 umi_e <- as.matrix(assay(sce, "UMI_counts")[g, ])
 high_count_tbl <- tibble::tibble(
@@ -453,9 +562,8 @@ DT::datatable(
 
 We can investigate this list more formally using a statistical test for over-representation of gene ontology (GO) terms in this gene set.
 This is done using the `goana()` function from the `r BiocStyle::Biocpkg("limma")` package.
-These results are shown in the table below. 
-
-**TODO** Comment on significant gene sets
+These results are shown in the table below and confirm that these genes are enriched for GO terms related to ribosomal and mitochondrial processes.
+This is something we frequently see with the mini-bulk protocol and the CEL-Seq protocol from which it is derived.
 
 ```{r}
 # NOTE: kegga() was uninformative.
@@ -475,7 +583,7 @@ There are a few notable points about this figure:
 3. The log-fold changes between the read counts and the UMI counts are larger on average for more highly expressed genes. The variation in the log-fold change is larger for the lowly expressed genes.
 4. The hemoglobin genes stand out. These genes are extremely highly expressed, meaning that they likely saturate the 6 bp UMIs and which leads to the strange relationship between the UMI counts and the read counts for these genes.
 
-```{r scatterplot-and-ma-plot, fig.cap = "Scatterplot of the logarithm of the UMI and read counts (top) and logCPM of the UMI and read counts (bottom) for all genes and samples (left) and mean-difference plot of the same data (right). The correlation in the scatterplot is reported below the x-axis label. Genes that are hemoglobin subunits are highlighted in red. The orange lines denote $4^6 = 4096$ and the blue line is a trend fitted to the mean-differences.", fig.asp = 1}
+```{r scatterplot-and-ma-plot, fig.cap = "Scatterplot of the logarithm of the UMI and read counts (top) and logCPM of the UMI and read counts (bottom) for all genes and samples (left) and mean-difference plot of the same data (right). The correlation in the scatterplot is reported below the x-axis label. Genes that are ribosomal protein genes subunits are highlighted in orange and mitochondrial genes in blue. The red line is a trend fitted to the mean-differences.", fig.asp = 1}
 x <- log2(as.vector(assay(sce, "UMI_counts")) + 1)
 y <- log2(as.vector(assay(sce, "read_counts")) + 1)
 m <- (x + y) / 2
@@ -496,12 +604,11 @@ par(mfrow = c(2, 2))
 plotWithHighlights(
   x = x[i],
   y = y[i],
-  # TODO: Is this useful?
-  status = g[i] %in% ribo_set, 
+  status = ifelse(g[i] %in% ribo_set, 1, ifelse(g[i] %in% mito_set, -1, 0)),
   legend = FALSE,
   bg.pch = ".",
   hl.pch = ".",
-  hl.col = "red",
+  hl.col = c("orange", "dodgerBlue"),
   hl.cex = 3,
   sub = paste0("r = ", number(cor(x, y), accuracy = 0.001)),
   xlab = expression(log[2](UMIs + 1)),
@@ -512,29 +619,27 @@ plotWithHighlights(
   x = m[i] / 2,
   y = d[i],
   pch = ".",
-  # TODO: Is this useful?
-  status = g[i] %in% ribo_set, 
+  status = ifelse(g[i] %in% ribo_set, 1, ifelse(g[i] %in% mito_set, -1, 0)),
   legend = FALSE,
   bg.pch = ".",
   hl.pch = ".",
-  hl.col = "red",
+  hl.col = c("orange", "dodgerBlue"),
   hl.cex = 3,
   xlab = "Average log-(count+1)",
   ylab = "logFC (reads vs. UMIs)",
   ylim = c(-max(abs(c(d, D))), max(abs(c(d, D)))))
 abline(h = 0, lty = 2, col = "grey")
 l <- lowess(m, d, f = 0.3)
-lines(l, col = "dodgerBlue", lwd = 2)
+lines(l, col = "red", lwd = 2)
 
 plotWithHighlights(
   x = X[I],
   y = Y[I],
-  # TODO: Is this useful?
-  status = G[I] %in% ribo_set, 
+  status = ifelse(G[I] %in% ribo_set, 1, ifelse(G[I] %in% mito_set, -1, 0)),
   legend = FALSE,
   bg.pch = ".",
   hl.pch = ".",
-  hl.col = "red",
+  hl.col = c("orange", "dodgerBlue"),
   hl.cex = 3,
   sub = paste0(
     "r = ", 
@@ -546,19 +651,18 @@ abline(a = 0, b = 1, lty = 2, col = "grey")
 plotWithHighlights(
   x = M[I],
   y = D[i],
-  # TODO: Is this useful?
-  status = G[I] %in% ribo_set, 
+  status = ifelse(G[I] %in% ribo_set, 1, ifelse(G[I] %in% mito_set, -1, 0)),
   legend = FALSE,
   bg.pch = ".",
   hl.pch = ".",
-  hl.col = "red",
+  hl.col = c("orange", "dodgerBlue"),
   hl.cex = 3,
   xlab = "Average logCPM",
   ylab = "logFC (reads vs. UMIs)",
   ylim = c(-max(abs(c(d, D))), max(abs(c(d, D)))))
 abline(h = 0, lty = 2, col = "grey")
 l <- lowess(M, D, f = 0.3)
-lines(l, col = "dodgerBlue", lwd = 2)
+lines(l, col = "red", lwd = 2)
 ```
 
 Rather than looking at all samples and all genes at once, can also examine the relationship between UMI counts and read counts within a single sample across genes (Figure \@ref(fig:within-sample-cors)) and within a single gene across samples (Figure \@ref(fig:within-gene-cors)).
@@ -585,24 +689,25 @@ These figures show that the UMI counts and read counts are highly correlated acr
 The genes with the lowest correlations include the aforementioned highly-expressed hemoglobin subunits.
 </aside>
 
-```{r within-sample-cors, fig.cap = "Association between UMI counts and read counts for each gene within each sample. The first 8 panels are scatter plots of the UMI counts and read counts for each gene for the samples with the 3 lowest correlations, 2 middlemost correlations, and 3 highest correlations. The correlation in the scatterplot is reported below each panel. The final panel is the distribution of these correlations across all samples.", fig.asp = 1}
+```{r within-sample-cors, fig.cap = "Association between UMI counts and read counts for each gene within each sample. The first 8 panels are scatter plots of the UMI counts and read counts for each gene for the samples with the 3 lowest correlations, 2 middlemost correlations, and 3 highest correlations. The correlation in the scatterplot is reported below each panel. Genes that are ribosomal protein genes subunits are highlighted in orange and mitochondrial genes in blue. The final panel is the distribution of these correlations across all samples.", fig.asp = 1}
 par(mfrow = c(3, 3), cex = 0.5)
-jj <- names(sort(cor_j)[c(1:3, 18:19, 34:36)])
+jj <- names(sort(cor_j)[c(1:3, 17:18, 33:35)])
 for (j in jj) {
   g <- rownames(sce)
   plot(
     x = X[, j],
     y = Y[, j],
     pch = ".",
-    # TODO: Useful?
-    cex = ifelse(g %in% ribo_set, 5, 1),
-    col = ifelse(g %in% ribo_set, "red", "black"),
+    cex = ifelse(g %in% c(ribo_set, mito_set), 5, 1),
+    col = ifelse(
+      g %in% ribo_set, "orange",
+      ifelse(g %in% mito_set, "dodgerBlue", "black")),
     sub = paste0("r = ", number(cor_j[j], accuracy = 0.001)),
     xlab = "logCPM(UMIs)",
     ylab = "logCPM(reads)",
     main = j,
-    xlim = c(0, max(x)),
-    ylim = c(0, max(y)))
+    xlim = range(x),
+    ylim = range(y))
   abline(a = 0, b = 1, col = "grey", lty = 2)
 }
 plot(
@@ -611,7 +716,7 @@ plot(
   xlab = expression(r[p]))
 ```
 
-```{r within-gene-cors, fig.cap = "Association between UMI counts and read counts for each sample within each gene. The first 8 panels are scatter plots of the UMI counts and read counts for each sample for the genes with the 3 lowest correlations, 2 middlemost correlations, and 3 highest correlations. The correlation in the scatterplot is reported below each panel. The final panel is the distribution of these correlations across all genes.", fig.asp = 1}
+```{r within-gene-cors, fig.cap = "Association between UMI counts and read counts for each sample within each gene. The first 8 panels are scatter plots of the UMI counts and read counts for each sample for the genes with the 3 lowest correlations, 2 middlemost correlations, and 3 highest correlations. The correlation in the scatterplot is reported below each panel. Genes that are ribosomal protein genes subunits are highlighted in orange and mitochondrial genes in blue. The final panel is the distribution of these correlations across all genes.", fig.asp = 1}
 par(mfrow = c(3, 3), cex = 0.5)
 # NOTE: There are some NA correlations, so this changes ii.
 ii <- names(sort(cor_i)[c(1:3, 12792:12793, 25585:25587)])
@@ -621,40 +726,31 @@ for (i in ii) {
     x = X[i, ],
     y = Y[i, ],
     pch = 16,
-    # TODO: Useful?
-    col = ifelse(g %in% ribo_set, "red", "black"),
+    col = ifelse(
+      g %in% ribo_set, "orange",
+      ifelse(g %in% mito_set, "dodgerBlue", "black")),
     sub = paste0("r = ", number(cor_i[i], accuracy = 0.001)),
     xlab = "logCPM(UMIs)",
     ylab = "logCPM(reads)",
     main = i,
-    # TODO: Fix lims
-    xlim = c(0, max(x)),
-    ylim = c(0, max(y)))
+    xlim = range(X),
+    ylim = range(Y))
   abline(a = 0, b = 1, col = "grey", lty = 2)
 }
 plot(
   density(cor_i, na.rm = TRUE, from = -1, to = 1),
   main = "All genes", 
   xlab = expression(r[p]))
-
-# TODO: Add sanity check
-# Sanity check
-# stopifnot(identical(names(sort(cor_i))[1:2], c("MT-RNR2", "HBB")))
 ```
 
 ## Summary
 
-**TODO:** Re-write
+The ultimate aim of this analysis is to perform a differential expression (DE) analysis. 
+On the one hand, a DE analysis is more powerful when there are more counts available, which is where the read counts are favoured.
+On the other hand, a DE analysis may be biased if these counts arise through PCR duplicates, which is where the deduplicated UMI counts are favoured.
+The choice between using the read counts or the UMI counts in the DE analysis is therefore a trade-off between these two choices.
 
-As there are so few genes with read counts that exceed the threshold of $4^6 = 4096$ there is little risk that the expression measurements are artificially truncated by using the UMI counts.
-Additionally, compared to the read counts, the UMI counts have the advantage that they mitigate the effects of PCR amplification noise.
-We therefore opt to use the UMI counts in all the analysis the follows.
-
-```{r}
-# TODO: Re-visit
-# assay(sce, "counts") <- assay(sce, "UMI_counts")
-assay(sce, "counts") <- assay(sce, "read_counts")
-```
+**For now, we defer our choice of read counts vs. UMI counts, but the remainder of this preprocessing report uses read counts**.
 
 # Quality control of samples
 
@@ -666,6 +762,7 @@ We use several quality control (QC) metrics to measure the quality of the sample
 - `sum`: This measures the library size of the samples, which is the total sum of counts across genes. We want samples to have high library sizes as this means more RNA has been successfully captured during library preparation. 
 - `detected`: This is the number of expressed features^[The number of expressed genes refers to the number of genes which have non-zero counts (ie. they have been identified in the sample at least once)] in each sample. Samples with few expressed features are likely to be of poor quality, as the diverse transcript population has not been successful captured. 
 - `subsets_Mt_percent`: This measures the proportion of reads which are mapped to mitochondrial RNA. If there is a higher than expected proportion of mitochondrial RNA this is often symptomatic of a sample which is under stress and is therefore of low quality and will not be used for the analysis. 
+- `subsets_Ribo_percent`: This measures the proportion of reads which are mapped to ribosomal protein genes. If there is a higher than expected proportion of ribosomal protein gene expression this is often symptomatic of a cell which is of compromised quality and we may want to exclude it from the analysis. 
 
 For mini-bulk data, we typically observe library sizes that are in the hundreds of thousands^[This is consistent with the use of UMI counts rather than read counts, as each transcript molecule can only produce one UMI count but can yield many reads after fragmentation.] and several thousand expressed genes per cell.
 
@@ -674,9 +771,16 @@ is_mito <- rownames(sce) %in% mito_set
 summary(is_mito)
 is_ribo <- rownames(sce) %in% ribo_set
 summary(is_ribo)
-sce <- addPerCellQC(
+sce_reads <- addPerCellQC(
   sce,
-  subsets = list(Mt = which(is_mito), Ribo = which(is_ribo)))
+  subsets = list(Mt = which(is_mito), Ribo = which(is_ribo)),
+  assay.type = "read_counts",
+  use.altexps = FALSE)
+sce_umis <- addPerCellQC(
+  sce,
+  subsets = list(Mt = which(is_mito), Ribo = which(is_ribo)),
+  assay.type = "UMI_counts",
+  use.altexps = FALSE)
 ```
 
 The aim is to remove putative low-quality samples that have low library sizes, low numbers of expressed features, and high mitochondrial proportions. 
@@ -684,18 +788,18 @@ Such samples can interfere with downstream analyses, e.g., by forming distinct c
 
 ## Visualizing the QC metrics
 
-The distributions of these metrics are shown in Figure \@ref(fig:qcplot), stratified by plate.
+The distributions of these metrics are shown in Figure \@ref(fig:qcplot) for read and UMI counts.
 
 ```{r qcplot, fig.cap = "Distributions of various QC metrics for all samples in the data set. This includes the library sizes, number of expressed genes, and proportion of reads mapped to mitochondrial genes.", fig.asp = 2 / 3}
 p1 <- plotColData(
-  sce,
+  sce_reads,
   "sum",
   x = "genotype.mouse",
   colour_by = "smchd1_genotype_updated") +
   scale_y_log10() +
-  theme_cowplot(font_size = 8) +
+  theme_cowplot(font_size = 6) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_log10(limits = c(1, NA)) +
+  scale_y_log10() +
   annotation_logticks(
     sides = "l",
     short = unit(0.03, "cm"),
@@ -703,106 +807,101 @@ p1 <- plotColData(
     long = unit(0.09, "cm")) +
   scale_colour_manual(values = smchd1_genotype_updated_colours)
 p2 <- plotColData(
-  sce,
+  sce_reads,
   "detected",
   x = "genotype.mouse",
   colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
+  theme_cowplot(font_size = 6) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_colour_manual(values = smchd1_genotype_updated_colours)
 p3 <- plotColData(
-  sce,
+  sce_reads,
   "subsets_Mt_percent",
   x = "genotype.mouse",
   colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
+  theme_cowplot(font_size = 6) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  ylim(0, 100) +
   scale_colour_manual(values = smchd1_genotype_updated_colours)
 p4 <- plotColData(
-  sce,
+  sce_reads,
   "subsets_Ribo_percent",
   x = "genotype.mouse",
   colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
+  theme_cowplot(font_size = 6) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  ylim(0, 100) +
   scale_colour_manual(values = smchd1_genotype_updated_colours)
-p1 + p2 + p3 + p4 + plot_layout(guides = "collect")
+q1 <- p1 + p2 + p3 + p4 + plot_layout(ncol = 4)
+
+p5 <- plotColData(
+  sce_umis,
+  "sum",
+  x = "genotype.mouse",
+  colour_by = "smchd1_genotype_updated") +
+  scale_y_log10() +
+  theme_cowplot(font_size = 6) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_log10() +
+  annotation_logticks(
+    sides = "l",
+    short = unit(0.03, "cm"),
+    mid = unit(0.06, "cm"),
+    long = unit(0.09, "cm")) +
+  scale_colour_manual(values = smchd1_genotype_updated_colours)
+p6 <- plotColData(
+  sce_umis,
+  "detected",
+  x = "genotype.mouse",
+  colour_by = "smchd1_genotype_updated") +
+  theme_cowplot(font_size = 6) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_colour_manual(values = smchd1_genotype_updated_colours)
+p7 <- plotColData(
+  sce_umis,
+  "subsets_Mt_percent",
+  x = "genotype.mouse",
+  colour_by = "smchd1_genotype_updated") +
+  theme_cowplot(font_size = 6) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_colour_manual(values = smchd1_genotype_updated_colours)
+p8 <- plotColData(
+  sce_umis,
+  "subsets_Ribo_percent",
+  x = "genotype.mouse",
+  colour_by = "smchd1_genotype_updated") +
+  theme_cowplot(font_size = 6) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_colour_manual(values = smchd1_genotype_updated_colours)
+q2 <- p5 + p6 + p7 + p8 + plot_layout(ncol = 4)
+
+q1 / q2 + 
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    title = "QC metrics",
+    subtitle = "Reads counts (top row) and UMI counts (bottom row)")
 ```
-
-It is also valuable to examine how the QC metrics behave with respect to each other (Figure \@ref(fig:qcbiplot)). 
-Generally, they will be in rough agreement, i.e., samples with low total counts will also have low numbers of expressed features and high mitochondrial proportions.
-Clear discrepancies may correspond to technical differences between batches of samples or genuine biological differences in RNA content.
-
-```{r qcbiplot, fig.cap = "Behaviour of each QC metric compared to the total number of expressed features. Each point represents a sample in the data set.", fig.width = 10, fig.asp = 1}
-par(mfrow = c(2, 2))
-plot(
-  x = sce$detected, 
-  y = sce$sum / 1e3,
-  pch = 16,
-  xlab = "Number of expressed genes",
-  ylab = "Library size (thousands)",
-  col = sce$smchd1_genotype_updated_colours)
-# TODO: Update
-# legend(
-#   x = "topleft",
-#   legend = levels(sce$plate_number),
-#   col = sce$plate_number_colours[levels(sce$plate_number)],
-#   pch = 16)
-plot(
-  x = sce$detected, 
-  y = sce$subsets_Mt_percent,
-  pch = 16,
-  xlab = "Number of expressed genes",
-  ylab = "Mitochondrial proportion (%)",
-  ylim = c(0, 100),
-  col = sce$smchd1_genotype_updated_colours)
-# TODO: Update
-# legend(
-#   x = "topleft",
-#   legend = levels(sce$plate_number),
-#   col = sce$plate_number_colours[levels(sce$plate_number)],
-#   pch = 16)
-plot(
-  x = sce$detected, 
-  y = sce$subsets_Ribo_percent,
-  pch = 16,
-  xlab = "Number of expressed genes",
-  ylab = "Ribosomal protein gene proportion (%)",
-  ylim = c(0, 100),
-  # TODO: Fix
-  col = sce$smchd1_genotype_updated_colours)
-# TODO: Update
-# legend(
-#   x = "topleft",
-#   legend = levels(sce$plate_number),
-#   col = sce$plate_number_colours[levels(sce$plate_number)],
-#   pch = 16)
-```
-
-**TODO** Re-write
-
-The results in Figures \@ref(fig:qcplot) and \@ref(fig:qcbiplot) show that more genes are detected on average for samples on plate `LC476` (median = `r number(median(sce$detected[sce$plate_number == "LC476"]), big.mark = ",")`) compared to plate `LC475` (median = `r number(median(sce$detected[sce$plate_number == "LC475"]), big.mark = ",")`).
-The samples on plate `LC476` do have on average a slightly higher percentage of counts from mitochondrial transcripts (median = `r percent(median(sce$subsets_Mt_percent[sce$plate_number == "LC476"]), scale = 1, accuracy = 0.01)`) compared to plate `LC475` (median = `r percent(median(sce$subsets_Mt_percent[sce$plate_number == "LC475"]), scale = 1, accuracy = 0.01)`), but both are small in absolute terms.
 
 ## Identifying outliers by each metric
 
-Outliers are defined based on the median absolute deviation (MADs) from the median value of each metric across all samples. 
-We remove small outliers for the library size and the number of expressed features.
-Removal of low-quality samples is then performed by combining the filters for all of the metrics.
-
-Due to the differences in the QC metrics by plate, we will compute our outlier thresholds at the plate-level.
+Outliers are defined based on the median absolute deviation (MADs) from the median value of each metric across all samples.
 
 ```{r}
-# TODO: Re-visit
-libsize_drop <- isOutlier(
-  metric = sce$sum, 
+libsize_drop_reads <- isOutlier(
+  metric = sce_reads$sum, 
   nmads = 3,
   type = "lower", 
   log = TRUE)
-feature_drop <- isOutlier(
-  metric = sce$detected,
+libsize_drop_umis <- isOutlier(
+  metric = sce_umis$sum, 
+  nmads = 3,
+  type = "lower", 
+  log = TRUE)
+feature_drop_reads <- isOutlier(
+  metric = sce_reads$detected,
+  nmads = 3, 
+  type = "lower", 
+  log = TRUE)
+feature_drop_umis <- isOutlier(
+  metric = sce_umis$detected,
   nmads = 3, 
   type = "lower", 
   log = TRUE)
@@ -812,116 +911,57 @@ The following table summarises the QC cutoffs:
 
 ```{r}
 libsize_drop_df <- data.frame(
-  lower = attributes(libsize_drop)$thresholds["lower"])
+  reads_lower = attributes(libsize_drop_reads)$thresholds["lower"],
+  umis_lower = attributes(libsize_drop_umis)$thresholds["lower"])
 feature_drop_df <- data.frame(
-  lower = attributes(feature_drop)$thresholds["lower"])
+  reads_lower = attributes(feature_drop_reads)$thresholds["lower"],
+  umis_lower = attributes(feature_drop_umis)$thresholds["lower"])
 qc_cutoffs_df <- cbind(libsize_drop_df, feature_drop_df)
 colnames(qc_cutoffs_df) <- c(
-  "total counts", "total features")
+  "read counts", "umi counts", "read features", "umi features")
 qc_cutoffs_df %>%
   knitr::kable(caption = "QC cutoffs", digits = 0)
 ```
 
-```{r}
-sce_pre_QC_outlier_removal <- sce
-keep <- !(libsize_drop | feature_drop)
-sce_pre_QC_outlier_removal$keep <- keep
-sce <- sce[, keep]
-```
-
-The table below summarises the number of samples per plate left following removal of outliers based on the QC metrics.
-The vast majority of samples are retained across both plates.
-In total, we remove `r sum(!keep)` samples based on these QC metrics, and retain `r sum(keep)` samples.
+**We would typically remove outliers (e.g., small outliers for the library size and the number of expressed features) at this stage.**
+However, we opt to retain all samples for the time being.
+The following table highlights samples that would typically exclude as outliers by this criteria:
 
 ```{r}
-data.frame(
-  ByLibSize = sum(libsize_drop, na.rm = TRUE),
-  ByFeature = sum(feature_drop, na.rm = TRUE),
-  Remaining = ncol(sce),
-  PercRemaining = round(
-    100 * ncol(sce) / ncol(sce_pre_QC_outlier_removal), 1)) %>%
-  dplyr::arrange(dplyr::desc(PercRemaining)) %>%
-  knitr::kable(
-    caption = "Number of samples removed by each QC step and the number of samples remaining, ordered by the percentage of samples remaining.")
+keep <- !(libsize_drop_reads | libsize_drop_umis | feature_drop_reads | feature_drop_umis)
+x <- cbind(
+  data.frame(sample = colnames(sce), keep = keep),
+  colData(sce_reads)[, c("sum", "detected")],
+  colData(sce_umis)[, c("sum", "detected")])
+colnames(x) <- c(
+  colnames(x)[1:2],
+  paste0("reads_", colnames(x)[3:4]),
+  paste0("umis_", colnames(x)[5:6]))
+row.names(x) <- NULL
+DT::datatable(
+  x[order(keep), ],
+  caption = "Quality control metrics including library size (`sum`) and number of genes detected (`keep`) for each replicate. Each replicate is annotated by whether it would be kept or excluded by the typical quality control procedures (`keep`).",
+  rownames = FALSE)
 ```
 
 ## Summary
 
-To conclude, Figure \@ref(fig:qcplot-post-outlier-removal) shows that post-QC that most samples have similar QC metrics, as is to be expected, and Figure \@ref(fig: breakdown-by-plate-number-post-qc) summarises the experimental design following QC.
-
-```{r qcplot-post-outlier-removal, fig.cap = "Distributions of various QC metrics for all samples that passed quality control. This includes the library sizes, number of expressed genes, and proportion of reads mapped to mitochondrial genes.", fig.asp = 2 / 3}
-p1 <- plotColData(
-  sce,
-  "sum",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_updated") +
-  scale_y_log10() +
-  theme_cowplot(font_size = 8) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_log10(limits = c(1, NA)) +
-  annotation_logticks(
-    sides = "l",
-    short = unit(0.03, "cm"),
-    mid = unit(0.06, "cm"),
-    long = unit(0.09, "cm")) +
-  scale_colour_manual(values = smchd1_genotype_updated_colours)
-p2 <- plotColData(
-  sce,
-  "detected",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_colour_manual(values = smchd1_genotype_updated_colours)
-p3 <- plotColData(
-  sce,
-  "subsets_Mt_percent",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  ylim(0, 100) +
-  scale_colour_manual(values = smchd1_genotype_updated_colours)
-p4 <- plotColData(
-  sce,
-  "subsets_Ribo_percent",
-  x = "genotype.mouse",
-  colour_by = "smchd1_genotype_updated") +
-  theme_cowplot(font_size = 8) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  ylim(0, 100) +
-  scale_colour_manual(values = smchd1_genotype_updated_colours)
-p1 + p2 + p3 + p4 + plot_layout(guides = "collect")
-```
-
-# Sex check
-
-Figure \@ref(fig:sex-check) visualises the expression of *Xist*, a female-specific gene.
-This can be used to confirm the reported sex of the sample and to detect sample mix-ups.
-The female samples have much higher average UMI counts of *Xist* than male samples on, as we would expect, and there are no obvious outliers.
-
-```{r sex-check, fig.cap = "Expression of XIST by sex."}
-assay(sce, "logCPM") <- edgeR::cpm(counts(sce), log = TRUE)
-plotExpression(
-  sce,
-  "Xist",
-  x = "sex",
-  exprs_values = "logCPM",
-  colour_by = "sex") + 
-  scale_colour_manual(values = sex_colours, name = "sex") +
-  guides(fill = FALSE) 
-assay(sce, "logCPM") <- NULL
-```
+We have opted not to exclude any replicates at this stage.
+However, we have identified 1 replicate (`Del.1282.2`) that has unusually small library size (by reads and UMIs) and number of genes detected compared to the other samples.
+We will keep an eye on this replicate and may later remove it.
 
 # Examining gene-level metrics
 
 ## Inspecting the most highly expressed genes
 
-Figure \@ref(fig:topgenes) shows the most highly expressed genes in the dataset.
-Many of these genes are hemoglobin subunit genes, mitochondrial genes, and ribosomal protein.
+Figures \@ref(fig:topgenes) shows the most highly expressed genes in the dataset.
+Many of these genes are mitochondrial genes and ribosomal protein.
 
 ```{r topgenes, fig.asp = 1, fig.cap = "Percentage of total counts assigned to the top 50 most highly-abundant features in the data set. For each feature, each bar represents the percentage assigned to that feature for a single sample, while the circle represents the average across all samples. Bars are coloured by the total number of expressed features in each samples, while circles are coloured according to whether the feature is labelled as a control feature."}
-plotHighestExprs(sce, n = 50)
+plotHighestExprs(sce, n = 50, exprs_values = "read_counts") +
+  ggtitle("Read counts") +
+  plotHighestExprs(sce, n = 50, exprs_values = "UMI_counts") + 
+  ggtitle("UMI counts")
 ```
 
 Figure \@ref(fig:topgenes-filtered) shows the most highly expressed after excluding the mitochondrial genes and ribosomal protein.
@@ -930,45 +970,140 @@ Figure \@ref(fig:topgenes-filtered) shows the most highly expressed after exclud
 plotHighestExprs(
   sce, 
   drop_features = intersect(rownames(sce), c(mito_set, ribo_set)),
-  n = 50)
+  n = 50,
+  exprs_values = "read_counts") +
+  ggtitle("Read counts") +
+  plotHighestExprs(
+    sce, 
+    drop_features = intersect(rownames(sce), c(mito_set, ribo_set)),
+    n = 50,
+    exprs_values = "UMI_counts") +
+  ggtitle("UMI counts")
 ```
 
-## Filtering out low-abundance genes
+## Sex check using *Xist*
 
-Low-abundance genes are problematic as zero or near-zero counts do not contain much information for reliable statistical inference [@bourgon2010independent].
-These genes typically do not provide enough evidence to reject the null hypothesis during testing, yet they still increase the severity of the multiple testing correction.
-In addition, the discreteness of the counts may interfere with statistical procedures, e.g., by compromising the accuracy of continuous approximations.
-Thus, low-abundance genes are often removed in many RNA-seq analysis pipelines before the application of downstream methods.
+Figure \@ref(fig:sex-check) visualises the expression of *Xist*, a female-specific gene.
+This can be used to confirm the reported sex of the sample and to detect sample mix-ups.
+Figure \@ref(fig:sex-check) shows that female samples have much higher average expression of *Xist* than male samples, as we would expect.
 
-The 'optimal' choice of filtering strategy depends on the downstream application.
-A more aggressive filter is usually required to remove discreteness (e.g., for normalization) compared to that required for removing underpowered tests.
-For hypothesis testing, the filter statistic should also be independent of the test statistic under the null hypothesis.
-Thus, we (or the relevant function) will filter at each step as needed, rather than applying a single filter for the entire analysis.
+There is one replicate, `Del.1282.2`, that has is nominally male but has $logCPM(UMI_{counts})$ for *Xist* that is comparable to the female samples.
+However, we have already seen that this replicate has an unusually small library size (by reads and UMIs) and number of genes detected compared to the other samples, so it already suspect.
 
-Several metrics can be used to define low-abundance genes.
-The most obvious is the average count for each gene, computed across all cells in the data set.
-We typically observe a peak of moderately expressed genes following a plateau of lowly expressed genes (Figure \@ref(fig:abhist)).
-
-```{r abhist, fig.cap = "Histogram of log-average counts for all genes in the combined data set.", results = "hide"}
-ave_counts <- calculateAverage(sce)
-par(mfrow = c(1, 1))
-hist(
-  x = log10(ave_counts), 
-  breaks = 100, 
-  main = "", 
-  col = "grey",
-  xlab = expression(Log[10] ~ "average count"))
-to_keep <- ave_counts > 0
-sce <- sce[to_keep, ]
+```{r sex-check, fig.cap = "Expression of *Xist* by mouse on a 'raw counts' and 'logCPM' scale using the read or UMI counts."}
+assay(sce, "logCPM_reads") <- edgeR::cpm(assay(sce, "read_counts"), log = TRUE)
+assay(sce, "logCPM_umis") <- edgeR::cpm(assay(sce, "UMI_counts"), log = TRUE)
+p1 <- plotExpression(
+  sce,
+  "Xist",
+  x = "sex",
+  exprs_values = "read_counts",
+  colour_by = "sex") + 
+  scale_colour_manual(values = sex_colours, name = "sex") +
+  guides(fill = FALSE) +
+  ylab("Read counts")  +
+  ylim(0, NA)
+p2 <-plotExpression(
+  sce,
+  "Xist",
+  x = "sex",
+  exprs_values = "logCPM_reads",
+  colour_by = "sex") + 
+  scale_colour_manual(values = sex_colours, name = "sex") +
+  guides(fill = FALSE) +
+  ylab("logCPM(read counts)")
+p3 <- plotExpression(
+  sce,
+  "Xist",
+  x = "sex",
+  exprs_values = "UMI_counts",
+  colour_by = "sex") + 
+  scale_colour_manual(values = sex_colours, name = "sex") +
+  guides(fill = FALSE) +
+  ylab("UMI counts")  +
+  ylim(0, NA)
+p4 <-plotExpression(
+  sce,
+  "Xist",
+  x = "sex",
+  exprs_values = "logCPM_umis",
+  colour_by = "sex") + 
+  scale_colour_manual(values = sex_colours, name = "sex") +
+  guides(fill = FALSE) +
+  ylab("logCPM(UMI counts)")
+p1 + p2 + p3 + p4 + plot_layout(guides = "collect", ncol = 2)
 ```
 
-We remove `r sum(!to_keep)` genes that are not expressed in any sample.
-Such genes provide no information and would be removed by any filtering strategy.
-We retain `r sum(to_keep)` genes for downstream analysis.
+## Genotype check using *Smchd1*
+
+Figure \@ref(fig:genotype-check) visualises the expression of *Smchd1*, the gene under investigation and which was deleted via a floxed allele in the `Del` mice.
+This can be used to confirm the reported genotype of the sample and to detect sample mix-ups.
+The `Del` samples have somewhat lower average expression of *Smchd1* than `Het` and `WT` samples on, as we would expect, but the difference is not a striking on-off binary difference.
+Furthermore, the `Del` samples have positive counts of *Smchd1*.
+
+```{r genotype-check, fig.cap = "Expression of *Smchd1* by mouse on a 'raw counts' and 'logCPM' scale using the read or UMI counts."}
+p1 <- plotExpression(
+  sce,
+  "Smchd1",
+  x = "genotype.mouse",
+  exprs_values = "read_counts",
+  colour_by = "smchd1_genotype_updated") + 
+  scale_colour_manual(
+    values = smchd1_genotype_updated_colours,
+    name = "smchd1_genotype_updated") +
+  guides(fill = FALSE) + 
+  ylab("Read counts") +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  ylim(0, NA)
+p2 <- plotExpression(
+    sce,
+    "Smchd1",
+    x = "genotype.mouse",
+    exprs_values = "logCPM_reads",
+    colour_by = "smchd1_genotype_updated") + 
+  scale_colour_manual(
+    values = smchd1_genotype_updated_colours,
+    name = "smchd1_genotype_updated") +
+  guides(fill = FALSE) + 
+  ylab("logCPM(read counts)") +
+  scale_x_discrete(guide = guide_axis(angle = 45))
+p3 <- plotExpression(
+  sce,
+  "Smchd1",
+  x = "genotype.mouse",
+  exprs_values = "UMI_counts",
+  colour_by = "smchd1_genotype_updated") + 
+  scale_colour_manual(
+    values = smchd1_genotype_updated_colours,
+    name = "smchd1_genotype_updated") +
+  guides(fill = FALSE) + 
+  ylab("UMI counts") +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  ylim(0, NA)
+p4 <- plotExpression(
+    sce,
+    "Smchd1",
+    x = "genotype.mouse",
+    exprs_values = "logCPM_umis",
+    colour_by = "smchd1_genotype_updated") + 
+  scale_colour_manual(
+    values = smchd1_genotype_updated_colours,
+    name = "smchd1_genotype_updated") +
+  guides(fill = FALSE) + 
+  ylab("logCPM(UMI counts)") +
+  scale_x_discrete(guide = guide_axis(angle = 45))
+
+p1 + p2 + p3 + p4 + plot_layout(guides = "collect", ncol = 2)
+```
 
 # Concluding remarks
 
 ```{r}
+# Remove some unneeded assays
+assay(sce, "logCPM_reads") <- NULL
+assay(sce, "logCPM_umis") <- NULL
+
+# Save
 saveRDS(
   sce,
   here("data", "SCEs", "C086_Kinkel.preprocessed.SCE.rds"),
@@ -977,7 +1112,7 @@ saveRDS(
 
 The processed *SingleCellExperiment* object is available (see [`data/SCEs/C086_Kinkel.preprocessed.SCE.rds`](../data/SCEs/C086_Kinkel.preprocessed.SCE.rds)).
 This will be used in downstream analyses, i.e. differential expression analysis.
-f
+
 # Additional information {.appendix}
 
 The following are available on request:
@@ -995,9 +1130,3 @@ sessioninfo::session_info()
 ```
 
 </details>
-
-# TODOs
-
-- [ ] Mapping QC stats
-  - [ ] Remove negative control after looking at QC
-- [ ] Expression of Smchd1
