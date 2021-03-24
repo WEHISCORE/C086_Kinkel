@@ -74,10 +74,11 @@ hemo_set <- rownames(sce)[
 ```
 
 We convert the data to a *DGEList* object in preparation for analysis with `r BiocStyle::Biocpkg("edgeR")`.
+In the interest of maximising statistical power, we use the read counts rather than the UMI counts.
 
 ```{r}
 x <- DGEList(
-  counts = as.matrix(counts(sce)),
+  counts = as.matrix(assay(sce, "read_counts")),
   samples = colData(sce),
   group = factor(sce$smchd1_genotype_updated),
   genes = flattenDF(rowData(sce)))
@@ -101,7 +102,7 @@ cpm <- cpm(x)
 lcpm <- cpm(x, log = TRUE)
 ```
 
-A CPM value of 1 for a gene equates to having `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the lowest sequencing depth (`r colnames(x)[which.min(x$samples$sum)]`, library size approx. `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` million) or `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the greatest sequencing depth (`r colnames(x)[which.max(x$samples$sum)]`, library size approx. `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` million).
+A CPM value of 1 for a gene equates to having `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the lowest sequencing depth (`r colnames(x)[which.min(colSums(x$counts))]`, library size approx. `r number(min(x$samples$lib.size / 1e6), accuracy = 0.01)` million) or `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` counts in the sample with the greatest sequencing depth (`r colnames(x)[which.max(colSums(x$counts))]`, library size approx. `r number(max(x$samples$lib.size / 1e6), accuracy = 0.01)` million).
 
 ```{r}
 L <- mean(x$samples$lib.size) * 1e-6
@@ -119,13 +120,13 @@ In other words, a count of zero for this data maps to a log-CPM value of `r numb
 
 ## Removing genes that are lowly expressed
 
-```{r}
-stopifnot(sum(matrixStats::rowAlls(x$counts == 0)) == 0)
-```
-
 All datasets will include a mix of genes that are expressed and those that are not expressed.
 Whilst it is of interest to examine genes that are expressed in one condition but not in another, some genes are unexpressed throughout all samples.
-We have already removed all genes in this dataset that have zero counts across all `r ncol(x)` samples.
+We remove all genes in this dataset that have zero counts across all `r ncol(x)` samples.
+
+```{r}
+x <- x[!matrixStats::rowAlls(x$counts == 0), ]
+```
 
 Figure \@ref(fig:lcpm-density) plots the distribution log-CPM values and shows that a sizeable proportion of genes within each sample are either unexpressed or lowly-expressed with log-CPM values that are small.
 Genes that do not have a worthwhile number of reads in any sample should be filtered out of the downstream analyses.
@@ -142,20 +143,12 @@ x <- x[keep_exprs, , keep.lib.sizes = FALSE]
 ```
 
 By default, `filterByExpr()` keeps genes with about 10 read counts or more in a minimum number of samples, where the number of samples is chosen according to the minimum group sample size^[The actual filtering uses CPM values rather than counts in order to avoid giving preference to samples with large library sizes.].
-For this dataset, the median library size is about `r number(M, accuracy = 0.01)` million (resp. `r number(M_lc476, accuracy = 0.01)` million) and 10 / `r number(M, accuracy = 0.01)` approx. `r number(10 / M, accuracy = 0.1)` (resp. 10 / `r number(M_lc476, accuracy = 0.01)` approx. `r number(10 / M_lc476, accuracy = 0.1)`), so the `filterByExpr()` function keeps genes that have a CPM of `r number(10 / M, accuracy = 0.1)` (resp. `r number(10 / M_lc476, accuracy = 0.1)`) or more in at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) samples.
-A biologically interesting gene should be expressed in at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) samples because all the groups have at least `r min(table(x$samples$group))` (resp. `r min(table(x_lc476$samples$group))`) replicates within each plate.
+For this dataset, the median library size is about `r number(M, accuracy = 0.01)` million and 10 / `r number(M, accuracy = 0.01)` approx. `r number(10 / M, accuracy = 0.1)`, so the `filterByExpr()` function keeps genes that have a CPM of `r number(10 / M, accuracy = 0.1)` or more in at least `r min(table(x$samples$group))` samples.
+A biologically interesting gene should be expressed in at least `r min(table(x$samples$group))` samples because all the groups have at least `r min(table(x$samples$group))` replicates within each plate.
 The cutoffs used depend on the sequencing depth and on the experimental design. If the library sizes had been larger then a lower CPM cutoff would have been chosen, because larger library sizes provide better resolution to explore more genes at lower expression levels.
 Alternatively, smaller library sizes decrease our ability to explore marginal genes and hence would have led to a higher CPM cutoff.
 
-<aside>
-The values in parenthesis refer to those for just [Using LC476].
-</aside>
-
-Using this criterion, the number of genes is reduced to `r number(sum(keep_exprs), big.mark = ",")` (resp. `r number(sum(keep_exprs_lc476), big.mark = ",")`), about `r percent(sum(keep_exprs) / length(keep_exprs))` (resp. `r percent(sum(keep_exprs_lc476) / length(keep_exprs_lc476))`) of the number that we started with (right panels of Figure \@ref(fig:lcpm-density)).
-
-<aside>
-The values in parenthesis refer to those for just [Using LC476].
-</aside>
+Using this criterion, the number of genes is reduced to `r number(sum(keep_exprs), big.mark = ",")`, about `r percent(sum(keep_exprs) / length(keep_exprs))` of the number that we started with (right panels of Figure \@ref(fig:lcpm-density)).
 
 ```{r lcpm-density, fig.cap = "The density of log-CPM values for raw pre-filtered data (left) and post-filtered data (right) are shown for 12 randomly chosen samples. Dotted vertical lines mark the log-CPM threshold used in the filtering step.", fig.asp = 1}
 f <- function(lcpm, x, j, samplenames, col, lcpm_cutoff) {
@@ -260,6 +253,7 @@ When experimental design involves multiple factors, it is recommended that each 
 If samples cluster by a given factor in any of these dimensions, it suggests that the factor contributes to expression differences and is worth including in the linear modelling.
 On the other hand, factors that show little or no effect may be left out of downstream analysis.
 
+**TODO**: Re-write
 Figure \@ref(fig:mds) shows that samples can be seen to cluster strongly by plate number over dimension 1.
 This dominates any variation due to timepoint or treatment.
 
@@ -285,7 +279,3 @@ col_list <- list(
 par(mfrow = c(3, 2))
 h(lcpm, col_list, "bottom")
 ```
-
-# TODOs
-
-- [ ] Consider making colnames (i.e. sample names) to be mouse-genotype-rep combination.
