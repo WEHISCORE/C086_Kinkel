@@ -91,8 +91,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   
   
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2021-03-25"/>
-  <meta property="article:created" itemprop="dateCreated" content="2021-03-25"/>
+  <meta property="article:published" itemprop="datePublished" content="2021-03-27"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-03-27"/>
   <meta name="article:author" content="Peter Hickey"/>
   
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
@@ -110,7 +110,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","editor_options","bibliography"]}},"value":[{"type":"character","attributes":{},"value":["Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"]},{"type":"NULL"},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Peter Hickey"]},{"type":"character","attributes":{},"value":["https://peterhickey.org"]},{"type":"character","attributes":{},"value":["WEHI SCORE"]},{"type":"character","attributes":{},"value":["https://www.wehi.edu.au/people/shalin-naik/3310/score"]}]}]},{"type":"character","attributes":{},"value":["2021-03-25"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["ref.bib"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","editor_options","bibliography"]}},"value":[{"type":"character","attributes":{},"value":["Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"]},{"type":"NULL"},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Peter Hickey"]},{"type":"character","attributes":{},"value":["https://peterhickey.org"]},{"type":"character","attributes":{},"value":["WEHI SCORE"]},{"type":"character","attributes":{},"value":["https://www.wehi.edu.au/people/shalin-naik/3310/score"]}]}]},{"type":"character","attributes":{},"value":["2021-03-27"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["ref.bib"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2054,7 +2054,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set","authors":[{"author":"Peter Hickey","authorURL":"https://peterhickey.org","affiliation":"WEHI SCORE","affiliationURL":"https://www.wehi.edu.au/people/shalin-naik/3310/score","orcidID":""}],"publishedDate":"2021-03-25T00:00:00.000+11:00","citationText":"Hickey, 2021"}
+{"title":"Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set","authors":[{"author":"Peter Hickey","authorURL":"https://peterhickey.org","affiliation":"WEHI SCORE","affiliationURL":"https://www.wehi.edu.au/people/shalin-naik/3310/score","orcidID":""}],"publishedDate":"2021-03-27T00:00:00.000+11:00","citationText":"Hickey, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2100,7 +2100,7 @@ Supplementary files
 <div class="d-byline">
   Peter Hickey <a href="https://peterhickey.org" class="uri">https://peterhickey.org</a> (WEHI SCORE)<a href="https://www.wehi.edu.au/people/shalin-naik/3310/score" class="uri">https://www.wehi.edu.au/people/shalin-naik/3310/score</a>
   
-<br/>2021-03-25
+<br/>2021-03-27
 </div>
 
 <div class="d-article">
@@ -2476,7 +2476,7 @@ FALSE  TRUE
 <summary>Show code</summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>x_o</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>x_design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fl'>0</span> <span class='op'>+</span> <span class='va'>smchd1_genotype_updated</span>, <span class='va'>x</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
+<span class='va'>x_design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fl'>0</span> <span class='op'>+</span> <span class='va'>smchd1_genotype_updated</span> <span class='op'>+</span> <span class='va'>sex</span>, <span class='va'>x</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x_design</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>sub</a></span><span class='op'>(</span><span class='st'>"smchd1_genotype_updated"</span>, <span class='st'>""</span>, <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>x_design</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='va'>x_fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/voomLmFit.html'>voomLmFit</a></span><span class='op'>(</span>
@@ -2491,7 +2491,7 @@ FALSE  TRUE
 <p><img src="C086_Kinkel.multi-sample_comparisons_files/figure-html5/unnamed-chunk-12-1.png" width="624" /></p>
 </div>
 <ul>
-<li><strong>TODO</strong>: How to interpret small intra-block correlation (<code>x_fit$cor</code> = 0.0246126)?</li>
+<li><strong>TODO</strong>: How to interpret small intra-block correlation (<code>x_fit$cor</code> = 0.0201805)?</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2537,8 +2537,8 @@ FALSE  TRUE
 </details>
 <pre><code>       Del - Het
 Down           0
-NotSig     15454
-Up             8</code></pre>
+NotSig     15452
+Up            10</code></pre>
 <details>
 <summary>Show code</summary>
 <div class="sourceCode">
@@ -2561,90 +2561,90 @@ Up             8</code></pre>
 Gm10925              unprocessed_pseudogene          Gm10925
 Gm6472     transcribed_processed_pseudogene           Gm6472
 Rpl31-ps8              processed_pseudogene        Rpl31-ps8
-Rps7                         protein_coding             Rps7
 Rps4x                        protein_coding            Rps4x
-Gm10275    transcribed_processed_pseudogene          Gm10275
-Rpl36a-ps1             processed_pseudogene       Rpl36a-ps1
-Gm15793                processed_pseudogene          Gm15793
+Rps7                         protein_coding             Rps7
 mt-Nd1                       protein_coding           mt-Nd1
-Nwd1                         protein_coding             Nwd1
+Gm10275    transcribed_processed_pseudogene          Gm10275
+Plac8                        protein_coding            Plac8
+Gm15793                processed_pseudogene          Gm15793
+Rpl36a-ps1             processed_pseudogene       Rpl36a-ps1
            ENSEMBL.GENESEQSTART ENSEMBL.GENESEQEND ENSEMBL.SEQNAME
 Gm10925                24613974           24614651               1
 Gm6472                152909505          152910155               X
 Rpl31-ps8              90764279           90764656              15
-Rps7                   28630847           28635953              12
 Rps4x                 102184941          102189394               X
-Gm10275                29698746           29699380              10
-Rpl36a-ps1             98993980           98994300              14
-Gm15793                66849108           66849602               1
+Rps7                   28630847           28635953              12
 mt-Nd1                     2751               3707              MT
-Nwd1                   72646711           72714746               8
+Gm10275                29698746           29699380              10
+Plac8                 100553725          100572245               5
+Gm15793                66849108           66849602               1
+Rpl36a-ps1             98993980           98994300              14
            ENSEMBL.SYMBOL        ENSEMBL.GENEID
 Gm10925           Gm10925  ENSMUSG00000100862.1
 Gm6472             Gm6472  ENSMUSG00000095597.2
 Rpl31-ps8       Rpl31-ps8  ENSMUSG00000067870.5
-Rps7                 Rps7  ENSMUSG00000061477.4
 Rps4x               Rps4x  ENSMUSG00000031320.9
-Gm10275           Gm10275  ENSMUSG00000069682.6
-Rpl36a-ps1     Rpl36a-ps1  ENSMUSG00000060377.4
-Gm15793           Gm15793  ENSMUSG00000082769.3
+Rps7                 Rps7  ENSMUSG00000061477.4
 mt-Nd1             mt-Nd1  ENSMUSG00000064341.1
-Nwd1                 Nwd1 ENSMUSG00000048148.18
+Gm10275           Gm10275  ENSMUSG00000069682.6
+Plac8               Plac8 ENSMUSG00000029322.12
+Gm15793           Gm15793  ENSMUSG00000082769.3
+Rpl36a-ps1     Rpl36a-ps1  ENSMUSG00000060377.4
                                         NCBI.ALIAS NCBI.ENTREZID
 Gm10925    Atp6; Atpase6; Mtatp6; mt-Atp6; Gm10925     100503946
 Gm6472                  EG624124; Gm6472; Rps7-ps3        624124
 Rpl31-ps8                                       NA            NA
-Rps7                       Mtu; Rps7A; S; S7; Rps7         20115
 Rps4x                  R; Rps; Rps4; Rps4-1; Rps4x         20102
-Gm10275                                    Gm10275         19897
-Rpl36a-ps1                     Gm10077; Rpl36a-ps1     100043787
-Gm15793                                         NA            NA
+Rps7                       Mtu; Rps7A; S; S7; Rps7         20115
 mt-Nd1                                         ND1         17716
-Nwd1                           A230063L24Rik; Nwd1        319555
-                                     NCBI.GENENAME
-Gm10925       ATP synthase F0 subunit 6 pseudogene
-Gm6472          ribosomal protein S7, pseudogene 3
-Rpl31-ps8                                       NA
-Rps7                          ribosomal protein S7
-Rps4x               ribosomal protein S4, X-linked
-Gm10275                           Rpl12 pseudogene
-Rpl36a-ps1    ribosomal protein L36A, pseudogene 1
-Gm15793                                         NA
-mt-Nd1                NADH dehydrogenase subunit 1
-Nwd1       NACHT and WD repeat domain containing 1
-                                                                                                                                                                                                                                                                                                            NCBI.REFSEQ
-Gm10925                                                                                                                                                                                                                                                                                                              NA
-Gm6472                                                                                                                                                                                                                                                                                                               NA
-Rpl31-ps8                                                                                                                                                                                                                                                                                                            NA
-Rps7                                                                                                                                                                                                                                                                                               NM_011300; NP_035430
-Rps4x                                                                                                                                                                                                                                                                  NM_009094; NP_033120; XM_011247553; XP_011245855
-Gm10275                                                                                                                                                                                                                                                                                                    NM_001134869
-Rpl36a-ps1                                                                                                                                                                                                                                                                                                           NA
-Gm15793                                                                                                                                                                                                                                                                                                              NA
-mt-Nd1                                                                                                                                                                                                                                                                                                        NP_904328
-Nwd1       NM_001159403; NM_176940; NP_795914; XM_006531086; XM_006531087; XM_006531088; XM_006531089; XM_006531090; XM_030243605; XM_030243606; XM_030243607; XP_006531149; XP_006531150; XP_006531151; XP_006531152; XP_006531153; XP_030099465; XP_030099466; XP_030099467; XR_003947304; XR_003947305; XR_003947306
-           NCBI.SYMBOL      logFC   AveExpr         t      P.Value
-Gm10925        Gm10925  0.3707849 13.583299 13.222081 1.801545e-15
-Gm6472        Rps7-ps3  0.2892834 11.416093  6.455814 1.631411e-07
-Rpl31-ps8           NA  0.3093971 10.893213  5.307337 5.677823e-06
-Rps7              Rps7  0.2773537  8.663003  4.877673 2.128752e-05
-Rps4x            Rps4x  0.3307432 11.569869  5.264567 6.479160e-06
-Gm10275        Gm10275  0.3340737  9.906238  4.832556 2.443708e-05
-Rpl36a-ps1  Rpl36a-ps1  0.2739531  9.735517  4.662100 4.108170e-05
-Gm15793             NA  0.3125711 11.620922  4.956690 1.671051e-05
-mt-Nd1             ND1  0.2635477 11.922707  4.847727 2.332965e-05
-Nwd1              Nwd1 -0.8697776  6.481548 -4.165558 1.825234e-04
-              adj.P.Val          B
-Gm10925    2.785549e-11 21.7321636
-Gm6472     1.261244e-03  6.0917622
-Rpl31-ps8  2.504519e-02  2.8514111
-Rps7       4.723076e-02  2.4250057
-Rps4x      2.504519e-02  2.3036403
-Gm10275    4.723076e-02  1.8812728
-Rpl36a-ps1 7.057836e-02  1.4382595
-Gm15793    4.723076e-02  1.3338725
-mt-Nd1     4.723076e-02  0.7763073
-Nwd1       1.561448e-01  0.7597849</code></pre>
+Gm10275                                    Gm10275         19897
+Plac8           C15; D5Wsu111; D5Wsu111e; o; Plac8        231507
+Gm15793                                         NA            NA
+Rpl36a-ps1                     Gm10077; Rpl36a-ps1     100043787
+                                  NCBI.GENENAME
+Gm10925    ATP synthase F0 subunit 6 pseudogene
+Gm6472       ribosomal protein S7, pseudogene 3
+Rpl31-ps8                                    NA
+Rps4x            ribosomal protein S4, X-linked
+Rps7                       ribosomal protein S7
+mt-Nd1             NADH dehydrogenase subunit 1
+Gm10275                        Rpl12 pseudogene
+Plac8                       placenta-specific 8
+Gm15793                                      NA
+Rpl36a-ps1 ribosomal protein L36A, pseudogene 1
+                                                                                                                                                                                            NCBI.REFSEQ
+Gm10925                                                                                                                                                                                              NA
+Gm6472                                                                                                                                                                                               NA
+Rpl31-ps8                                                                                                                                                                                            NA
+Rps4x                                                                                                                                                  NM_009094; NP_033120; XM_011247553; XP_011245855
+Rps7                                                                                                                                                                               NM_011300; NP_035430
+mt-Nd1                                                                                                                                                                                        NP_904328
+Gm10275                                                                                                                                                                                    NM_001134869
+Plac8      NM_001370754; NM_139198; NP_001357683; NP_631937; XM_017320849; XM_017320850; XM_030254402; XM_030254403; XM_030254404; XP_017176338; XP_017176339; XP_030110262; XP_030110263; XP_030110264
+Gm15793                                                                                                                                                                                              NA
+Rpl36a-ps1                                                                                                                                                                                           NA
+           NCBI.SYMBOL     logFC   AveExpr         t      P.Value
+Gm10925        Gm10925 0.3636613 13.583299 12.282923 2.471878e-14
+Gm6472        Rps7-ps3 0.2847321 11.416093  6.805169 6.395772e-08
+Rpl31-ps8           NA 0.3053303 10.893213  5.519274 3.196328e-06
+Rps4x            Rps4x 0.3161250 11.569869  5.522743 3.162626e-06
+Rps7              Rps7 0.2728438  8.663003  4.979994 1.654151e-05
+mt-Nd1             ND1 0.2760025 11.922707  5.490450 3.490651e-06
+Gm10275        Gm10275 0.3292183  9.906238  4.973225 1.688488e-05
+Plac8            Plac8 1.4396497  4.767396  4.689288 3.984069e-05
+Gm15793             NA 0.2906575 11.620922  5.226212 7.820511e-06
+Rpl36a-ps1  Rpl36a-ps1 0.2757738  9.735517  4.847399 2.472205e-05
+              adj.P.Val         B
+Gm10925    3.822018e-10 19.044385
+Gm6472     4.944571e-04  6.884446
+Rpl31-ps8  1.079449e-02  3.286937
+Rps4x      1.079449e-02  2.860856
+Rps7       2.900822e-02  2.575890
+mt-Nd1     1.079449e-02  2.557637
+Gm10275    2.900822e-02  2.124062
+Plac8      5.600153e-02  2.087144
+Gm15793    2.015346e-02  1.911894
+Rpl36a-ps1 3.822524e-02  1.823869</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2666,8 +2666,8 @@ Smchd1 4931400A14Rik; AW554188; MommeD; MommeD1; mKIAA0650; Smchd1
 Smchd1         74355 SMC hinge domain containing 1
                                             NCBI.REFSEQ NCBI.SYMBOL
 Smchd1 NM_028887; NP_083163; XM_030250119; XP_030105979      Smchd1
-           logFC  AveExpr         t      P.Value adj.P.Val          B
-Smchd1 -1.135559 5.994756 -3.765338 0.0005873866 0.2507332 -0.2768763</code></pre>
+           logFC  AveExpr         t      P.Value  adj.P.Val        B
+Smchd1 -1.192231 5.994756 -4.330564 0.0001164031 0.09999029 1.171171</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2697,7 +2697,7 @@ Smchd1 -1.135559 5.994756 -3.765338 0.0005873866 0.2507332 -0.2768763</code></pr
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>y_mds</span> <span class='op'>&lt;-</span> <span class='fu'>plotMDS</span><span class='op'>(</span><span class='va'>y</span>, plot <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
-<span class='va'>y_df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>y_mds</span><span class='op'>$</span><span class='va'>x</span>, y <span class='op'>=</span> <span class='va'>y_mds</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>, <span class='va'>ym</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
+<span class='va'>y_df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>y_mds</span><span class='op'>$</span><span class='va'>x</span>, y <span class='op'>=</span> <span class='va'>y_mds</span><span class='op'>$</span><span class='va'>y</span><span class='op'>)</span>, <span class='va'>y</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>y_df</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
 
 <span class='va'>p1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>
@@ -2768,7 +2768,7 @@ Smchd1 -1.135559 5.994756 -3.765338 0.0005873866 0.2507332 -0.2768763</code></pr
 <summary>Show code</summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>y_o</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>y_design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fl'>0</span> <span class='op'>+</span> <span class='va'>smchd1_genotype_updated</span>, <span class='va'>y</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
+<span class='va'>y_design</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='fl'>0</span> <span class='op'>+</span> <span class='va'>smchd1_genotype_updated</span> <span class='op'>+</span> <span class='va'>sex</span>, <span class='va'>y</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>y_design</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>sub</a></span><span class='op'>(</span><span class='st'>"smchd1_genotype_updated"</span>, <span class='st'>""</span>, <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>y_design</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>y_fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/voomLmFit.html'>voomLmFit</a></span><span class='op'>(</span>
   <span class='va'>y</span>,
@@ -2857,105 +2857,105 @@ Up             0</code></pre>
 </code></pre>
 </div>
 </details>
-<pre><code>                      ENSEMBL.GENEBIOTYPE ENSEMBL.GENENAME
-Gm6472   transcribed_processed_pseudogene           Gm6472
-Klhl24                     protein_coding           Klhl24
-Mrpl3                      protein_coding            Mrpl3
-Cyc1                       protein_coding             Cyc1
-Utp3                       protein_coding             Utp3
-Stat2                      protein_coding            Stat2
-Smchd1                     protein_coding           Smchd1
-Tctex1d2                   protein_coding         Tctex1d2
-Gclm                       protein_coding             Gclm
-Nwd1                       protein_coding             Nwd1
-         ENSEMBL.GENESEQSTART ENSEMBL.GENESEQEND ENSEMBL.SEQNAME
-Gm6472              152909505          152910155               X
-Klhl24               20097554           20127744              16
-Mrpl3               105053239          105079888               9
-Cyc1                 76343523           76345934              15
-Utp3                 88554483           88556083               5
-Stat2               128270576          128292849              10
-Smchd1               71344489           71475343              17
-Tctex1d2             32419702           32429099              16
-Gclm                122245557          122269984               3
-Nwd1                 72646711           72714746               8
-         ENSEMBL.SYMBOL        ENSEMBL.GENEID
-Gm6472           Gm6472  ENSMUSG00000095597.2
-Klhl24           Klhl24  ENSMUSG00000062901.3
-Mrpl3             Mrpl3 ENSMUSG00000032563.16
-Cyc1               Cyc1  ENSMUSG00000022551.8
-Utp3               Utp3  ENSMUSG00000070697.4
-Stat2             Stat2 ENSMUSG00000040033.16
-Smchd1           Smchd1 ENSMUSG00000024054.14
-Tctex1d2       Tctex1d2 ENSMUSG00000014075.15
-Gclm               Gclm ENSMUSG00000028124.15
-Nwd1               Nwd1 ENSMUSG00000048148.18
-                                                                    NCBI.ALIAS
-Gm6472                                              EG624124; Gm6472; Rps7-ps3
-Klhl24             1110046J11Rik; 4930429H24Rik; 6530402O20Rik; C85082; Klhl24
-Mrpl3             2010320L16Rik; 5930422H18Rik; AA407889; L3mt; dc; dcr; Mrpl3
-Cyc1                                      2610002H19Rik; AA408921; Cyct1; Cyc1
-Utp3     2400011K09Rik; AW557551; C87704; Crl; Crl-1; Crl1; Crlz1; Sas10; Utp3
-Stat2                                           1600010G07Rik; AW496480; Stat2
-Smchd1             4931400A14Rik; AW554188; MommeD; MommeD1; mKIAA0650; Smchd1
-Tctex1d2                                0610012D17Rik; 2410011K15Rik; Tctex1d2
-Gclm                                           AI649393; Gcmc; Gl; Glclr; Gclm
-Nwd1                                                       A230063L24Rik; Nwd1
-         NCBI.ENTREZID
-Gm6472          624124
-Klhl24           75785
-Mrpl3            94062
-Cyc1             66445
-Utp3             65961
-Stat2            20847
-Smchd1           74355
-Tctex1d2         66061
-Gclm             14630
-Nwd1            319555
-                                              NCBI.GENENAME
-Gm6472                   ribosomal protein S7, pseudogene 3
-Klhl24                                        kelch-like 24
-Mrpl3                    mitochondrial ribosomal protein L3
-Cyc1                                         cytochrome c-1
-Utp3                UTP3 small subunit processome component
-Stat2    signal transducer and activator of transcription 2
-Smchd1                        SMC hinge domain containing 1
-Tctex1d2                         Tctex1 domain containing 2
-Gclm            glutamate-cysteine ligase, modifier subunit
-Nwd1                NACHT and WD repeat domain containing 1
-                                                                                                                                                                                                                                                                                                          NCBI.REFSEQ
-Gm6472                                                                                                                                                                                                                                                                                                             NA
-Klhl24                                                                                                                                                                                                                                                               NM_029436; NP_083712; XM_006522687; XP_006522750
-Mrpl3                                                                                                                                                                                                                                    NM_001364512; NM_001364513; NM_053159; NP_001351441; NP_001351442; NP_444389
-Cyc1                                                                                                                                                                                                                                                                 NM_025567; NP_079843; XM_030248694; XP_030104554
-Utp3                                                                                                                                                                                                                                                                                             NM_023054; NP_075541
-Stat2                                                                                                                                                                                                                                                                                            NM_019963; NP_064347
-Smchd1                                                                                                                                                                                                                                                               NM_028887; NP_083163; XM_030250119; XP_030105979
-Tctex1d2                                                                                                                                                                                                                                                  NM_001347183; NM_025329; NP_001334112; NP_079605; NR_154990
-Gclm                                                                                                                                                                                                                                                                 NM_008129; NP_032155; XM_030252423; XP_030108283
-Nwd1     NM_001159403; NM_176940; NP_795914; XM_006531086; XM_006531087; XM_006531088; XM_006531089; XM_006531090; XM_030243605; XM_030243606; XM_030243607; XP_006531149; XP_006531150; XP_006531151; XP_006531152; XP_006531153; XP_030099465; XP_030099466; XP_030099467; XR_003947304; XR_003947305; XR_003947306
-         NCBI.SYMBOL      logFC   AveExpr         t      P.Value
-Gm6472      Rps7-ps3  0.2669878 11.459065  5.334298 0.0001427972
-Klhl24        Klhl24 -0.6152340  7.363387 -4.819747 0.0003493263
-Mrpl3          Mrpl3  0.8659765  5.617527  5.003640 0.0002526988
-Cyc1            Cyc1  0.7019621  6.011196  4.428172 0.0007062296
-Utp3            Utp3  0.8448833  6.520586  4.165562 0.0011439120
-Stat2          Stat2 -1.4356947  4.864508 -4.868078 0.0003206885
-Smchd1        Smchd1 -0.8990695  6.151109 -4.229392 0.0010166740
-Tctex1d2    Tctex1d2  1.0334459  5.266745  4.155372 0.0011656961
-Gclm            Gclm  0.4154509  7.168367  3.952411 0.0017009587
-Nwd1            Nwd1 -0.8291009  6.560859 -3.906188 0.0018548227
-         adj.P.Val          B
-Gm6472   0.7885654  0.7514634
-Klhl24   0.7885654  0.4056494
-Mrpl3    0.7885654  0.2766703
-Cyc1     0.7885654 -0.3847384
-Utp3     0.7885654 -0.6838291
-Stat2    0.7885654 -0.6976325
-Smchd1   0.7885654 -0.7021644
-Tctex1d2 0.7885654 -0.9815003
-Gclm     0.7885654 -0.9843326
-Nwd1     0.7885654 -1.1130483</code></pre>
+<pre><code>                     ENSEMBL.GENEBIOTYPE ENSEMBL.GENENAME
+Stat2                     protein_coding            Stat2
+Gm6472  transcribed_processed_pseudogene           Gm6472
+Klhl24                    protein_coding           Klhl24
+Mrpl3                     protein_coding            Mrpl3
+Ube2l3                    protein_coding           Ube2l3
+Smchd1                    protein_coding           Smchd1
+Rab2b                     protein_coding            Rab2b
+Cyc1                      protein_coding             Cyc1
+Fam188a                   protein_coding          Fam188a
+Aldh9a1                   protein_coding          Aldh9a1
+        ENSEMBL.GENESEQSTART ENSEMBL.GENESEQEND ENSEMBL.SEQNAME
+Stat2              128270576          128292849              10
+Gm6472             152909505          152910155               X
+Klhl24              20097554           20127744              16
+Mrpl3              105053239          105079888               9
+Ube2l3              17152013           17202649              16
+Smchd1              71344489           71475343              17
+Rab2b               52261759           52279545              14
+Cyc1                76343523           76345934              15
+Fam188a             12347263           12419470               2
+Aldh9a1            167349991          167368532               1
+        ENSEMBL.SYMBOL        ENSEMBL.GENEID
+Stat2            Stat2 ENSMUSG00000040033.16
+Gm6472          Gm6472  ENSMUSG00000095597.2
+Klhl24          Klhl24  ENSMUSG00000062901.3
+Mrpl3            Mrpl3 ENSMUSG00000032563.16
+Ube2l3          Ube2l3 ENSMUSG00000038965.17
+Smchd1          Smchd1 ENSMUSG00000024054.14
+Rab2b            Rab2b ENSMUSG00000022159.16
+Cyc1              Cyc1  ENSMUSG00000022551.8
+Fam188a        Fam188a ENSMUSG00000026767.12
+Aldh9a1        Aldh9a1 ENSMUSG00000026687.14
+                                                                                     NCBI.ALIAS
+Stat2                                                            1600010G07Rik; AW496480; Stat2
+Gm6472                                                               EG624124; Gm6472; Rps7-ps3
+Klhl24                              1110046J11Rik; 4930429H24Rik; 6530402O20Rik; C85082; Klhl24
+Mrpl3                              2010320L16Rik; 5930422H18Rik; AA407889; L3mt; dc; dcr; Mrpl3
+Ube2l3                                                             C79827; UbcM4; Ubce7; Ube2l3
+Smchd1                              4931400A14Rik; AW554188; MommeD; MommeD1; mKIAA0650; Smchd1
+Rab2b                            1500012D09Rik; 4930528G15Rik; A230002G14; D530043M21Rik; Rab2b
+Cyc1                                                       2610002H19Rik; AA408921; Cyct1; Cyc1
+Fam188a 1810041E18Rik; 2310047O13Rik; 5830410F13Rik; AI447827; AW111958; Fam18; Fam188a; Mindy3
+Aldh9a1                     AA139417; Abaldh; ESTM4; ESTM40; TMABA-; TMABA-DH; Tmabadh; Aldh9a1
+        NCBI.ENTREZID
+Stat2           20847
+Gm6472         624124
+Klhl24          75785
+Mrpl3           94062
+Ube2l3          22195
+Smchd1          74355
+Rab2b           76338
+Cyc1            66445
+Fam188a         66960
+Aldh9a1         56752
+                                             NCBI.GENENAME
+Stat2   signal transducer and activator of transcription 2
+Gm6472                  ribosomal protein S7, pseudogene 3
+Klhl24                                       kelch-like 24
+Mrpl3                   mitochondrial ribosomal protein L3
+Ube2l3                  ubiquitin-conjugating enzyme E2L 3
+Smchd1                       SMC hinge domain containing 1
+Rab2b                    RAB2B, member RAS oncogene family
+Cyc1                                        cytochrome c-1
+Fam188a                   MINDY lysine 48 deubiquitinase 3
+Aldh9a1             aldehyde dehydrogenase 9, subfamily A1
+                                                                                                                                                                                                                                                                                                                                                                                                                                         NCBI.REFSEQ
+Stat2                                                                                                                                                                                                                                                                                                                                                                                                                           NM_019963; NP_064347
+Gm6472                                                                                                                                                                                                                                                                                                                                                                                                                                            NA
+Klhl24                                                                                                                                                                                                                                                                                                                                                                                              NM_029436; NP_083712; XM_006522687; XP_006522750
+Mrpl3                                                                                                                                                                                                                                                                                                                                                                   NM_001364512; NM_001364513; NM_053159; NP_001351441; NP_001351442; NP_444389
+Ube2l3                                                                                                                                                                                                                                                                                                                                                                                              NM_009456; NP_033482; XM_006522004; XP_006522067
+Smchd1                                                                                                                                                                                                                                                                                                                                                                                              NM_028887; NP_083163; XM_030250119; XP_030105979
+Rab2b                                                                                                                                                                                                                                                                                                                                                                                               NM_172601; NP_766189; XM_030248092; XP_030103952
+Cyc1                                                                                                                                                                                                                                                                                                                                                                                                NM_025567; NP_079843; XM_030248694; XP_030104554
+Fam188a NM_001355535; NM_001355536; NM_001355537; NM_001355538; NM_001355539; NM_024185; NP_001342464; NP_001342465; NP_001342466; NP_001342467; NP_001342468; NP_077147; NR_149730; NR_149731; NR_149732; NR_149745; XM_006497522; XM_006497523; XM_006497524; XM_006497525; XM_006497526; XM_006497529; XM_030251974; XP_006497585; XP_006497586; XP_006497587; XP_006497588; XP_006497589; XP_006497592; XP_030107834; XR_001783166; XR_003953695
+Aldh9a1                                                                                                                                                                                                                                                                                                                                                                                             NM_019993; NP_064377; XM_006496950; XP_006497013
+        NCBI.SYMBOL      logFC   AveExpr         t      P.Value
+Stat2         Stat2 -1.4969790  4.864508 -5.618702 0.0001182248
+Gm6472     Rps7-ps3  0.2648009 11.459065  5.240865 0.0002163819
+Klhl24       Klhl24 -0.6101068  7.363387 -4.759046 0.0004814548
+Mrpl3         Mrpl3  0.8492608  5.617527  4.788993 0.0004576821
+Ube2l3       Ube2l3  0.4144942  8.044244  4.692104 0.0005393919
+Smchd1       Smchd1 -0.9369847  6.151109 -4.643970 0.0005855291
+Rab2b         Rab2b -1.4425991  5.222047 -4.412040 0.0008732473
+Cyc1           Cyc1  0.6856786  6.011196  4.206570 0.0012513216
+Fam188a      Mindy3 -1.3066249  4.389511 -4.518645 0.0007260633
+Aldh9a1     Aldh9a1 -0.5586245  6.541156 -4.181715 0.0013074240
+        adj.P.Val           B
+Stat2   0.7205038  0.58999113
+Gm6472  0.7205038  0.20128191
+Klhl24  0.7205038  0.18823251
+Mrpl3   0.7205038  0.11330417
+Ube2l3  0.7205038  0.03681287
+Smchd1  0.7205038 -0.05234266
+Rab2b   0.7205038 -0.61294850
+Cyc1    0.7205038 -0.69862528
+Fam188a 0.7205038 -0.70942116
+Aldh9a1 0.7205038 -0.72301533</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2977,8 +2977,10 @@ Smchd1 4931400A14Rik; AW554188; MommeD; MommeD1; mKIAA0650; Smchd1
 Smchd1         74355 SMC hinge domain containing 1
                                             NCBI.REFSEQ NCBI.SYMBOL
 Smchd1 NM_028887; NP_083163; XM_030250119; XP_030105979      Smchd1
-            logFC  AveExpr         t     P.Value adj.P.Val          B
-Smchd1 -0.8990695 6.151109 -4.229392 0.001016674 0.7885654 -0.7021644</code></pre>
+            logFC  AveExpr        t      P.Value adj.P.Val
+Smchd1 -0.9369847 6.151109 -4.64397 0.0005855291 0.7205038
+                 B
+Smchd1 -0.05234266</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3030,10 +3032,10 @@ Smchd1 -0.8990695 6.151109 -4.229392 0.001016674 0.7885654 -0.7021644</code></pr
 </code></pre>
 </div>
 </details>
-<pre><code>  NGenes  PropDown    PropUp Direction PValue    FDR PValue.Mixed
-X    698 0.0773639 0.0730659        Up 0.7181 0.7181       0.0389
+<pre><code>  NGenes   PropDown     PropUp Direction PValue    FDR PValue.Mixed
+X    698 0.08309456 0.06446991      Down 0.8964 0.8964        0.026
   FDR.Mixed
-X    0.0389</code></pre>
+X     0.026</code></pre>
 </div>
 <p>Using <code>voomWithQualityWeights()</code></p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3051,9 +3053,9 @@ X    0.0389</code></pre>
 </div>
 </details>
 <pre><code>  NGenes   PropDown     PropUp Direction PValue    FDR PValue.Mixed
-X    698 0.08166189 0.08739255        Up 0.2904 0.2904       0.0437
+X    698 0.09312321 0.09455587        Up 0.1756 0.1756       0.0367
   FDR.Mixed
-X    0.0437</code></pre>
+X    0.0367</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3402,9 +3404,9 @@ Smchd1 -0.5245546 6.187839 -1.739218 0.1248504 0.9969908 -4.541153</code></pre>
 </div>
 </details>
 <pre><code>  NGenes   PropDown     PropUp Direction PValue    FDR PValue.Mixed
-X    635 0.08503937 0.07244094      Down 0.0141 0.0141       0.0289
+X    635 0.08503937 0.07244094      Down 0.0154 0.0154       0.0295
   FDR.Mixed
-X    0.0289</code></pre>
+X    0.0295</code></pre>
 </div>
 <p>Using <code>voomWithQualityWeights()</code></p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3422,9 +3424,9 @@ X    0.0289</code></pre>
 </div>
 </details>
 <pre><code>  NGenes   PropDown     PropUp Direction PValue    FDR PValue.Mixed
-X    635 0.07401575 0.08818898      Down 0.9224 0.9224       0.3506
+X    635 0.07401575 0.08818898      Down 0.9275 0.9275       0.3547
   FDR.Mixed
-X    0.3506</code></pre>
+X    0.3547</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3763,9 +3765,9 @@ Smchd1 -1.146664 6.118155 -4.351497 0.002811413 0.8445392 -4.218821</code></pre>
 </div>
 </details>
 <pre><code>  NGenes   PropDown    PropUp Direction PValue    FDR PValue.Mixed
-X    544 0.07536765 0.1011029        Up 0.0634 0.0634       0.0413
+X    544 0.07536765 0.1011029        Up 0.0691 0.0691       0.0422
   FDR.Mixed
-X    0.0413</code></pre>
+X    0.0422</code></pre>
 </div>
 <p>Using <code>voomWithQualityWeights()</code></p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3783,9 +3785,9 @@ X    0.0413</code></pre>
 </div>
 </details>
 <pre><code>  NGenes PropDown    PropUp Direction PValue    FDR PValue.Mixed
-X    544  0.09375 0.1231618        Up 0.0446 0.0446       0.0515
+X    544  0.09375 0.1231618        Up 0.0458 0.0458       0.0464
   FDR.Mixed
-X    0.0515</code></pre>
+X    0.0464</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3842,7 +3844,7 @@ Include <code>sex</code> in design matrix for analysis of <code>x</code> and <co
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2021-03-25                  
+ date     2021-03-27                  
 
 ─ Packages ─────────────────────────────────────────────────────────
  ! package              * version  date       lib source        
@@ -3918,7 +3920,7 @@ Include <code>sex</code> in design matrix for analysis of <code>x</code> and <co
  P zlibbioc               1.36.0   2020-10-27 [?] Bioconductor  
 
 [1] /stornext/Projects/score/Analyses/C086_Kinkel/renv/library/R-4.0/x86_64-pc-linux-gnu
-[2] /tmp/RtmpXadIXe/renv-system-library
+[2] /tmp/Rtmpdu75iZ/renv-system-library
 [3] /stornext/System/data/apps/R/R-4.0.3/lib64/R/library
 
  P ── Loaded and on-disk path mismatch.</code></pre>

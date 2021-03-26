@@ -248,7 +248,7 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 
 ```{r, fig.asp = 1}
 x_o <- order(colnames(x))
-x_design <- model.matrix(~0 + smchd1_genotype_updated, x$samples)
+x_design <- model.matrix(~0 + smchd1_genotype_updated + sex, x$samples)
 colnames(x_design) <- sub("smchd1_genotype_updated", "", colnames(x_design))
 
 x_fit <- voomLmFit(
@@ -321,7 +321,7 @@ hist(
 ```{r, fig.asp = 1}
 y_mds <- plotMDS(y, plot = FALSE)
 
-y_df <- cbind(data.frame(x = y_mds$x, y = y_mds$y), ym$samples)
+y_df <- cbind(data.frame(x = y_mds$x, y = y_mds$y), y$samples)
 rownames(y_df) <- colnames(y)
 
 p1 <- ggplot(
@@ -386,7 +386,7 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 
 ```{r, fig.asp = 1}
 y_o <- order(colnames(y))
-y_design <- model.matrix(~0 + smchd1_genotype_updated, y$samples)
+y_design <- model.matrix(~0 + smchd1_genotype_updated + sex, y$samples)
 colnames(y_design) <- sub("smchd1_genotype_updated", "", colnames(y_design))
 y_fit <- voomLmFit(
   y,
