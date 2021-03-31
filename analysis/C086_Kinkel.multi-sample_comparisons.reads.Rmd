@@ -875,6 +875,7 @@ barcodeplot(
 - [ ] Compare gene lists from analysis of `x` and `y`
 - [ ] Help interpreting flick in voom plot and plotSA plot
 - [ ] Quantile normalize with/without
+- [ ] Add Glimma
 
 # Session info {.appendix}
 
