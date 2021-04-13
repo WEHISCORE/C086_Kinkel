@@ -345,6 +345,7 @@ plotSA(x_fit, main = "Final model: Mean-variance trend")
 x_aw <- x_fit$targets$sample.weight
 names(x_aw) <- colnames(x)
 x_aw <- x_aw[x_o]
+par(mfrow = c(1, 1))
 barplot(
   x_aw,
   col = x$samples$smchd1_genotype_updated_colours[x_o],
@@ -438,7 +439,7 @@ x_cor_fit <- duplicateCorrelation(
   x_design, 
   block = x_v$targets$mouse_number)
 x_v <- voomWithQualityWeights(
-  x_v, 
+  x, 
   x_design,
   normalize.method = "quantile",
   block = x_v$targets$mouse_number,
@@ -562,6 +563,7 @@ plotSA(y_fit, main = "Final model: Mean-variance trend")
 y_aw <- y_fit$targets$sample.weight
 names(y_aw) <- colnames(y)
 y_aw <- y_aw[y_o]
+par(mfrow = c(1, 1))
 barplot(y_aw, col = y$samples$smchd1_genotype_updated_colours[y_o], las = 2)
 ```
 
@@ -775,6 +777,7 @@ plotSA(ym_fit, main = "Final model: Mean-variance trend")
 ym_aw <- ym_fit$targets$sample.weight
 names(ym_aw) <- colnames(ym)
 ym_aw <- ym_aw[ym_o]
+par(mfrow = c(1, 1))
 barplot(ym_aw, col = ym$samples$smchd1_genotype_updated_colours[ym_o], las = 2)
 ```
 
@@ -990,6 +993,7 @@ plotSA(yf_fit, main = "Final model: Mean-variance trend")
 yf_aw <- yf_fit$targets$sample.weight
 names(yf_aw) <- colnames(yf)
 yf_aw <- yf_aw[yf_o]
+par(mfrow = c(1, 1))
 barplot(yf_aw, col = yf$samples$smchd1_genotype_updated_colours[yf_o], las = 2)
 ```
 
