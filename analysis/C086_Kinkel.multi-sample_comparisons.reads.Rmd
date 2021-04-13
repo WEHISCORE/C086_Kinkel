@@ -317,6 +317,7 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 
 ## DE analysis
 
+- Fit a model with a term for `smchd1_genotype_updated` and `sex`.
 
 ```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 x_o <- order(colnames(x))
@@ -471,6 +472,34 @@ for (n in names(x_index)) {
 }
 ```
 
+## Consistency of technical replicates
+
+We saw earlier that the consensus correlation between technical replicates, as estimated by `limma::duplicateCorrelation()`, is very close to zero (`x_fit$correlation` = `r scales::number(x_fit$correlation, accuracy = 0.001)`).
+This suggests that the technical replicates are not very consistent.
+However, the 'consensus correlation' has a somewhat technical meaning and a value close to zero does not simply mean that the technical replicates are uncorrelated.
+Indeed, shown in [`output/figures/logCPM_pairs_plot.reads.pdf`](../output/figures/logCPM_pairs_plot.reads.pdf) are scatterplots of the log-CPM for pairs of technical replicates from each mouse which shows the replicates are highly correlated.
+
+```{r}
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+dir.create(here("output", "figures"), recursive = TRUE)
+pdf(here("output", "figures", "logCPM_pairs_plot.reads.pdf"))
+for (l in levels(x_v$targets$genotype.mouse)) {
+  j <- x_v$targets$genotype.mouse == l
+  E <- x_v$E[, j]
+  pairs(E, upper.panel = panel.cor, main = l)
+}
+dev.off()
+```
+
+
 # Analysis of aggregated technical replicates
 
 ## MDS
@@ -538,6 +567,8 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
 ## DE analysis
+
+- Fit a model with a term for `smchd1_genotype_updated` and `sex`.
 
 ```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 y_o <- order(colnames(y))
@@ -753,6 +784,8 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 
 ## DE analysis
 
+- Fit a model with a term for `smchd1_genotype_updated`.
+
 ```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 ym_o <- order(colnames(ym))
 ym_design <- model.matrix(~0 + smchd1_genotype_updated, ym$samples)
@@ -966,6 +999,8 @@ p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
 ## DE analysis
+
+- Fit a model with a term for `smchd1_genotype_updated`.
 
 ```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 yf_o <- order(colnames(yf))
