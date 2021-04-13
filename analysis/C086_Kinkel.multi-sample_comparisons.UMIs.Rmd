@@ -103,6 +103,55 @@ ym <- calcNormFactors(ym, method = "TMM")
 yf <- calcNormFactors(yf, method = "TMM")
 ```
 
+## Further normalization
+
+<aside>
+The need for further normalization and the rationale for choosing quantile normalization is more relevant for the analysis of the UMI counts than the read counts.
+</aside>
+
+Figure \@ref(fig:voom) shows that the variance of the expression levels is still somewhat dependent on the mean expression level, which is undesirable.
+This suggests that the TMM normalization is insufficient to adjust for technical differences between samples, which means that subsequent analysis may be biased (e.g., ‘differentially expressed genes’ may be false positives).
+
+```{r voom, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.", fig.asp = 1 / 2}
+x_o <- order(colnames(x))
+x_design <- model.matrix(~0 + smchd1_genotype_updated + sex, x$samples)
+colnames(x_design) <- sub("smchd1_genotype_updated", "", colnames(x_design))
+
+par(mfrow = c(1, 2))
+x_fit <- voomLmFit(
+  x,
+  design = x_design,
+  block = x$samples$mouse_number,
+  sample.weights = TRUE,
+  plot = TRUE)
+x_contrasts <- makeContrasts(Del - Het, levels = x_design)
+x_fit <- contrasts.fit(x_fit, x_contrasts)
+x_fit <- eBayes(x_fit, robust = TRUE)
+plotSA(x_fit, main = "Mean-variance trend")
+```
+
+To correct this dependency we require additional, stronger normalization of the data.
+I have opted for quantile normalization, which forces the entire empirical distribution of each sample to be identical[@bolstad2003comparison].
+This approach was suggested to me by Matt Ritchie, Charity Law, and Gordon Smyth^[Email from Gordon (2020-09-20): "The uptick at high expression levels [in the MA plot but also true for the SA plot] does look a bit suspicious. I suggest switching to quantile normalization. It is heavier than TMM but still performs fine and may very well solve the issue. Wei's lab has used quantile normalization for lots of RNA-seq projects without any apparent ill effects."], authors of the the `r BiocStyle::Biocpkg("limma")` and `r BiocStyle::Biocpkg("edgeR")` packages.
+
+Figure \@ref(fig:voom-with-quantile-normalization) shows that by quantile normalizing the data we successfully remove the dependency of the variance on the mean expression level.
+Likewise, the removal of this dependency is also observed in the MD plots shown in Figures \@ref(fig:md-plot-quantile-normalized) and \@ref(fig:md-plot-lc476-quantile-normalized).
+
+```{r voom-with-quantile-normalization, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data and the data are quantile normalized (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.", fig.asp = 1}
+par(mfrow = c(1, 2))
+x_fit <- voomLmFit(
+  x,
+  design = x_design,
+  block = x$samples$mouse_number,
+  sample.weights = TRUE,
+  plot = TRUE,
+  normalize.method = "quantile")
+x_contrasts <- makeContrasts(Del - Het, levels = x_design)
+x_fit <- contrasts.fit(x_fit, x_contrasts)
+x_fit <- eBayes(x_fit, robust = TRUE)
+plotSA(x_fit, main = "Mean-variance trend")
+```
+
 # Analysis of individuals tech reps
 
 ## MDS
@@ -255,7 +304,8 @@ x_fit <- voomLmFit(
   design = x_design,
   block = x$samples$mouse_number,
   sample.weights = TRUE,
-  plot = TRUE)
+  plot = TRUE,
+  normalize.method = "quantile")
 ```
 
 - **TODO**: How to interpret small intra-block correlation (` x_fit$cor` = `r x_fit$cor`)?
@@ -391,7 +441,8 @@ y_fit <- voomLmFit(
   y,
   design = y_design,
   sample.weights = TRUE,
-  plot = TRUE)
+  plot = TRUE,
+  normalize.method = "quantile")
 ```
 
 ```{r}
@@ -479,7 +530,7 @@ roast(
 Using `voomWithQualityWeights()`
 
 ```{r}
-v_y <- voomWithQualityWeights(y, y_design)
+v_y <- voomWithQualityWeights(y, y_design, normalize.method = "quantile")
 roast(
   v_y,
   index = y_index,
@@ -585,7 +636,8 @@ ym_fit <- voomLmFit(
   ym,
   design = ym_design,
   sample.weights = TRUE,
-  plot = TRUE)
+  plot = TRUE,
+  normalize.method = "quantile")
 ```
 
 ```{r}
@@ -658,7 +710,7 @@ roast(
 Using `voomWithQualityWeights()`
 
 ```{r}
-v_ym <- voomWithQualityWeights(ym, ym_design)
+v_ym <- voomWithQualityWeights(ym, ym_design, normalize.method = "quantile")
 roast(
   v_ym,
   index = ym_index,
@@ -766,7 +818,8 @@ yf_fit <- voomLmFit(
   yf,
   design = yf_design,
   sample.weights = TRUE,
-  plot = TRUE)
+  plot = TRUE,
+  normalize.method = "quantile")
 ```
 
 ```{r}
@@ -839,7 +892,7 @@ roast(
 Using `voomWithQualityWeights()`
 
 ```{r}
-v_yf <- voomWithQualityWeights(yf, yf_design)
+v_yf <- voomWithQualityWeights(yf, yf_design, normalize.method = "quantile")
 roast(
   v_yf,
   index = yf_index,
@@ -869,10 +922,8 @@ barcodeplot(
 
 # TODOs
 
-- [ ] Exclude pseudogenes and all that crap?
 - [ ] Compare gene lists from analysis of `x` and `y`
 - [ ] Help interpreting flick in voom plot and plotSA plot
-- [ ] Quantile normalize with/without
 - [ ] Add Glimma
 
 # Session info {.appendix}
