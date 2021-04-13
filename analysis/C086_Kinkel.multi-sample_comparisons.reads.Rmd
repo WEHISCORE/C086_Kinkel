@@ -1,6 +1,6 @@
 ---
 title: "Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"
-description: "Read-based analysis"
+description: "read-based analysis"
 author:
   - name: Peter Hickey
     url: https://peterhickey.org
@@ -12,16 +12,18 @@ editor_options:
 bibliography: ref.bib
 ---
 
-# Setup
 
-## Summary
+# Summary
 
-- Read counts analysed
+- This report analyses the read counts
+- The report begins with some general [Setup] and is followed by
 - Various analyses denoted by a prefix (`x`, `y`, `ym`, `yf`)
-  - `x`: `voomLmFit()` of individual technical replicates, blocking on mouse
-  - `y`: `voomLmFit()` of aggregated technical reps
-  - `ym`: As with `y` but **males** only
-  - `yf`: As with `y` but **females** only
+  - `x`: [Analysis of individual technical replicates], blocking on mouse, using `voomLmFit()`.
+  - `y`: [Analysis of aggregated technical replicates] using `voomLmFit()`.
+  - `ym`: [Male-only: analysis of aggregated technical replicates]
+  - `yf`: [Female-only: analysis of aggregated technical replicates]
+  
+# Setup
 
 ## Load data
 
@@ -33,6 +35,8 @@ library(ggplot2)
 library(cowplot)
 library(patchwork)
 library(ggrepel)
+library(magrittr)
+library(Glimma)
 
 source(here("code/helper_functions.R"))
 
@@ -49,6 +53,9 @@ smchd1_genotype_updated_colours <- setNames(
 mouse_number_colours <- setNames(
   unique(sce$mouse_number_colours),
   unique(names(sce$mouse_number_colours)))
+
+outdir <- here("output", "DEGs", "reads")
+dir.create(outdir, recursive = TRUE)
 ```
 
 ## Create DGEList objects
@@ -70,31 +77,35 @@ yf <- y[, y$samples$sex == "F"]
 
 ## Gene filtering
 
+- For each analysis, shown are the number of genes that have sufficient counts to test for DE (`TRUE`) or not (`FALSE`).
+
 ```{r}
 x_keep_exprs <- filterByExpr(x, group = x$samples$group)
-table(x_keep_exprs)
 x <- x[x_keep_exprs, , keep.lib.sizes = FALSE]
+table(x_keep_exprs)
 ```
 
 ```{r}
 y_keep_exprs <- filterByExpr(y, group = ym$samples$group)
-table(y_keep_exprs)
 y <- y[y_keep_exprs, , keep.lib.sizes = FALSE]
+table(y_keep_exprs)
 ```
 
 ```{r}
 ym_keep_exprs <- filterByExpr(ym, group = ym$samples$group)
-table(ym_keep_exprs)
 ym <- ym[ym_keep_exprs, , keep.lib.sizes = FALSE]
+table(ym_keep_exprs)
 ```
 
 ```{r}
 yf_keep_exprs <- filterByExpr(yf, group = yf$samples$group)
-table(yf_keep_exprs)
 yf <- yf[yf_keep_exprs, , keep.lib.sizes = FALSE]
+table(yf_keep_exprs)
 ```
 
 ## Normalization
+
+- Normalization with TMM
 
 ```{r}
 x <- calcNormFactors(x, method = "TMM")
@@ -106,7 +117,7 @@ yf <- calcNormFactors(yf, method = "TMM")
 ## Further normalization
 
 <aside>
-The need for further normalization and the rationale for choosing quantile normalization is more relevant for the analysis of the UMI counts than the read counts.
+The need for further normalization and the rationale for choosing quantile normalization is more relevant for the analysis of the read counts than the read counts.
 </aside>
 
 Figure \@ref(fig:voom) shows that the variance of the expression levels is still somewhat dependent on the mean expression level, which is undesirable.
@@ -135,9 +146,8 @@ I have opted for quantile normalization, which forces the entire empirical distr
 This approach was suggested to me by Matt Ritchie, Charity Law, and Gordon Smyth^[Email from Gordon (2020-09-20): "The uptick at high expression levels [in the MA plot but also true for the SA plot] does look a bit suspicious. I suggest switching to quantile normalization. It is heavier than TMM but still performs fine and may very well solve the issue. Wei's lab has used quantile normalization for lots of RNA-seq projects without any apparent ill effects."], authors of the the `r BiocStyle::Biocpkg("limma")` and `r BiocStyle::Biocpkg("edgeR")` packages.
 
 Figure \@ref(fig:voom-with-quantile-normalization) shows that by quantile normalizing the data we successfully remove the dependency of the variance on the mean expression level.
-Likewise, the removal of this dependency is also observed in the MD plots shown in Figures \@ref(fig:md-plot-quantile-normalized) and \@ref(fig:md-plot-lc476-quantile-normalized).
 
-```{r voom-with-quantile-normalization, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data and the data are quantile normalized (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.", fig.asp = 1}
+```{r voom-with-quantile-normalization, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data and the data are quantile normalized (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.", fig.asp = 1 / 2}
 par(mfrow = c(1, 2))
 x_fit <- voomLmFit(
   x,
@@ -152,11 +162,28 @@ x_fit <- eBayes(x_fit, robust = TRUE)
 plotSA(x_fit, main = "Mean-variance trend")
 ```
 
-# Analysis of individuals tech reps
+## Gene sets
+
+- Marnie and Sarah interested in the following gene sets:
+  - X-linked genes (anything with `ENSEMBL.SEQNAME` set as '`X`').
+  - Protocadherin genes (*Pcdh#*)
+  - Imprinted genes, especially the Prader-Willi cluster (*Ndn*, *Mkrn3*, *Peg12*)
+  - DEGs from a "previous RNA-seq experiment on male and female Smchd1-het and -del B cells from aged mice (>12 months old). [Sarah] used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate". These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs_gene_lists).
+  
+**TODO** General imprinted gene list?
+
+```{r}
+male_het_vs_del <- readxl::read_excel(
+  here("data", "sarahs_gene_lists", "MaleHetvDel_EdgeR.xlsx"))
+female_het_vs_del <- readxl::read_excel(
+  here("data", "sarahs_gene_lists", "Bcell_female_HetvDel_EdgeR_mRNA.xlsx"))
+```
+
+# Analysis of individual technical replicates
 
 ## MDS
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "MDS plots coloured by various experimental factors."}
 x_mds <- plotMDS(x, plot = FALSE)
 
 x_df <- cbind(data.frame(x = x_mds$x, y = x_mds$y), x$samples)
@@ -226,7 +253,7 @@ outliers <- c("Del.1282.2", "Het.1248.2")
 
 - Exclude `r paste0(outliers, collapse = ", ")`
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "MDS plots coloured by various experimental factors."}
 x2 <- x[, setdiff(colnames(x), outliers)]
 
 x2_mds <- plotMDS(x2, plot = FALSE)
@@ -290,15 +317,15 @@ p6 <- ggplot(
 p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
-## Array weights
+## DE analysis
 
-- **TODO**: Interpret voom plot
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 x_o <- order(colnames(x))
 x_design <- model.matrix(~0 + smchd1_genotype_updated + sex, x$samples)
 colnames(x_design) <- sub("smchd1_genotype_updated", "", colnames(x_design))
 
+par(mfrow = c(1, 2))
 x_fit <- voomLmFit(
   x,
   design = x_design,
@@ -306,11 +333,15 @@ x_fit <- voomLmFit(
   sample.weights = TRUE,
   plot = TRUE,
   normalize.method = "quantile")
+x_contrasts <- makeContrasts(Del - Het, levels = x_design)
+x_fit <- contrasts.fit(x_fit, x_contrasts)
+x_fit <- eBayes(x_fit, robust = TRUE)
+plotSA(x_fit, main = "Final model: Mean-variance trend")
 ```
 
-- **TODO**: How to interpret small intra-block correlation (` x_fit$cor` = `r x_fit$cor`)?
+- The consensus correlation between technical replicates, as estimated by `limma::duplicateCorrelation()`, is very close to zero (`x_fit$correlation` = `r scales::number(x_fit$correlation, accuracy = 0.001)`). This is surprising and I don't yet understand why it happens.
 
-```{r}
+```{r, fig.cap = "Sample quality weights."}
 x_aw <- x_fit$targets$sample.weight
 names(x_aw) <- colnames(x)
 x_aw <- x_aw[x_o]
@@ -321,52 +352,131 @@ barplot(
   cex.names = 0.5)
 ```
 
-## DE analysis
-
-```{r, fig.asp = 1}
-x_contrasts <- makeContrasts(Del - Het, levels = x_design)
-x_fit <- contrasts.fit(x_fit, x_contrasts)
-x_fit <- eBayes(x_fit)
-
-par(mfrow = c(1, 1))
-plotSA(x_fit, main="Final model: Mean-variance trend")
+```{r}
+x_dt <- decideTests(x_fit)
+summary(x_dt) %>%
+  knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
 ```
 
-```{r, fig.asp = 1}
-x_dt <- decideTests(x_fit)
-summary(x_dt)
-
+```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
 par(mfrow = c(1, 1))
 plotMD(x_fit, status = x_dt[, 1], main = "Del - Het")
 ```
 
+- An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/individual_tech_reps.md-plot.html`](../output/DEGs/reads/glimma-plots/individual_tech_reps.md-plot.html).
+
 ```{r}
-topTable(x_fit)
+glMDPlot(
+  x = x_fit,
+  counts = x,
+  anno = x$genes,
+  display.columns = c("ENSEMBL.SYMBOL"),
+  groups = x$samples$group,
+  samples = colnames(x),
+  status = ifelse(
+    topTable(x_fit, n = Inf, sort.by = "none")$adj.P.Val < 0.05,
+    ifelse(topTable(x_fit, n = Inf, sort.by = "none")$logFC > 0, 1, -1),
+    0),
+  transform = TRUE,
+  sample.cols = x$samples$smchd1_genotype_updated_colours,
+  path = outdir,
+  html = "individual_tech_reps.md-plot",
+  launch = FALSE)
 ```
 
 ```{r}
-topTable(x_fit, n = Inf)["Smchd1", ]
+x_tt <- topTable(x_fit, p.value = 0.05)
+if (nrow(x_tt)) {
+  x_tt[, c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B")] %>%
+    DT::datatable(caption = "DEGs (FDR < 0.05)") %>%
+    DT::formatSignif(
+      c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B"),
+      digits = 3)
+}
+```
+
+- CSV file of results available from [`output/DEGs/reads/individual_tech_reps.DEGs.csv.gz`](../output/DEGs/reads/individual_tech_reps.DEGs.csv.gz).
+
+```{r}
+gzout <- gzfile(
+  description = file.path(outdir, "individual_tech_reps.DEGs.csv.gz"),
+  open = "wb")
+write.csv(
+  topTable(x_fit, n = Inf),
+  gzout,
+  # NOTE: quote = TRUE needed because some fields contain commas.
+  quote = TRUE,
+  row.names = FALSE)
+close(gzout)
+```
+
+## Gene set tests
+
+```{r}
+x_X <- x$genes$ENSEMBL.SEQNAME == "X"
+x_protocadherin <- grepl("Pcdh", rownames(x))
+x_pw <- rownames(x) %in% c("Ndn", "Mkrn3", "Peg12")
+# TODO: Something more sophisticated than taking genes with FDR < 0.05?
+x_male <- rownames(x) %in% male_het_vs_del$Probe[male_het_vs_del$FDR < 0.05]
+x_female <- rownames(x) %in% 
+  female_het_vs_del$Probe[female_het_vs_del$FDR < 0.05]
+
+x_index <- list(
+  `X-linked` = x_X,
+  Protocadherin = x_protocadherin,
+  `Prader-Willi` = x_pw,
+  `Male: Het vs. Del` = x_male,
+  `Female: Het vs. Del` = x_female)
 ```
 
 ```{r}
-par(mfrow = c(1, 2))
-hist(
-  topTable(x_fit, n = Inf)$P.Value,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "P-value")
-hist(
-  topTable(x_fit, n = Inf)$adj.P.Val,
-  xlim = c(0, 1), 
-  breaks = 0:20 / 20,
-  main = "Adjusted P-value")
+# NOTE: Can't use output of `voomLmFit()`, so have to re-fit model (see 
+#       email with Gordon, 2021-04-13).
+x_v <- voomWithQualityWeights(x, x_design, normalize.method = "quantile")
+x_cor_fit <- duplicateCorrelation(
+  x_v,
+  x_design, 
+  block = x_v$targets$mouse_number)
+x_v <- voomWithQualityWeights(
+  x_v, 
+  x_design,
+  normalize.method = "quantile",
+  block = x_v$targets$mouse_number,
+  correlation = x_cor_fit$consensus.correlation)
+fry(
+  x_v,
+  index = x_index,
+  design = x_design,
+  contrast = x_contrasts) %>%
+    knitr::kable(
+      caption = "Results of applying `fry()` to the scRNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-# Analysis of aggregated tech reps
+```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed."}
+par(mfrow = c(length(x_index), 2))
+for (n in names(x_index)) {
+  x_status <- rep("Other", nrow(x_fit))
+  x_status[x_index[[n]]] <- n
+  plotMD(
+    x_fit,
+    status = x_status,
+    values = n,
+    hl.col = "red",
+    legend = "bottomright")
+  abline(h = 0, col = "darkgrey")
+  
+  barcodeplot(
+    x_fit$t[, 1],
+    x_index[[n]],
+    labels = c("Down in Del", "Up in Del"))
+}
+```
+
+# Analysis of aggregated technical replicates
 
 ## MDS
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "MDS plots coloured by various experimental factors."}
 y_mds <- plotMDS(y, plot = FALSE)
 
 y_df <- cbind(data.frame(x = y_mds$x, y = y_mds$y), y$samples)
@@ -428,32 +538,34 @@ p6 <- ggplot(
 p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
-## Array weights
+## DE analysis
 
-- **TODO**: Interpret voom plot
-
-```{r, fig.asp = 1}
+```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 y_o <- order(colnames(y))
 y_design <- model.matrix(~0 + smchd1_genotype_updated + sex, y$samples)
 colnames(y_design) <- sub("smchd1_genotype_updated", "", colnames(y_design))
+
+par(mfrow = c(1, 2))
 y_fit <- voomLmFit(
   y,
   design = y_design,
   sample.weights = TRUE,
   plot = TRUE,
   normalize.method = "quantile")
+y_contrasts <- makeContrasts(Del - Het, levels = y_design)
+y_fit <- contrasts.fit(y_fit, y_contrasts)
+y_fit <- eBayes(y_fit, robust = TRUE)
+plotSA(y_fit, main = "Final model: Mean-variance trend")
 ```
 
-```{r}
+```{r, fig.cap = "Sample quality weights."}
 y_aw <- y_fit$targets$sample.weight
 names(y_aw) <- colnames(y)
 y_aw <- y_aw[y_o]
 barplot(y_aw, col = y$samples$smchd1_genotype_updated_colours[y_o], las = 2)
 ```
 
-### Comparison to individual tech reps
-
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "Comparison of sample weights from individual technical replicates and from aggregated technical replicates."}
 par(mfrow = c(2, 1))
 barplot(
   x_aw,
@@ -463,105 +575,121 @@ barplot(
 barplot(y_aw, col = y$samples$smchd1_genotype_updated_colours[y_o], las = 2)
 ```
 
-## DE analysis
-
-```{r, fig.asp = 1}
-y_contrasts <- makeContrasts(Del - Het, levels = y_design)
-y_fit <- contrasts.fit(y_fit, y_contrasts)
-y_fit <- eBayes(y_fit)
-
-par(mfrow = c(1, 1))
-plotSA(y_fit, main="Final model: Mean-variance trend")
-```
-
 ```{r, fig.asp = 1}
 y_dt <- decideTests(y_fit)
-summary(y_dt)
+summary(y_dt) %>%
+  knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
+```
 
+```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
 par(mfrow = c(1, 1))
 plotMD(y_fit, status = y_dt[, 1])
 ```
 
+- An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html).
+
 ```{r}
-topTable(y_fit)
+glMDPlot(
+  x = y_fit,
+  counts = y,
+  anno = y$genes,
+  display.columns = c("ENSEMBL.SYMBOL"),
+  groups = y$samples$group,
+  samples = colnames(y),
+  status = ifelse(
+    topTable(y_fit, n = Inf, sort.by = "none")$adj.P.Val < 0.05,
+    ifelse(topTable(y_fit, n = Inf, sort.by = "none")$logFC > 0, 1, -1),
+    0),
+  transform = TRUE,
+  sample.cols = y$samples$smchd1_genotype_updated_colours,
+  path = outdir,
+  html = "aggregated_tech_reps.md-plot",
+  launch = FALSE)
 ```
 
 ```{r}
-topTable(y_fit, n = Inf)["Smchd1", ]
+y_tt <- topTable(y_fit, p.value = 0.05)
+if (nrow(y_tt)) {
+  y_tt[, c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B")] %>%
+    DT::datatable(caption = "DEGs (FDR < 0.05)") %>%
+    DT::formatSignif(
+      c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B"),
+      digits = 3)
+}
 ```
+
+- CSV file of results available from [`output/DEGs/reads/aggregated_tech_reps.DEGs.csv.gz`](../output/DEGs/reads/aggregated_tech_reps.DEGs.csv.gz).
 
 ```{r}
-par(mfrow = c(1, 2))
-hist(
-  topTable(y_fit, n = Inf)$P.Value,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "P-value")
-hist(
-  topTable(y_fit, n = Inf)$adj.P.Val,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "Adjusted P-value")
+gzout <- gzfile(
+  description = file.path(outdir, "aggregated_tech_reps.DEGs.csv.gz"),
+  open = "wb")
+write.csv(
+  topTable(y_fit, n = Inf),
+  gzout,
+  # NOTE: quote = TRUE needed because some fields contain commas.
+  quote = TRUE,
+  row.names = FALSE)
+close(gzout)
 ```
 
-### Gene set tests
-
-- Can't use output of `voomLmFit()`, so have to re-fit model with **edgeR** or `voomWithQualityWeights()`
-- Marnie and Sarah interested in chrX as a whole
+## Gene set tests
 
 ```{r}
 y_X <- y$genes$ENSEMBL.SEQNAME == "X"
+y_protocadherin <- grepl("Pcdh", rownames(y))
+y_pw <- rownames(y) %in% c("Ndn", "Mkrn3", "Peg12")
+# TODO: Something more sophisticated than taking genes with FDR < 0.05?
+y_male <- rownames(y) %in% male_het_vs_del$Probe[male_het_vs_del$FDR < 0.05]
+y_female <- rownames(y) %in% 
+  female_het_vs_del$Probe[female_het_vs_del$FDR < 0.05]
+
+y_index <- list(
+  `X-linked` = y_X,
+  Protocadherin = y_protocadherin,
+  `Prader-Willi` = y_pw,
+  `Male: Het vs. Del` = y_male,
+  `Female: Het vs. Del` = y_female)
 ```
 
-Using **edgeR**
-
 ```{r}
-y_index <- list(X = y_X)
-y <- estimateDisp(y, design = y_design)
-roast(
-  y,
+# NOTE: Can't use output of `voomLmFit()`, so have to re-fit model (see 
+#       email with Gordon, 2021-04-13).
+y_v <- voomWithQualityWeights(y, y_design, normalize.method = "quantile")
+fry(
+  y_v,
   index = y_index,
   design = y_design,
-  contrast = y_contrasts,
-  nrot = 9999)
+  contrast = y_contrasts) %>%
+    knitr::kable(
+      caption = "Results of applying `fry()` to the scRNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-Using `voomWithQualityWeights()`
-
-```{r}
-v_y <- voomWithQualityWeights(y, y_design, normalize.method = "quantile")
-roast(
-  v_y,
-  index = y_index,
-  design = y_design,
-  contrast = y_contrasts,
-  nrot = 9999)
+```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed."}
+par(mfrow = c(length(y_index), 2))
+for (n in names(y_index)) {
+  y_status <- rep("Other", nrow(y_fit))
+  y_status[y_index[[n]]] <- n
+  plotMD(
+    y_fit,
+    status = y_status,
+    values = n,
+    hl.col = "red",
+    legend = "bottomright")
+  abline(h = 0, col = "darkgrey")
+  
+  barcodeplot(
+    y_fit$t[, 1],
+    y_index[[n]],
+    labels = c("Down in Del", "Up in Del"))
+}
 ```
 
-```{r}
-y_status <- rep("Other", nrow(y_fit))
-y_status[y_X] <- "X"
-
-par(mfrow = c(1, 2))
-plotMD(
-  y_fit,
-  status = y_status,
-  values = "X",
-  hl.col = "red",
-  legend = "bottomright")
-abline(h = 0, col = "darkgrey")
-
-barcodeplot(
-  y_fit$t[, 1],
-  y_X,
-  labels = c("Down in Del", "Up in Del"))
-```
-
-# Male-only: analysis of aggregated tech reps
+# Male-only: analysis of aggregated technical replicates
 
 ## MDS
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "MDS plots coloured by various experimental factors."}
 ym_mds <- plotMDS(ym, plot = FALSE)
 
 ym_df <- cbind(data.frame(x = ym_mds$x, y = ym_mds$y), ym$samples)
@@ -623,127 +751,158 @@ p6 <- ggplot(
 p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
-## Array weights
+## DE analysis
 
-- **TODO**: Interpret voom plot
-
-```{r, fig.asp = 1}
+```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 ym_o <- order(colnames(ym))
 ym_design <- model.matrix(~0 + smchd1_genotype_updated, ym$samples)
 colnames(ym_design) <- sub("smchd1_genotype_updated", "", colnames(ym_design))
+
+par(mfrow = c(1, 2))
 ym_fit <- voomLmFit(
   ym,
   design = ym_design,
   sample.weights = TRUE,
   plot = TRUE,
   normalize.method = "quantile")
+ym_contrasts <- makeContrasts(Del - Het, levels = ym_design)
+ym_fit <- contrasts.fit(ym_fit, ym_contrasts)
+ym_fit <- eBayes(ym_fit, robust = TRUE)
+plotSA(ym_fit, main = "Final model: Mean-variance trend")
 ```
 
-```{r}
+```{r, fig.cap = "Sample quality weights."}
 ym_aw <- ym_fit$targets$sample.weight
 names(ym_aw) <- colnames(ym)
 ym_aw <- ym_aw[ym_o]
 barplot(ym_aw, col = ym$samples$smchd1_genotype_updated_colours[ym_o], las = 2)
 ```
 
-## DE analysis
-
-```{r, fig.asp = 1}
-ym_contrasts <- makeContrasts(Del - Het, levels = ym_design)
-ym_fit <- contrasts.fit(ym_fit, ym_contrasts)
-ym_fit <- eBayes(ym_fit)
-
-par(mfrow = c(1, 1))
-plotSA(ym_fit, main="Final model: Mean-variance trend")
+```{r, fig.asp = 1, fig.cap = "Comparison of sample weights from individual technical replicates and from aggregated technical replicates."}
+par(mfrow = c(2, 1))
+barplot(
+  x_aw,
+  col = x$samples$smchd1_genotype_updated_colours[x_o],
+  las = 2,
+  cex.names = 0.5)
+barplot(ym_aw, col = ym$samples$smchd1_genotype_updated_colours[ym_o], las = 2)
 ```
 
 ```{r, fig.asp = 1}
 ym_dt <- decideTests(ym_fit)
-summary(ym_dt)
+summary(ym_dt) %>%
+  knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
+```
 
+```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
 par(mfrow = c(1, 1))
 plotMD(ym_fit, status = ym_dt[, 1])
 ```
 
+- An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.males.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.males.md-plot.html).
+
 ```{r}
-topTable(ym_fit)
+glMDPlot(
+  x = ym_fit,
+  counts = ym,
+  anno = ym$genes,
+  display.columns = c("ENSEMBL.SYMBOL"),
+  groups = ym$samples$group,
+  samples = colnames(ym),
+  status = ifelse(
+    topTable(ym_fit, n = Inf, sort.by = "none")$adj.P.Val < 0.05,
+    ifelse(topTable(ym_fit, n = Inf, sort.by = "none")$logFC > 0, 1, -1),
+    0),
+  transform = TRUE,
+  sample.cols = ym$samples$smchd1_genotype_updated_colours,
+  path = outdir,
+  html = "aggregated_tech_reps.males.md-plot",
+  launch = FALSE)
 ```
 
 ```{r}
-topTable(ym_fit, n = Inf)["Smchd1", ]
+ym_tt <- topTable(ym_fit, p.value = 0.05)
+if (nrow(ym_tt)) {
+  ym_tt[, c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B")] %>%
+    DT::datatable(caption = "DEGs (FDR < 0.05)") %>%
+    DT::formatSignif(
+      c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B"),
+      digits = 3)
+}
 ```
+
+- CSV file of results available from [`output/DEGs/reads/aggregated_tech_reps.males.DEGs.csv.gz`](../output/DEGs/reads/aggregated_tech_reps.males.DEGs.csv.gz).
 
 ```{r}
-par(mfrow = c(1, 2))
-hist(
-  topTable(ym_fit, n = Inf)$P.Value,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "P-value")
-hist(
-  topTable(ym_fit, n = Inf)$adj.P.Val,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "Adjusted P-value")
+gzout <- gzfile(
+  description = file.path(outdir, "aggregated_tech_reps.males.DEGs.csv.gz"),
+  open = "wb")
+write.csv(
+  topTable(ym_fit, n = Inf),
+  gzout,
+  # NOTE: quote = TRUE needed because some fields contain commas.
+  quote = TRUE,
+  row.names = FALSE)
+close(gzout)
 ```
 
-### Gene set tests
-
-**TODO**: Large discrepancy between *edgeR** and `voomWithQualityWeights()` results
+## Gene set tests
 
 ```{r}
 ym_X <- ym$genes$ENSEMBL.SEQNAME == "X"
+ym_protocadherin <- grepl("Pcdh", rownames(ym))
+ym_pw <- rownames(ym) %in% c("Ndn", "Mkrn3", "Peg12")
+# TODO: Something more sophisticated than taking genes with FDR < 0.05?
+ym_male <- rownames(ym) %in% male_het_vs_del$Probe[male_het_vs_del$FDR < 0.05]
+ym_female <- rownames(ym) %in% 
+  female_het_vs_del$Probe[female_het_vs_del$FDR < 0.05]
+
+ym_index <- list(
+  `X-linked` = ym_X,
+  Protocadherin = ym_protocadherin,
+  `Prader-Willi` = ym_pw,
+  `Male: Het vs. Del` = ym_male,
+  `Female: Het vs. Del` = ym_female)
 ```
 
-Using **edgeR**
-
 ```{r}
-ym_index <- list(X = ym_X)
-ym <- estimateDisp(ym, design = ym_design)
-roast(
-  ym,
+# NOTE: Can't use output of `voomLmFit()`, so have to re-fit model (see 
+#       email with Gordon, 2021-04-13).
+ym_v <- voomWithQualityWeights(ym, ym_design, normalize.method = "quantile")
+fry(
+  ym_v,
   index = ym_index,
   design = ym_design,
-  contrast = ym_contrasts,
-  nrot = 9999)
+  contrast = ym_contrasts) %>%
+    knitr::kable(
+      caption = "Results of applying `fry()` to the scRNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselym, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-Using `voomWithQualityWeights()`
-
-```{r}
-v_ym <- voomWithQualityWeights(ym, ym_design, normalize.method = "quantile")
-roast(
-  v_ym,
-  index = ym_index,
-  design = ym_design,
-  contrast = ym_contrasts,
-  nrot = 9999)
+```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed."}
+par(mfrow = c(length(ym_index), 2))
+for (n in names(ym_index)) {
+  ym_status <- rep("Other", nrow(ym_fit))
+  ym_status[ym_index[[n]]] <- n
+  plotMD(
+    ym_fit,
+    status = ym_status,
+    values = n,
+    hl.col = "red",
+    legend = "bottomright")
+  abline(h = 0, col = "darkgrey")
+  
+  barcodeplot(
+    ym_fit$t[, 1],
+    ym_index[[n]],
+    labels = c("Down in Del", "Up in Del"))
+}
 ```
 
-```{r}
-ym_status <- rep("Other", nrow(ym_fit))
-ym_status[ym_X] <- "X"
-
-par(mfrow = c(1, 2))
-plotMD(
-  ym_fit,
-  status = ym_status,
-  values = "X",
-  hl.col = "red",
-  legend = "bottomright")
-abline(h = 0, col = "darkgrey")
-
-barcodeplot(
-  ym_fit$t[, 1],
-  ym_X,
-  labels = c("Down in Del", "Up in Del"))
-```
-
-# Female-only: analysis of aggregated tech reps
+# Female-only: analysis of aggregated technical replicates
 
 ## MDS
 
-```{r, fig.asp = 1}
+```{r, fig.asp = 1, fig.cap = "MDS plots coloured by various experimental factors."}
 yf_mds <- plotMDS(yf, plot = FALSE)
 
 yf_df <- cbind(data.frame(x = yf_mds$x, y = yf_mds$y), yf$samples)
@@ -805,127 +964,161 @@ p6 <- ggplot(
 p1 + p2 + p3 + p4 + p5 + p6 + plot_layout(ncol = 2)
 ```
 
-## Array weights
+## DE analysis
 
-- **TODO**: Interpret voom plot
-
-```{r, fig.asp = 1}
+```{r, fig.asp = 1 / 2, fig.cap = "Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red."}
 yf_o <- order(colnames(yf))
 yf_design <- model.matrix(~0 + smchd1_genotype_updated, yf$samples)
 # NOTE: Drop WT column as there are no female WT samples.
 yf_design <- yf_design[, colSums(yf_design) > 0]
 colnames(yf_design) <- sub("smchd1_genotype_updated", "", colnames(yf_design))
+
+par(mfrow = c(1, 2))
 yf_fit <- voomLmFit(
   yf,
   design = yf_design,
   sample.weights = TRUE,
   plot = TRUE,
   normalize.method = "quantile")
+yf_contrasts <- makeContrasts(Del - Het, levels = yf_design)
+yf_fit <- contrasts.fit(yf_fit, yf_contrasts)
+yf_fit <- eBayes(yf_fit, robust = TRUE)
+plotSA(yf_fit, main = "Final model: Mean-variance trend")
 ```
 
-```{r}
+```{r, fig.cap = "Sample quality weights."}
 yf_aw <- yf_fit$targets$sample.weight
 names(yf_aw) <- colnames(yf)
 yf_aw <- yf_aw[yf_o]
 barplot(yf_aw, col = yf$samples$smchd1_genotype_updated_colours[yf_o], las = 2)
 ```
 
-## DE analysis
-
-```{r, fig.asp = 1}
-yf_contrasts <- makeContrasts(Del - Het, levels = yf_design)
-yf_fit <- contrasts.fit(yf_fit, yf_contrasts)
-yf_fit <- eBayes(yf_fit)
-
-par(mfrow = c(1, 1))
-plotSA(yf_fit, main="Final model: Mean-variance trend")
+```{r, fig.asp = 1, fig.cap = "Comparison of sample weights from individual technical replicates and from aggregated technical replicates."}
+par(mfrow = c(2, 1))
+barplot(
+  x_aw,
+  col = x$samples$smchd1_genotype_updated_colours[x_o],
+  las = 2,
+  cex.names = 0.5)
+barplot(yf_aw, col = yf$samples$smchd1_genotype_updated_colours[yf_o], las = 2)
 ```
 
 ```{r, fig.asp = 1}
 yf_dt <- decideTests(yf_fit)
-summary(yf_dt)
+summary(yf_dt) %>%
+  knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
+```
 
+```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
 par(mfrow = c(1, 1))
 plotMD(yf_fit, status = yf_dt[, 1])
 ```
 
-```{r}
-topTable(yf_fit)
-```
+- An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.females.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.females.md-plot.html).
 
 ```{r}
-topTable(yf_fit, n = Inf)["Smchd1", ]
+glMDPlot(
+  x = yf_fit,
+  counts = yf,
+  anno = yf$genes,
+  display.columns = c("ENSEMBL.SYMBOL"),
+  groups = yf$samples$group,
+  samples = colnames(yf),
+  status = ifelse(
+    topTable(yf_fit, n = Inf, sort.by = "none")$adj.P.Val < 0.05,
+    ifelse(topTable(yf_fit, n = Inf, sort.by = "none")$logFC > 0, 1, -1),
+    0),
+  transform = TRUE,
+  sample.cols = yf$samples$smchd1_genotype_updated_colours,
+  path = outdir,
+  html = "aggregated_tech_reps.females.md-plot",
+  launch = FALSE)
 ```
+
 
 ```{r}
-par(mfrow = c(1, 2))
-hist(
-  topTable(yf_fit, n = Inf)$P.Value,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "P-value")
-hist(
-  topTable(yf_fit, n = Inf)$adj.P.Val,
-  xlim = c(0, 1),
-  breaks = 0:20 / 20,
-  main = "Adjusted P-value")
+yf_tt <- topTable(yf_fit, p.value = 0.05)
+if (nrow(yf_tt)) {
+  yf_tt[, c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B")] %>%
+    DT::datatable(caption = "DEGs (FDR < 0.05)") %>%
+    DT::formatSignif(
+      c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B"),
+      digits = 3)
+}
 ```
 
-### Gene set tests
+- CSV file of results available from [`output/DEGs/reads/aggregated_tech_reps.females.DEGs.csv.gz`](../output/DEGs/reads/aggregated_tech_reps.females.DEGs.csv.gz).
+
+```{r}
+gzout <- gzfile(
+  description = file.path(outdir, "aggregated_tech_reps.females.DEGs.csv.gz"),
+  open = "wb")
+write.csv(
+  topTable(yf_fit, n = Inf),
+  gzout,
+  # NOTE: quote = TRUE needed because some fields contain commas.
+  quote = TRUE,
+  row.names = FALSE)
+close(gzout)
+```
+
+## Gene set tests
 
 ```{r}
 yf_X <- yf$genes$ENSEMBL.SEQNAME == "X"
+yf_protocadherin <- grepl("Pcdh", rownames(yf))
+yf_pw <- rownames(yf) %in% c("Ndn", "Mkrn3", "Peg12")
+# TODO: Something more sophisticated than taking genes with FDR < 0.05?
+yf_male <- rownames(yf) %in% male_het_vs_del$Probe[male_het_vs_del$FDR < 0.05]
+yf_female <- rownames(yf) %in% 
+  female_het_vs_del$Probe[female_het_vs_del$FDR < 0.05]
+
+yf_index <- list(
+  `X-linked` = yf_X,
+  Protocadherin = yf_protocadherin,
+  `Prader-Willi` = yf_pw,
+  `Male: Het vs. Del` = yf_male,
+  `Female: Het vs. Del` = yf_female)
 ```
 
-Using **edgeR**
-
 ```{r}
-yf_index <- list(X = yf_X)
-yf <- estimateDisp(yf, design = yf_design)
-roast(
-  yf,
+# NOTE: Can't use output of `voomLmFit()`, so have to re-fit model (see 
+#       email with Gordon, 2021-04-13).
+yf_v <- voomWithQualityWeights(yf, yf_design, normalize.method = "quantile")
+fry(
+  yf_v,
   index = yf_index,
   design = yf_design,
-  contrast = yf_contrasts,
-  nrot = 9999)
+  contrast = yf_contrasts) %>%
+    knitr::kable(
+      caption = "Results of applying `fry()` to the scRNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselyf, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-Using `voomWithQualityWeights()`
-
-```{r}
-v_yf <- voomWithQualityWeights(yf, yf_design, normalize.method = "quantile")
-roast(
-  v_yf,
-  index = yf_index,
-  design = yf_design,
-  contrast = yf_contrasts,
-  nrot = 9999)
-```
-
-```{r}
-yf_status <- rep("Other", nrow(yf_fit))
-yf_status[yf_X] <- "X"
-
-par(mfrow = c(1, 2))
-plotMD(
-  yf_fit,
-  status = yf_status,
-  values = "X",
-  hl.col = "red",
-  legend = "bottomright")
-abline(h = 0, col = "darkgrey")
-
-barcodeplot(
-  yf_fit$t[, 1],
-  yf_X,
-  labels = c("Down in Del", "Up in Del"))
+```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed."}
+par(mfrow = c(length(yf_index), 2))
+for (n in names(yf_index)) {
+  yf_status <- rep("Other", nrow(yf_fit))
+  yf_status[yf_index[[n]]] <- n
+  plotMD(
+    yf_fit,
+    status = yf_status,
+    values = n,
+    hl.col = "red",
+    legend = "bottomright")
+  abline(h = 0, col = "darkgrey")
+  
+  barcodeplot(
+    yf_fit$t[, 1],
+    yf_index[[n]],
+    labels = c("Down in Del", "Up in Del"))
+}
 ```
 
 # TODOs
 
-- [ ] Compare gene lists from analysis of `x` and `y`
-- [ ] Help interpreting flick in voom plot and plotSA plot
-- [ ] Add Glimma
+- [x] Add CSV
+- [x] Add Glimma
+- [ ] Vary `filterByExpr()` arguments.
 
 # Session info {.appendix}
 
@@ -937,4 +1130,3 @@ sessioninfo::session_info()
 ```
 
 </details>
-
