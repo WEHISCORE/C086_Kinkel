@@ -1,6 +1,6 @@
 ---
 title: "Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"
-description: "read-based analysis"
+description: "Read-based analysis"
 author:
   - name: Peter Hickey
     url: https://peterhickey.org
