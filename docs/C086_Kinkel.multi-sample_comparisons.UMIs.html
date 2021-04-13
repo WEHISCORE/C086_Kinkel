@@ -92,8 +92,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2021-04-13"/>
-  <meta property="article:created" itemprop="dateCreated" content="2021-04-13"/>
+  <meta property="article:published" itemprop="datePublished" content="2021-04-14"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-04-14"/>
   <meta name="article:author" content="Peter Hickey"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
@@ -113,7 +113,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","editor_options","bibliography"]}},"value":[{"type":"character","attributes":{},"value":["Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"]},{"type":"character","attributes":{},"value":["UMI-based analysis"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Peter Hickey"]},{"type":"character","attributes":{},"value":["https://peterhickey.org"]},{"type":"character","attributes":{},"value":["WEHI SCORE"]},{"type":"character","attributes":{},"value":["https://www.wehi.edu.au/people/shalin-naik/3310/score"]}]}]},{"type":"character","attributes":{},"value":["2021-04-13"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["ref.bib"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","editor_options","bibliography"]}},"value":[{"type":"character","attributes":{},"value":["Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set"]},{"type":"character","attributes":{},"value":["UMI-based analysis"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Peter Hickey"]},{"type":"character","attributes":{},"value":["https://peterhickey.org"]},{"type":"character","attributes":{},"value":["WEHI SCORE"]},{"type":"character","attributes":{},"value":["https://www.wehi.edu.au/people/shalin-naik/3310/score"]}]}]},{"type":"character","attributes":{},"value":["2021-04-14"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["ref.bib"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2067,7 +2067,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set","description":"UMI-based analysis","authors":[{"author":"Peter Hickey","authorURL":"https://peterhickey.org","affiliation":"WEHI SCORE","affiliationURL":"https://www.wehi.edu.au/people/shalin-naik/3310/score","orcidID":""}],"publishedDate":"2021-04-13T00:00:00.000+10:00","citationText":"Hickey, 2021"}
+{"title":"Multi-sample comparisons of the Kinkel (C086) Smchd1 LSK mini-bulk data set","description":"UMI-based analysis","authors":[{"author":"Peter Hickey","authorURL":"https://peterhickey.org","affiliation":"WEHI SCORE","affiliationURL":"https://www.wehi.edu.au/people/shalin-naik/3310/score","orcidID":""}],"publishedDate":"2021-04-14T00:00:00.000+10:00","citationText":"Hickey, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2123,7 +2123,7 @@ Supplementary files
 <div class="d-byline">
   Peter Hickey <a href="https://peterhickey.org" class="uri">https://peterhickey.org</a> (WEHI SCORE)<a href="https://www.wehi.edu.au/people/shalin-naik/3310/score" class="uri">https://www.wehi.edu.au/people/shalin-naik/3310/score</a>
   
-<br/>2021-04-13
+<br/>2021-04-14
 </div>
 
 <div class="d-article">
@@ -2149,6 +2149,7 @@ Supplementary files
 </ul></li>
 <li><a href="#de-analysis">DE analysis</a></li>
 <li><a href="#gene-set-tests">Gene set tests</a></li>
+<li><a href="#consistency-of-technical-replicates">Consistency of technical replicates</a></li>
 </ul></li>
 <li><a href="#analysis-of-aggregated-technical-replicates">Analysis of aggregated technical replicates</a>
 <ul>
@@ -2601,6 +2602,9 @@ Figure 4: MDS plots coloured by various experimental factors.
 </div>
 </div>
 <h2 id="de-analysis">DE analysis</h2>
+<ul>
+<li>Fit a model with a term for <code>smchd1_genotype_updated</code> and <code>sex</code>.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -2761,8 +2765,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div id="htmlwidget-5fa7abeabf3d113123c2" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5fa7abeabf3d113123c2">{"x":{"filter":"none","caption":"<caption>DEGs (FDR &lt; 0.05)<\/caption>","data":[["C130026I21Rik","Smchd1"],[1.51519628278509,-0.720310496787417],[4.22367206929332,6.28371110416425],[5.30582078373381,-4.87543475482665],[9.15807609629506e-07,4.5185143704391e-06],[0.0105528510857608,0.0260334205452848],[4.07764011777151,3.90988454852762]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>logFC<\/th>\n      <th>AveExpr<\/th>\n      <th>t<\/th>\n      <th>P.Value<\/th>\n      <th>adj.P.Val<\/th>\n      <th>B<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"targets":1,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"className":"dt-right","targets":[1,2,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render","options.columnDefs.4.render","options.columnDefs.5.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-4e21acbeedaa06ceefea" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4e21acbeedaa06ceefea">{"x":{"filter":"none","caption":"<caption>DEGs (FDR &lt; 0.05)<\/caption>","data":[["C130026I21Rik","Smchd1"],[1.51519628278509,-0.720310496787417],[4.22367206929332,6.28371110416425],[5.30582078373381,-4.87543475482665],[9.15807609629506e-07,4.5185143704391e-06],[0.0105528510857608,0.0260334205452848],[4.07764011777151,3.90988454852762]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>logFC<\/th>\n      <th>AveExpr<\/th>\n      <th>t<\/th>\n      <th>P.Value<\/th>\n      <th>adj.P.Val<\/th>\n      <th>B<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"targets":1,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"className":"dt-right","targets":[1,2,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render","options.columnDefs.4.render","options.columnDefs.5.render"],"jsHooks":[]}</script>
 </div>
 <ul>
 <li>CSV file of results available from <a href="../output/DEGs/UMIs/individual_tech_reps.DEGs.csv.gz"><code>output/DEGs/UMIs/individual_tech_reps.DEGs.csv.gz</code></a>.</li>
@@ -2936,6 +2940,37 @@ Figure 8: MD-plot and barcode plot of DEGs in supplied gene sets. For each set, 
 </p>
 </div>
 </div>
+<h2 id="consistency-of-technical-replicates">Consistency of technical replicates</h2>
+<p>We saw earlier that the consensus correlation between technical replicates, as estimated by <code>limma::duplicateCorrelation()</code>, is very close to zero (<code>x_fit$correlation</code> = 0.025). This suggests that the technical replicates are not very consistent. However, the ‘consensus correlation’ has a somewhat technical meaning and a value close to zero does not simply mean that the technical replicates are uncorrelated. Indeed, shown in <a href="../output/figures/logCPM_pairs_plot.UMIs.pdf"><code>output/figures/logCPM_pairs_plot.UMIs.pdf</code></a> are scatterplots of the log-CPM for pairs of technical replicates from each mouse which shows the replicates are highly correlated.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>panel.cor</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>digits</span> <span class='op'>=</span> <span class='fl'>2</span>, <span class='va'>prefix</span> <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>cex.cor</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>usr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span><span class='st'>"usr"</span><span class='op'>)</span>; <span class='fu'><a href='https://rdrr.io/r/base/on.exit.html'>on.exit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span><span class='va'>usr</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>usr <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='va'>txt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>r</span>, <span class='fl'>0.123456789</span><span class='op'>)</span>, digits <span class='op'>=</span> <span class='va'>digits</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+    <span class='va'>txt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>prefix</span>, <span class='va'>txt</span><span class='op'>)</span>
+    <span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/missing.html'>missing</a></span><span class='op'>(</span><span class='va'>cex.cor</span><span class='op'>)</span><span class='op'>)</span> <span class='va'>cex.cor</span> <span class='op'>&lt;-</span> <span class='fl'>0.8</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/graphics/strwidth.html'>strwidth</a></span><span class='op'>(</span><span class='va'>txt</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/graphics/text.html'>text</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='va'>txt</span>, cex <span class='op'>=</span> <span class='va'>cex.cor</span> <span class='op'>*</span> <span class='va'>r</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span><span class='op'>(</span><span class='fu'><a href='https://here.r-lib.org//reference/here.html'>here</a></span><span class='op'>(</span><span class='st'>"output"</span>, <span class='st'>"figures"</span><span class='op'>)</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/grDevices/pdf.html'>pdf</a></span><span class='op'>(</span><span class='fu'><a href='https://here.r-lib.org//reference/here.html'>here</a></span><span class='op'>(</span><span class='st'>"output"</span>, <span class='st'>"figures"</span>, <span class='st'>"logCPM_pairs_plot.UMIs.pdf"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>l</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>x_v</span><span class='op'>$</span><span class='va'>targets</span><span class='op'>$</span><span class='va'>genotype.mouse</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>j</span> <span class='op'>&lt;-</span> <span class='va'>x_v</span><span class='op'>$</span><span class='va'>targets</span><span class='op'>$</span><span class='va'>genotype.mouse</span> <span class='op'>==</span> <span class='va'>l</span>
+  <span class='va'>E</span> <span class='op'>&lt;-</span> <span class='va'>x_v</span><span class='op'>$</span><span class='va'>E</span><span class='op'>[</span>, <span class='va'>j</span><span class='op'>]</span>
+  <span class='fu'><a href='https://rdrr.io/r/graphics/pairs.html'>pairs</a></span><span class='op'>(</span><span class='va'>E</span>, upper.panel <span class='op'>=</span> <span class='va'>panel.cor</span>, main <span class='op'>=</span> <span class='va'>l</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'><a href='https://rdrr.io/r/grDevices/dev.html'>dev.off</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>png 
+  2 </code></pre>
+</div>
 <h1 id="analysis-of-aggregated-technical-replicates">Analysis of aggregated technical replicates</h1>
 <h2 id="mds-1">MDS</h2>
 <div class="layout-chunk" data-layout="l-body">
@@ -3006,14 +3041,17 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-23"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-23-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-24"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-24-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
 <p class="caption">
 Figure 9: MDS plots coloured by various experimental factors.
 </p>
 </div>
 </div>
 <h2 id="de-analysis-1">DE analysis</h2>
+<ul>
+<li>Fit a model with a term for <code>smchd1_genotype_updated</code> and <code>sex</code>.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -3038,8 +3076,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-24"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-24-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-25"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-25-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
 <p class="caption">
 Figure 10: Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the <code>voomLmFit()</code> function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using <code>plotSA()</code> which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (<code>voomLmFit()</code> makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.
 </p>
@@ -3059,8 +3097,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-25"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-25-1.png" alt="Sample quality weights." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-26"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-26-1.png" alt="Sample quality weights." width="624" />
 <p class="caption">
 Figure 11: Sample quality weights.
 </p>
@@ -3082,8 +3120,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-26"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-26-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-27"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-27-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
 <p class="caption">
 Figure 12: Comparison of sample weights from individual technical replicates and from aggregated technical replicates.
 </p>
@@ -3102,7 +3140,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-27">Table 3: </span>Number of DEGs (FDR &lt; 0.05)</caption>
+<caption><span id="tab:unnamed-chunk-28">Table 3: </span>Number of DEGs (FDR &lt; 0.05)</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3136,8 +3174,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-28"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-28-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-29"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-29-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
 <p class="caption">
 Figure 13: MD plot highlighting DEGs (red).
 </p>
@@ -3258,7 +3296,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-33">Table 4: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
+<caption><span id="tab:unnamed-chunk-34">Table 4: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3345,8 +3383,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-34"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-34-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-35"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-35-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
 <p class="caption">
 Figure 14: MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed.
 </p>
@@ -3422,14 +3460,17 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-35"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-35-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-36"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-36-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
 <p class="caption">
 Figure 15: MDS plots coloured by various experimental factors.
 </p>
 </div>
 </div>
 <h2 id="de-analysis-2">DE analysis</h2>
+<ul>
+<li>Fit a model with a term for <code>smchd1_genotype_updated</code>.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -3454,8 +3495,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-36"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-36-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-37"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-37-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
 <p class="caption">
 Figure 16: Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the <code>voomLmFit()</code> function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using <code>plotSA()</code> which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (<code>voomLmFit()</code> makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.
 </p>
@@ -3475,8 +3516,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-37"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-37-1.png" alt="Sample quality weights." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-38"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-38-1.png" alt="Sample quality weights." width="624" />
 <p class="caption">
 Figure 17: Sample quality weights.
 </p>
@@ -3498,8 +3539,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-38"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-38-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-39"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-39-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
 <p class="caption">
 Figure 18: Comparison of sample weights from individual technical replicates and from aggregated technical replicates.
 </p>
@@ -3518,7 +3559,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-39">Table 5: </span>Number of DEGs (FDR &lt; 0.05)</caption>
+<caption><span id="tab:unnamed-chunk-40">Table 5: </span>Number of DEGs (FDR &lt; 0.05)</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3552,8 +3593,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-40"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-40-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-41"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-41-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
 <p class="caption">
 Figure 19: MD plot highlighting DEGs (red).
 </p>
@@ -3674,7 +3715,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-45">Table 6: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselym, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
+<caption><span id="tab:unnamed-chunk-46">Table 6: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselym, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3761,8 +3802,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-46"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-46-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-47"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-47-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
 <p class="caption">
 Figure 20: MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed.
 </p>
@@ -3838,14 +3879,17 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-47"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-47-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-48"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-48-1.png" alt="MDS plots coloured by various experimental factors." width="624" />
 <p class="caption">
 Figure 21: MDS plots coloured by various experimental factors.
 </p>
 </div>
 </div>
 <h2 id="de-analysis-3">DE analysis</h2>
+<ul>
+<li>Fit a model with a term for <code>smchd1_genotype_updated</code>.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -3872,8 +3916,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-48"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-48-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-49"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-49-1.png" alt="Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the `voomLmFit()` function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using `plotSA()` which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (`voomLmFit()` makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red." width="624" />
 <p class="caption">
 Figure 22: Means (x-axis) and variances (y-axis) of each gene are plotted to show the dependence between the two before voom is applied to the data (left panel) and how the trend is removed after voom precision weights are applied to the data (right panel). The plot on the left is created within the <code>voomLmFit()</code> function which extracts residual variances from fitting linear models to log-CPM transformed data. Variances are then rescaled to quarter-root variances (or square-root of standard deviations) and plotted against the average log2 count for each gene. The plot on the right is created using <code>plotSA()</code> which plots log2 residual standard deviations against mean log-CPM values. In both plots, each black dot represents a gene. On the left plot, the red curvse show the estimated mean-variance trend used to compute the voom weights (<code>voomLmFit()</code> makes a first estimate and refines it for the final estimate). On the right plot, the average log2 residual standard deviation estimated by the empirical Bayes algorithm is marked by a horizontal blue line and outlier variances are highlighted in red.
 </p>
@@ -3893,8 +3937,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-49"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-49-1.png" alt="Sample quality weights." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-50"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-50-1.png" alt="Sample quality weights." width="624" />
 <p class="caption">
 Figure 23: Sample quality weights.
 </p>
@@ -3916,8 +3960,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-50"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-50-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-51"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-51-1.png" alt="Comparison of sample weights from individual technical replicates and from aggregated technical replicates." width="624" />
 <p class="caption">
 Figure 24: Comparison of sample weights from individual technical replicates and from aggregated technical replicates.
 </p>
@@ -3936,7 +3980,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-51">Table 7: </span>Number of DEGs (FDR &lt; 0.05)</caption>
+<caption><span id="tab:unnamed-chunk-52">Table 7: </span>Number of DEGs (FDR &lt; 0.05)</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3970,8 +4014,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-52"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-52-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-53"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-53-1.png" alt="MD plot highlighting DEGs (red)." width="624" />
 <p class="caption">
 Figure 25: MD plot highlighting DEGs (red).
 </p>
@@ -4092,7 +4136,7 @@ Show code
 </div>
 </details>
 <table>
-<caption><span id="tab:unnamed-chunk-57">Table 8: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselyf, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
+<caption><span id="tab:unnamed-chunk-58">Table 8: </span>Results of applying <code>fry()</code> to the scRNA-seq differential expression results using the supplied gene sets. A significant ‘Up’ P-value means that the differential expression results found in the scRNA-seq data are positively correlated with the expression signature from the corresponding gene set. Converselyf, a significant ‘Down’ P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant ‘Mixed’ P-value means that the genes in the set tend to be differentially expressed without regard for direction.</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -4179,8 +4223,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<div class="figure"><span id="fig:unnamed-chunk-58"></span>
-<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-58-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
+<div class="figure"><span id="fig:unnamed-chunk-59"></span>
+<img src="C086_Kinkel.multi-sample_comparisons.UMIs_files/figure-html5/unnamed-chunk-59-1.png" alt="MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed." width="624" />
 <p class="caption">
 Figure 26: MD-plot and barcode plot of DEGs in supplied gene sets. For each set, an enrichment line that shows the relative enrichment of the vertical bars in each part of the plot is displayed.
 </p>
@@ -4211,7 +4255,7 @@ Show code
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       Australia/Melbourne         
- date     2021-04-13                  
+ date     2021-04-14                  
 
 ─ Packages ─────────────────────────────────────────────────────────
  ! package              * version  date       lib source        
@@ -4314,13 +4358,13 @@ Show code
  P zlibbioc               1.36.0   2020-10-27 [?] Bioconductor  
 
 [1] /stornext/Projects/score/Analyses/C086_Kinkel/renv/library/R-4.0/x86_64-pc-linux-gnu
-[2] /tmp/Rtmp0KK9kW/renv-system-library
+[2] /tmp/Rtmpy6e24H/renv-system-library
 [3] /stornext/System/data/apps/R/R-4.0.3/lib64/R/library
 
  P ── Loaded and on-disk path mismatch.</code></pre>
 </div>
 </details>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-bolstad2003comparison" class="csl-entry" role="doc-biblioentry">
 Bolstad, Benjamin M, Rafael A Irizarry, Magnus Åstrand, and Terence P. Speed. 2003. <span>“A Comparison of Normalization Methods for High Density Oligonucleotide Array Data Based on Variance and Bias.”</span> <em>Bioinformatics</em> 19 (2): 185–93.
