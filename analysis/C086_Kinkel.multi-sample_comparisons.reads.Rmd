@@ -12,7 +12,6 @@ editor_options:
 bibliography: ref.bib
 ---
 
-
 # Summary
 
 - This report analyses the read counts
@@ -80,25 +79,25 @@ yf <- y[, y$samples$sex == "F"]
 - For each analysis, shown are the number of genes that have sufficient counts to test for DE (`TRUE`) or not (`FALSE`).
 
 ```{r}
-x_keep_exprs <- filterByExpr(x, group = x$samples$group)
+x_keep_exprs <- filterByExpr(x, group = x$samples$group, min.count = 5)
 x <- x[x_keep_exprs, , keep.lib.sizes = FALSE]
 table(x_keep_exprs)
 ```
 
 ```{r}
-y_keep_exprs <- filterByExpr(y, group = ym$samples$group)
+y_keep_exprs <- filterByExpr(y, group = ym$samples$group, min.count = 5)
 y <- y[y_keep_exprs, , keep.lib.sizes = FALSE]
 table(y_keep_exprs)
 ```
 
 ```{r}
-ym_keep_exprs <- filterByExpr(ym, group = ym$samples$group)
+ym_keep_exprs <- filterByExpr(ym, group = ym$samples$group, min.count = 5)
 ym <- ym[ym_keep_exprs, , keep.lib.sizes = FALSE]
 table(ym_keep_exprs)
 ```
 
 ```{r}
-yf_keep_exprs <- filterByExpr(yf, group = yf$samples$group)
+yf_keep_exprs <- filterByExpr(yf, group = yf$samples$group, min.count = 5)
 yf <- yf[yf_keep_exprs, , keep.lib.sizes = FALSE]
 table(yf_keep_exprs)
 ```
@@ -170,9 +169,8 @@ plotSA(x_fit, main = "Mean-variance trend")
   - Imprinted genes, especially the Prader-Willi cluster (*Ndn*, *Mkrn3*, *Peg12*)
   - DEGs from a "previous RNA-seq experiment on male and female Smchd1-het and -del B cells from aged mice (>12 months old). [Sarah] used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate". These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs_gene_lists).
   
-**TODO** General imprinted gene list?
-
 ```{r}
+# TODO: Is there a more general list of imprinted genes?
 male_het_vs_del <- readxl::read_excel(
   here("data", "sarahs_gene_lists", "MaleHetvDel_EdgeR.xlsx"))
 female_het_vs_del <- readxl::read_excel(
@@ -1117,12 +1115,6 @@ for (n in names(yf_index)) {
     labels = c("Down in Del", "Up in Del"))
 }
 ```
-
-# TODOs
-
-- [x] Add CSV
-- [x] Add Glimma
-- [ ] Vary `filterByExpr()` arguments.
 
 # Session info {.appendix}
 

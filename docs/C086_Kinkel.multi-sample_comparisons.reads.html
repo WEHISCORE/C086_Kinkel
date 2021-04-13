@@ -2039,6 +2039,15 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   <!--/radix_placeholder_distill-->
   <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+  <script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+  <script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+  <script src="site_libs/datatables-binding-0.17/datatables.js"></script>
+  <link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+  <link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+  <script src="site_libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+  <link href="site_libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+  <script src="site_libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2256,7 +2265,7 @@ Show code
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>x_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>x</span>, group <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>x_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>x</span>, group <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>, min.count <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>x</span><span class='op'>[</span><span class='va'>x_keep_exprs</span>, , keep.lib.sizes <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>x_keep_exprs</span><span class='op'>)</span>
 </code></pre>
@@ -2264,7 +2273,7 @@ Show code
 </details>
 <pre><code>x_keep_exprs
 FALSE  TRUE 
-10124 15462 </code></pre>
+ 9127 16459 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2272,7 +2281,7 @@ FALSE  TRUE
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>y_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>y</span>, group <span class='op'>=</span> <span class='va'>ym</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>y_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>y</span>, group <span class='op'>=</span> <span class='va'>ym</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>, min.count <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='va'>y_keep_exprs</span>, , keep.lib.sizes <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>y_keep_exprs</span><span class='op'>)</span>
 </code></pre>
@@ -2280,7 +2289,7 @@ Show code
 </details>
 <pre><code>y_keep_exprs
 FALSE  TRUE 
- 6634 18952 </code></pre>
+ 5898 19688 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2288,7 +2297,7 @@ FALSE  TRUE
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ym_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>ym</span>, group <span class='op'>=</span> <span class='va'>ym</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ym_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>ym</span>, group <span class='op'>=</span> <span class='va'>ym</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>, min.count <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>ym</span> <span class='op'>&lt;-</span> <span class='va'>ym</span><span class='op'>[</span><span class='va'>ym_keep_exprs</span>, , keep.lib.sizes <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>ym_keep_exprs</span><span class='op'>)</span>
 </code></pre>
@@ -2296,7 +2305,7 @@ Show code
 </details>
 <pre><code>ym_keep_exprs
 FALSE  TRUE 
- 8338 17248 </code></pre>
+ 7713 17873 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2304,7 +2313,7 @@ FALSE  TRUE
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>yf_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>yf</span>, group <span class='op'>=</span> <span class='va'>yf</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>yf_keep_exprs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/filterByExpr.html'>filterByExpr</a></span><span class='op'>(</span><span class='va'>yf</span>, group <span class='op'>=</span> <span class='va'>yf</span><span class='op'>$</span><span class='va'>samples</span><span class='op'>$</span><span class='va'>group</span>, min.count <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>yf</span> <span class='op'>&lt;-</span> <span class='va'>yf</span><span class='op'>[</span><span class='va'>yf_keep_exprs</span>, , keep.lib.sizes <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>yf_keep_exprs</span><span class='op'>)</span>
 </code></pre>
@@ -2312,7 +2321,7 @@ Show code
 </details>
 <pre><code>yf_keep_exprs
 FALSE  TRUE 
-10977 14609 </code></pre>
+10180 15406 </code></pre>
 </div>
 <h2 id="normalization">Normalization</h2>
 <ul>
@@ -2626,7 +2635,7 @@ Figure 5: Means (x-axis) and variances (y-axis) of each gene are plotted to show
 </div>
 </div>
 <ul>
-<li>The consensus correlation between technical replicates, as estimated by <code>limma::duplicateCorrelation()</code>, is very close to zero (<code>x_fit$correlation</code> = 0.019). This is surprising and I don’t yet understand why it happens.</li>
+<li>The consensus correlation between technical replicates, as estimated by <code>limma::duplicateCorrelation()</code>, is very close to zero (<code>x_fit$correlation</code> = 0.016). This is surprising and I don’t yet understand why it happens.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2680,11 +2689,11 @@ Show code
 </tr>
 <tr class="even">
 <td style="text-align: left;">NotSig</td>
-<td style="text-align: right;">15462</td>
+<td style="text-align: right;">16458</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 </tr>
 </tbody>
 </table>
@@ -2753,6 +2762,8 @@ Show code
 </code></pre>
 </div>
 </details>
+<div id="htmlwidget-84e28de7eac669268fb6" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-84e28de7eac669268fb6">{"x":{"filter":"none","caption":"<caption>DEGs (FDR &lt; 0.05)<\/caption>","data":[["Gm10925"],[0.355791066826006],[13.5659065523734],[6.73954293452564],[1.50056629578705e-07],[0.0024697820662359],[2.99576518271893]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>logFC<\/th>\n      <th>AveExpr<\/th>\n      <th>t<\/th>\n      <th>P.Value<\/th>\n      <th>adj.P.Val<\/th>\n      <th>B<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"targets":1,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatSignif(data, 3, 3, \",\", \".\");\n  }"},{"className":"dt-right","targets":[1,2,3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render","options.columnDefs.4.render","options.columnDefs.5.render"],"jsHooks":[]}</script>
 </div>
 <ul>
 <li>CSV file of results available from <a href="../output/DEGs/reads/individual_tech_reps.DEGs.csv.gz"><code>output/DEGs/reads/individual_tech_reps.DEGs.csv.gz</code></a>.</li>
@@ -2847,48 +2858,48 @@ Show code
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">X-linked</td>
-<td style="text-align: right;">557</td>
+<td style="text-align: right;">604</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.0000887</td>
-<td style="text-align: right;">0.0004435</td>
-<td style="text-align: right;">0.0000085</td>
-<td style="text-align: right;">0.0000427</td>
+<td style="text-align: right;">0.0000997</td>
+<td style="text-align: right;">0.0004985</td>
+<td style="text-align: right;">0.0000016</td>
+<td style="text-align: right;">0.0000081</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Prader-Willi</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: left;">Protocadherin</td>
+<td style="text-align: right;">13</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.1677151</td>
-<td style="text-align: right;">0.3633689</td>
-<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.1474601</td>
+<td style="text-align: right;">0.3204757</td>
+<td style="text-align: right;">0.9401285</td>
 <td style="text-align: right;">1.0000000</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Protocadherin</td>
-<td style="text-align: right;">10</td>
+<td style="text-align: left;">Prader-Willi</td>
+<td style="text-align: right;">3</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.2180213</td>
-<td style="text-align: right;">0.3633689</td>
-<td style="text-align: right;">0.9865946</td>
+<td style="text-align: right;">0.1922854</td>
+<td style="text-align: right;">0.3204757</td>
+<td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">1.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male: Het vs. Del</td>
 <td style="text-align: right;">21</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.3525845</td>
-<td style="text-align: right;">0.4407306</td>
-<td style="text-align: right;">0.0047807</td>
-<td style="text-align: right;">0.0079678</td>
+<td style="text-align: right;">0.4809840</td>
+<td style="text-align: right;">0.4859216</td>
+<td style="text-align: right;">0.0059826</td>
+<td style="text-align: right;">0.0099711</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female: Het vs. Del</td>
-<td style="text-align: right;">57</td>
+<td style="text-align: right;">61</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.4428844</td>
-<td style="text-align: right;">0.4428844</td>
-<td style="text-align: right;">0.0016477</td>
-<td style="text-align: right;">0.0041193</td>
+<td style="text-align: right;">0.4859216</td>
+<td style="text-align: right;">0.4859216</td>
+<td style="text-align: right;">0.0023971</td>
+<td style="text-align: right;">0.0059928</td>
 </tr>
 </tbody>
 </table>
@@ -3106,7 +3117,7 @@ Show code
 </tr>
 <tr class="even">
 <td style="text-align: left;">NotSig</td>
-<td style="text-align: right;">18952</td>
+<td style="text-align: right;">19688</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Up</td>
@@ -3263,48 +3274,48 @@ Show code
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">X-linked</td>
-<td style="text-align: right;">698</td>
+<td style="text-align: right;">750</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.0352650</td>
-<td style="text-align: right;">0.1763248</td>
-<td style="text-align: right;">0.0388935</td>
-<td style="text-align: right;">0.0648226</td>
+<td style="text-align: right;">0.0316339</td>
+<td style="text-align: right;">0.1581696</td>
+<td style="text-align: right;">0.0267594</td>
+<td style="text-align: right;">0.0445989</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Protocadherin</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.1577728</td>
-<td style="text-align: right;">0.3852399</td>
-<td style="text-align: right;">0.1260311</td>
-<td style="text-align: right;">0.1575389</td>
+<td style="text-align: right;">0.1734161</td>
+<td style="text-align: right;">0.4075572</td>
+<td style="text-align: right;">0.1483666</td>
+<td style="text-align: right;">0.1854583</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Prader-Willi</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.2311439</td>
-<td style="text-align: right;">0.3852399</td>
-<td style="text-align: right;">0.5563607</td>
-<td style="text-align: right;">0.5563607</td>
+<td style="text-align: right;">0.2445343</td>
+<td style="text-align: right;">0.4075572</td>
+<td style="text-align: right;">0.5576974</td>
+<td style="text-align: right;">0.5576974</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Male: Het vs. Del</td>
 <td style="text-align: right;">24</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.6149662</td>
-<td style="text-align: right;">0.6991198</td>
+<td style="text-align: right;">0.6781416</td>
+<td style="text-align: right;">0.7428825</td>
 <td style="text-align: right;">0.0000000</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Female: Het vs. Del</td>
-<td style="text-align: right;">74</td>
+<td style="text-align: right;">75</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.6991198</td>
-<td style="text-align: right;">0.6991198</td>
-<td style="text-align: right;">0.0049647</td>
-<td style="text-align: right;">0.0124117</td>
+<td style="text-align: right;">0.7428825</td>
+<td style="text-align: right;">0.7428825</td>
+<td style="text-align: right;">0.0070239</td>
+<td style="text-align: right;">0.0175597</td>
 </tr>
 </tbody>
 </table>
@@ -3522,7 +3533,7 @@ Show code
 </tr>
 <tr class="even">
 <td style="text-align: left;">NotSig</td>
-<td style="text-align: right;">17248</td>
+<td style="text-align: right;">17873</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Up</td>
@@ -3681,46 +3692,46 @@ Show code
 <td style="text-align: left;">Female: Het vs. Del</td>
 <td style="text-align: right;">64</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.1236522</td>
-<td style="text-align: right;">0.4819015</td>
-<td style="text-align: right;">0.0000026</td>
-<td style="text-align: right;">0.0000128</td>
+<td style="text-align: right;">0.1445601</td>
+<td style="text-align: right;">0.5492921</td>
+<td style="text-align: right;">0.0000241</td>
+<td style="text-align: right;">0.0001205</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">X-linked</td>
-<td style="text-align: right;">635</td>
-<td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.2398517</td>
-<td style="text-align: right;">0.4819015</td>
-<td style="text-align: right;">0.3197475</td>
-<td style="text-align: right;">0.3996843</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Male: Het vs. Del</td>
 <td style="text-align: right;">22</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.2891409</td>
-<td style="text-align: right;">0.4819015</td>
-<td style="text-align: right;">0.0001923</td>
-<td style="text-align: right;">0.0004806</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Protocadherin</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.4367730</td>
-<td style="text-align: right;">0.4876137</td>
-<td style="text-align: right;">0.0106367</td>
-<td style="text-align: right;">0.0177279</td>
+<td style="text-align: right;">0.2650311</td>
+<td style="text-align: right;">0.5492921</td>
+<td style="text-align: right;">0.0003365</td>
+<td style="text-align: right;">0.0008412</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Prader-Willi</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.4876137</td>
-<td style="text-align: right;">0.4876137</td>
-<td style="text-align: right;">0.4408770</td>
-<td style="text-align: right;">0.4408770</td>
+<td style="text-align: right;">0.4231666</td>
+<td style="text-align: right;">0.5492921</td>
+<td style="text-align: right;">0.1704605</td>
+<td style="text-align: right;">0.1850738</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X-linked</td>
+<td style="text-align: right;">673</td>
+<td style="text-align: left;">Up</td>
+<td style="text-align: right;">0.4394337</td>
+<td style="text-align: right;">0.5492921</td>
+<td style="text-align: right;">0.1850738</td>
+<td style="text-align: right;">0.1850738</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Protocadherin</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">Up</td>
+<td style="text-align: right;">0.6172227</td>
+<td style="text-align: right;">0.6172227</td>
+<td style="text-align: right;">0.0108135</td>
+<td style="text-align: right;">0.0180225</td>
 </tr>
 </tbody>
 </table>
@@ -3940,7 +3951,7 @@ Show code
 </tr>
 <tr class="even">
 <td style="text-align: left;">NotSig</td>
-<td style="text-align: right;">14609</td>
+<td style="text-align: right;">15406</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Up</td>
@@ -4097,48 +4108,48 @@ Show code
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">X-linked</td>
-<td style="text-align: right;">544</td>
+<td style="text-align: right;">581</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.0104444</td>
-<td style="text-align: right;">0.0522222</td>
-<td style="text-align: right;">0.0060953</td>
-<td style="text-align: right;">0.0304765</td>
+<td style="text-align: right;">0.0096638</td>
+<td style="text-align: right;">0.0483192</td>
+<td style="text-align: right;">0.0037688</td>
+<td style="text-align: right;">0.0188441</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Female: Het vs. Del</td>
-<td style="text-align: right;">41</td>
+<td style="text-align: right;">43</td>
 <td style="text-align: left;">Down</td>
-<td style="text-align: right;">0.2393765</td>
-<td style="text-align: right;">0.5984412</td>
-<td style="text-align: right;">0.0448212</td>
-<td style="text-align: right;">0.1054423</td>
+<td style="text-align: right;">0.1072166</td>
+<td style="text-align: right;">0.2680415</td>
+<td style="text-align: right;">0.0353239</td>
+<td style="text-align: right;">0.0883097</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Protocadherin</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.3789034</td>
-<td style="text-align: right;">0.6315057</td>
-<td style="text-align: right;">0.3102385</td>
-<td style="text-align: right;">0.3877981</td>
+<td style="text-align: right;">0.3434894</td>
+<td style="text-align: right;">0.5724823</td>
+<td style="text-align: right;">0.3835713</td>
+<td style="text-align: right;">0.4794642</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Prader-Willi</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">Up</td>
-<td style="text-align: right;">0.5456317</td>
-<td style="text-align: right;">0.6820396</td>
-<td style="text-align: right;">0.9396770</td>
-<td style="text-align: right;">0.9396770</td>
+<td style="text-align: right;">0.5818187</td>
+<td style="text-align: right;">0.7272734</td>
+<td style="text-align: right;">0.9412866</td>
+<td style="text-align: right;">0.9412866</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Male: Het vs. Del</td>
-<td style="text-align: right;">15</td>
+<td style="text-align: right;">17</td>
 <td style="text-align: left;">Down</td>
-<td style="text-align: right;">0.8039481</td>
-<td style="text-align: right;">0.8039481</td>
-<td style="text-align: right;">0.0632654</td>
-<td style="text-align: right;">0.1054423</td>
+<td style="text-align: right;">0.8407315</td>
+<td style="text-align: right;">0.8407315</td>
+<td style="text-align: right;">0.0931029</td>
+<td style="text-align: right;">0.1551714</td>
 </tr>
 </tbody>
 </table>
@@ -4232,6 +4243,7 @@ Show code
  P colorspace             2.0-0    2020-11-11 [?] CRAN (R 4.0.3)
  P cowplot              * 1.1.1    2020-12-30 [?] CRAN (R 4.0.3)
  P crayon                 1.4.1    2021-02-08 [?] CRAN (R 4.0.3)
+ P crosstalk              1.1.1    2021-01-12 [?] CRAN (R 4.0.3)
  P DBI                    1.1.1    2021-01-15 [?] CRAN (R 4.0.3)
  P DelayedArray           0.16.1   2021-01-22 [?] Bioconductor  
  P DESeq2                 1.30.1   2021-02-19 [?] Bioconductor  
@@ -4239,6 +4251,7 @@ Show code
  P distill                1.2      2021-01-13 [?] CRAN (R 4.0.3)
  P downlit                0.2.1    2020-11-04 [?] CRAN (R 4.0.3)
  P dplyr                  1.0.4    2021-02-02 [?] CRAN (R 4.0.3)
+ P DT                     0.17     2021-01-06 [?] CRAN (R 4.0.3)
  P edgeR                * 3.32.1   2021-01-14 [?] Bioconductor  
  P ellipsis               0.3.1    2020-05-15 [?] CRAN (R 4.0.0)
  P evaluate               0.14     2019-05-28 [?] CRAN (R 4.0.0)
