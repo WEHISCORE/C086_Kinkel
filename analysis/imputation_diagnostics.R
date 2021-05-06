@@ -33,25 +33,41 @@ mouse_number_colours <- setNames(
   unique(sce$mouse_number_colours),
   unique(names(sce$mouse_number_colours)))
 
+# TODO: Feel like there's a more efficient way do this (perhaps matrix algebra
+#       or statmod::vecmat()/statmod::matvec()).
 deterministicImputation <- function(sce, exprs_values) {
-  mat <- assay(sce, exprs_values)
-  pi <- rowSums(mat) / sum(mat)
-  nonzero_idx <- which(mat > 0)
-  imputed <- as.matrix(pi) %*%
-    matrix(colSums(mat), ncol = ncol(mat), dimnames = list(NULL, colnames(mat)))
-  imputed[nonzero_idx] <- mat[nonzero_idx]
-  assay(sce, paste0("imputed_", exprs_values)) <- imputed
+  y <- assay(sce, exprs_values)
+  I <- y > 0
+  # NOTE: Equivalent to rowSums(y * I)
+  num <- rowSums(y)
+  N <- matrix(
+    colSums(y),
+    nrow = nrow(y),
+    ncol = ncol(y),
+    byrow = TRUE,
+    dimnames = dimnames(y))
+  denom <- rowSums(N * I)
+  pi_nonzero <- matrix(
+    num / denom,
+    ncol = nrow(y),
+    dimnames = list(NULL, rownames(y)))
+  # TODO: Don't know why I need `[,]`.
+  y_imp <- pi_nonzero[, ] * N[, ]
+  y2 <- y_imp
+  y2[which(I > 0)] <- y[which(I > 0)]
+  assay(sce, paste0("imputed_", exprs_values)) <- y2
   sce
 }
 
 diagnosticPlots <- function(sce, exprs_values) {
 
   # Prepare data
+  y <- assay(sce, exprs_values)
+  y <- y[rowSums(y, na.rm = TRUE) > 0, ]
   dgel <- DGEList(
-    counts = as.matrix(assay(sce, exprs_values)),
+    counts = y,
     samples = colData(sce),
-    group = factor(sce$smchd1_genotype_updated),
-    genes = flattenDF(rowData(sce)))
+    group = factor(sce$smchd1_genotype_updated))
   dgel <- dgel[rowSums(dgel$counts) > 0, ]
   keep_exprs <- filterByExpr(
     dgel,
@@ -80,7 +96,8 @@ diagnosticPlots <- function(sce, exprs_values) {
     dgel$counts,
     outline = FALSE,
     col = dgel$samples$smchd1_genotype_updated_colours,
-    las = 2)
+    las = 2,
+    main = exprs_values)
   legend(
     "bottomright",
     fill = unique(dgel$samples$smchd1_genotype_updated_colours),
