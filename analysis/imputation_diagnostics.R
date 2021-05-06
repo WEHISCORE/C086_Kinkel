@@ -8,6 +8,7 @@ library(here)
 library(SingleCellExperiment)
 library(pheatmap)
 library(edgeR)
+library(RUVSeq)
 
 source(here("code/helper_functions.R"))
 
@@ -58,9 +59,6 @@ diagnosticPlots <- function(sce, exprs_values) {
     min.count = 5)
   dgel <- dgel[keep_exprs, , keep.lib.sizes = FALSE]
   dgel <- calcNormFactors(dgel)
-  lcpm <- cpm(dgel, log = TRUE)
-  median_lcpm <- rowMedians(lcpm)
-  rle <- lcpm - median_lcpm
   # TODO: With or without mouse_number?
   design <- model.matrix(~0 + smchd1_genotype_updated + sex, dgel$samples)
   dgel <- estimateDisp(dgel, design)
@@ -73,17 +71,16 @@ diagnosticPlots <- function(sce, exprs_values) {
 
   # Plot
   par(mfrow = c(2, 2))
-  plotMDS(
-    dgel,
+  plotPCA(
+    cpm(dgel$counts),
+    isLog = FALSE,
     col = dgel$samples$smchd1_genotype_updated_colours,
     main = exprs_values)
-  boxplot(
-    rle,
-    col = dgel$samples$smchd1_genotype_updated_colours,
-    las = 2,
+  plotRLE(
+    dgel$counts,
     outline = FALSE,
-    main = exprs_values)
-  abline(h = 0, lty = 2, col = "red")
+    col = dgel$samples$smchd1_genotype_updated_colours,
+    las = 2)
   legend(
     "bottomright",
     fill = unique(dgel$samples$smchd1_genotype_updated_colours),
