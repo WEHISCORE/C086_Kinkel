@@ -87,6 +87,7 @@ diagnosticPlots <- function(sce, exprs_values) {
 
   # Plot
   par(mfrow = c(2, 2))
+  # TODO: In calls to plotPCA(), should counts be (log)cpm-ed?
   plotPCA(
     cpm(dgel$counts),
     isLog = FALSE,
