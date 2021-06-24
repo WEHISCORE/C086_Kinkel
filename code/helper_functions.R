@@ -127,3 +127,88 @@ flattenDF <- function(x, sep = "; ") {
     row.names = rownames(x))
 }
 
+filterCountMatrix <- function(sce, exprs_values, min.count, method) {
+  y <- assay(sce, exprs_values)
+
+  if (method == "standard") {
+    keep <- filterByExpr(
+      y,
+      group = sce$smchd1_genotype_updated,
+      min.count = min.count)
+  } else if (method == "careful") {
+    keeps <- lapply(levels(sce$smchd1_genotype_updated), function(j) {
+      rowSums(
+        y[, sce$smchd1_genotype_updated == j, drop = FALSE] >= min.count) >=
+        sum(sce$smchd1_genotype_updated == j)
+    })
+    keep <- Reduce("|", keeps)
+  } else {
+    stop("Unknown method")
+  }
+  sce[keep, ]
+}
+
+deterministicImputation <- function(sce, exprs_values, method) {
+  y <- assay(sce, exprs_values)
+
+  # NOTE: Feel like there's a more efficient way do this (perhaps matrix algebra
+  #       or statmod::vecmat()/statmod::matvec()). In any case, still much more
+  #       efficient than Luke's implementation that explicitly loops over rows
+  #       of the matrix.
+  if (method == "all") {
+    # NOTE: This treats all samples as coming from a single biological group.
+    num <- rowSums(y)
+    N <- matrix(
+      colSums(y),
+      nrow = nrow(y),
+      ncol = ncol(y),
+      byrow = TRUE,
+      dimnames = dimnames(y))
+    I <- y > 0
+    denom <- rowSums(N * I)
+    pi_nonzero <- matrix(
+      num / denom,
+      ncol = nrow(y),
+      dimnames = list(NULL, rownames(y)))
+    # NOTE: Don't know why I need `[,]` but I do.
+    y_imp <- pi_nonzero[, ] * N[, ]
+    y2 <- y_imp
+    y2[which(I > 0)] <- y[which(I > 0)]
+  } else if (method == "group-specific") {
+    # NOTE: Adapted from Luke's code.
+    # NOTE: This imputes samples in each biological group separately.
+    # NOTE: This could be further sped up by pre-allocating a matrix, `y2`,
+    #       and filling it directly.
+    y2s <- lapply(levels(sce$smchd1_genotype_updated), function(j) {
+      y <- y[, sce$smchd1_genotype_updated == j]
+      num <- rowSums(y)
+      N <- matrix(
+        colSums(y),
+        nrow = nrow(y),
+        ncol = ncol(y),
+        byrow = TRUE,
+        dimnames = dimnames(y))
+      I <- y > 0
+      denom <- rowSums(N * I)
+      # NOTE: If all samples have zero counts for a particular gene then that
+      #       value of denom will be 0. To avoid 0 / 0 (i.e. NaN) values in
+      #       pi_nonzero we replace these by an arbitrary value.
+      denom[denom == 0] <- 1L
+      pi_nonzero <- matrix(
+        num / denom,
+        ncol = nrow(y),
+        dimnames = list(NULL, rownames(y)))
+      # NOTE: Don't know why I need `[,]` but I do.
+      y_imp <- pi_nonzero[, ] * N[, ]
+      y2 <- y_imp
+      y2[which(I > 0)] <- y[which(I > 0)]
+      y2
+    })
+    y2 <- do.call(cbind, y2s)
+    y2 <- y2[, colnames(y)]
+  } else {
+    stop("Unknown 'method'")
+  }
+  assay(sce, paste0("imputed_", exprs_values)) <- y2
+  sce
+}

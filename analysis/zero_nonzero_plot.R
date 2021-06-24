@@ -12,6 +12,9 @@ library(edgeR)
 sce <- readRDS(here("data", "SCEs", "C086_Kinkel.preprocessed.SCE.rds"))
 sce <- sce[, order(sce$smchd1_genotype_updated, sce$sex, sce$mouse_number)]
 
+# NOTE: Filter to only retain protein coding genes.
+sce <- sce[any(grepl("protein_coding", rowData(sce)$ENSEMBL.GENEBIOTYPE)), ]
+
 sce_aggr <- scuttle::aggregateAcrossCells(
   sce,
   ids = colData(sce)[, c("genotype.mouse")],

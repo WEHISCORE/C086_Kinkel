@@ -1,6 +1,6 @@
 # Deterministic imputation of count matrix with diagnostic plots.
 # Peter Hickey
-# 2021-05-06
+# 2021-06-24
 
 # Setup ------------------------------------------------------------------------
 
@@ -14,6 +14,9 @@ source(here("code/helper_functions.R"))
 
 sce <- readRDS(here("data", "SCEs", "C086_Kinkel.preprocessed.SCE.rds"))
 sce <- sce[, order(sce$smchd1_genotype_updated, sce$sex, sce$mouse_number)]
+
+# NOTE: Filter to only retain protein coding genes.
+sce <- sce[any(grepl("protein_coding", rowData(sce)$ENSEMBL.GENEBIOTYPE)), ]
 
 sce_aggr <- scuttle::aggregateAcrossCells(
   sce,
@@ -33,68 +36,37 @@ mouse_number_colours <- setNames(
   unique(sce$mouse_number_colours),
   unique(names(sce$mouse_number_colours)))
 
-# TODO: Feel like there's a more efficient way do this (perhaps matrix algebra
-#       or statmod::vecmat()/statmod::matvec()).
-deterministicImputation <- function(sce, exprs_values) {
-  y <- assay(sce, exprs_values)
-  I <- y > 0
-  # NOTE: Equivalent to rowSums(y * I)
-  num <- rowSums(y)
-  N <- matrix(
-    colSums(y),
-    nrow = nrow(y),
-    ncol = ncol(y),
-    byrow = TRUE,
-    dimnames = dimnames(y))
-  denom <- rowSums(N * I)
-  pi_nonzero <- matrix(
-    num / denom,
-    ncol = nrow(y),
-    dimnames = list(NULL, rownames(y)))
-  # TODO: Don't know why I need `[,]`.
-  y_imp <- pi_nonzero[, ] * N[, ]
-  y2 <- y_imp
-  y2[which(I > 0)] <- y[which(I > 0)]
-  assay(sce, paste0("imputed_", exprs_values)) <- y2
-  sce
-}
+# Output directory
+dir.create(here("output/figures/for_Terry"), recursive = TRUE)
 
+# NOTE: This function assumes that the genes have already been filtered.
 diagnosticPlots <- function(sce, exprs_values) {
 
   # Prepare data
-  y <- assay(sce, exprs_values)
-  y <- y[rowSums(y, na.rm = TRUE) > 0, ]
   dgel <- DGEList(
-    counts = y,
+    counts = assay(sce, exprs_values),
     samples = colData(sce),
     group = factor(sce$smchd1_genotype_updated))
-  dgel <- dgel[rowSums(dgel$counts) > 0, ]
-  keep_exprs <- filterByExpr(
-    dgel,
-    group = dgel$samples$smchd1_genotype_updated,
-    min.count = 5)
-  dgel <- dgel[keep_exprs, , keep.lib.sizes = FALSE]
-  dgel <- calcNormFactors(dgel)
-  # TODO: With or without mouse_number?
+
+  # DE analysis
+  dgel <- calcNormFactors(dgel, method = "upperquartile")
   design <- model.matrix(~0 + smchd1_genotype_updated + sex, dgel$samples)
   dgel <- estimateDisp(dgel, design)
-  dgeglm <- glmQLFit(dgel, design)
+  dgeglm <- glmFit(dgel, design)
   contrasts <- makeContrasts(
-    smchd1_genotype_updatedDel - smchd1_genotype_updatedHet,
+    smchd1_genotype_updatedHet - smchd1_genotype_updatedDel,
     levels = design)
-  dgelrt <- glmQLFTest(dgeglm, contrast = contrasts)
+  dgelrt <- glmLRT(dgeglm, contrast = contrasts)
   tt <- topTags(dgelrt, n = Inf)
 
   # Plot
   par(mfrow = c(2, 2))
-  # TODO: In calls to plotPCA(), should counts be (log)cpm-ed?
   plotPCA(
-    cpm(dgel$counts),
-    isLog = FALSE,
+    cpm(dgel),
     col = dgel$samples$smchd1_genotype_updated_colours,
     main = exprs_values)
   plotRLE(
-    dgel$counts,
+    cpm(dgel),
     outline = FALSE,
     col = dgel$samples$smchd1_genotype_updated_colours,
     las = 2,
@@ -105,29 +77,159 @@ diagnosticPlots <- function(sce, exprs_values) {
     legend = unique(dgel$samples$smchd1_genotype_updated),
     cex = 0.4)
   plotBCV(dgel, main = exprs_values)
-  hist(tt$table$FDR, breaks = 0:20 / 20, xlab = "FDR", main = exprs_values)
+  hist(tt$table$PValue, breaks = 0:20 / 20, xlab = "P", main = exprs_values)
 }
+
+# Filtering --------------------------------------------------------------------
+
+sce_reads_standard <- filterCountMatrix(
+  sce,
+  "read_counts",
+  min.count = 5,
+  method = "standard")
+sce_reads_careful <- filterCountMatrix(
+  sce,
+  "read_counts",
+  min.count = 5,
+  method = "careful")
+sce_umis_standard <- filterCountMatrix(
+  sce,
+  "UMI_counts",
+  min.count = 5,
+  method = "standard")
+sce_umis_careful <- filterCountMatrix(
+  sce,
+  "UMI_counts",
+  min.count = 5,
+  method = "careful")
 
 # Imputation -------------------------------------------------------------------
 
-sce <- deterministicImputation(sce, "read_counts")
-sce <- deterministicImputation(sce, "UMI_counts")
-sce_aggr <- deterministicImputation(sce_aggr, "read_counts")
-sce_aggr <- deterministicImputation(sce_aggr, "UMI_counts")
+sce_reads_standard_all <- deterministicImputation(
+  sce = sce_reads_standard,
+  exprs_values = "read_counts",
+  method = "all")
+sce_reads_standard_group <- deterministicImputation(
+  sce = sce_reads_standard,
+  exprs_values = "read_counts",
+  method = "group-specific")
+sce_reads_careful_all <- deterministicImputation(
+  sce = sce_reads_careful,
+  exprs_values = "read_counts",
+  method = "all")
+sce_reads_careful_group <- deterministicImputation(
+  sce = sce_reads_careful,
+  exprs_values = "read_counts",
+  method = "group-specific")
+sce_umis_standard_all <- deterministicImputation(
+  sce = sce_umis_standard,
+  exprs_values = "UMI_counts",
+  method = "all")
+sce_umis_standard_group <- deterministicImputation(
+  sce = sce_umis_standard,
+  exprs_values = "UMI_counts",
+  method = "group-specific")
+sce_umis_careful_all <- deterministicImputation(
+  sce = sce_umis_careful,
+  exprs_values = "UMI_counts",
+  method = "all")
+sce_umis_careful_group <- deterministicImputation(
+  sce = sce_umis_careful,
+  exprs_values = "UMI_counts",
+  method = "group-specific")
 
-# Plot -------------------------------------------------------------------------
+# Plots: Individual replicates, read counts ------------------------------------
 
-dir.create(here("output/figures/for_Terry"), recursive = TRUE)
 pdf(
-  here("output/figures/for_Terry/imputation_diagnostics.pdf"),
+  here("output/figures/for_Terry/imputation_diagnostics.read_counts.standard_filtering.pdf"),
   width = 9,
   height = 9)
-diagnosticPlots(sce, "read_counts")
-diagnosticPlots(sce, "imputed_read_counts")
-diagnosticPlots(sce, "UMI_counts")
-diagnosticPlots(sce, "imputed_UMI_counts")
-diagnosticPlots(sce_aggr, "read_counts")
-diagnosticPlots(sce_aggr, "imputed_read_counts")
-diagnosticPlots(sce_aggr, "UMI_counts")
-diagnosticPlots(sce_aggr, "imputed_UMI_counts")
+diagnosticPlots(sce_reads_standard, "read_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.read_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_reads_careful, "read_counts")
+dev.off()
+
+# Plots: Individual replicates, all imputed read counts ------------------------
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.all_imputed_read_counts.standard_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_reads_standard_all, "imputed_read_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.all_imputed_read_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_reads_careful_all, "imputed_read_counts")
+dev.off()
+
+# Plots: Individual replicates, group imputed read counts ----------------------
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.group_imputed_read_counts.standard_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_reads_standard_group, "imputed_read_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.group_imputed_read_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_reads_careful_group, "imputed_read_counts")
+dev.off()
+
+# Plots: Individual replicates, UMI counts -------------------------------------
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.UMI_counts.standard_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_standard, "UMI_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.UMI_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_careful, "UMI_counts")
+dev.off()
+
+# Plots: Individual replicates, all imputed UMI counts -------------------------
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.all_imputed_UMI_counts.standard_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_standard_all, "imputed_UMI_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.all_imputed_UMI_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_careful_all, "imputed_UMI_counts")
+dev.off()
+
+# Plots: Individual replicates, group imputed UMI counts -----------------------
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.group_imputed_UMI_counts.standard_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_standard_group, "imputed_UMI_counts")
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/imputation_diagnostics.group_imputed_UMI_counts.careful_filtering.pdf"),
+  width = 9,
+  height = 9)
+diagnosticPlots(sce_umis_careful_group, "imputed_UMI_counts")
 dev.off()
