@@ -1,6 +1,6 @@
 # RUVs
 # Peter Hickey
-# 2021-06-24
+# 2021-07-07
 
 # Setup ------------------------------------------------------------------------
 
@@ -199,6 +199,27 @@ sce_umis_careful <- filterCountMatrix(
   min.count = 5,
   method = "careful")
 
+sce_aggr_reads_standard <- filterCountMatrix(
+  sce_aggr,
+  "read_counts",
+  min.count = 5,
+  method = "standard")
+sce_aggr_reads_careful <- filterCountMatrix(
+  sce_aggr,
+  "read_counts",
+  min.count = 5,
+  method = "careful")
+sce_aggr_umis_standard <- filterCountMatrix(
+  sce_aggr,
+  "UMI_counts",
+  min.count = 5,
+  method = "standard")
+sce_aggr_umis_careful <- filterCountMatrix(
+  sce_aggr,
+  "UMI_counts",
+  min.count = 5,
+  method = "careful")
+
 # Imputation -------------------------------------------------------------------
 
 sce_reads_standard_all <- deterministicImputation(
@@ -234,13 +255,46 @@ sce_umis_careful_group <- deterministicImputation(
   exprs_values = "UMI_counts",
   method = "group-specific")
 
+sce_aggr_reads_standard_all <- deterministicImputation(
+  sce = sce_aggr_reads_standard,
+  exprs_values = "read_counts",
+  method = "all")
+sce_aggr_reads_standard_group <- deterministicImputation(
+  sce = sce_aggr_reads_standard,
+  exprs_values = "read_counts",
+  method = "group-specific")
+sce_aggr_reads_careful_all <- deterministicImputation(
+  sce = sce_aggr_reads_careful,
+  exprs_values = "read_counts",
+  method = "all")
+sce_aggr_reads_careful_group <- deterministicImputation(
+  sce = sce_aggr_reads_careful,
+  exprs_values = "read_counts",
+  method = "group-specific")
+sce_aggr_umis_standard_all <- deterministicImputation(
+  sce = sce_aggr_umis_standard,
+  exprs_values = "UMI_counts",
+  method = "all")
+sce_aggr_umis_standard_group <- deterministicImputation(
+  sce = sce_aggr_umis_standard,
+  exprs_values = "UMI_counts",
+  method = "group-specific")
+sce_aggr_umis_careful_all <- deterministicImputation(
+  sce = sce_aggr_umis_careful,
+  exprs_values = "UMI_counts",
+  method = "all")
+sce_aggr_umis_careful_group <- deterministicImputation(
+  sce = sce_aggr_umis_careful,
+  exprs_values = "UMI_counts",
+  method = "group-specific")
+
 # Plots: Individual replicates, read counts ------------------------------------
 
 ks <- seq(1, 15, 2)
 names(ks) <- ks
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.standard_filtering.mouse_number.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.standard_filtering.mouse_number.pdf"),
   width = 9,
   height = 9)
 runRUVs(
@@ -251,7 +305,7 @@ runRUVs(
 dev.off()
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.standard_filtering.genotype_sex.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.standard_filtering.genotype_sex.pdf"),
   width = 9,
   height = 9)
 runRUVs(
@@ -262,7 +316,7 @@ runRUVs(
 dev.off()
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.standard_filtering.smchd1_genotype_updated.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.standard_filtering.genotype.pdf"),
   width = 9,
   height = 9)
 runRUVs(
@@ -273,7 +327,7 @@ runRUVs(
 dev.off()
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.careful_filtering.mouse_number.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.careful_filtering.mouse_number.pdf"),
   width = 9,
   height = 9)
 runRUVs(
@@ -284,7 +338,7 @@ runRUVs(
 dev.off()
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.careful_filtering.genotype_sex.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.careful_filtering.genotype_sex.pdf"),
   width = 9,
   height = 9)
 runRUVs(
@@ -295,80 +349,661 @@ runRUVs(
 dev.off()
 
 pdf(
-  here("output/figures/for_Terry/RUV.read_counts.careful_filtering.genotype.pdf"),
+  here("output/figures/for_Terry/RUV.individual_replicates.read_counts.careful_filtering.genotype.pdf"),
   width = 9,
   height = 9)
 runRUVs(
   sce = sce_reads_careful,
   exprs_values = "read_counts",
-  g = "genotype",
+  g = "smchd1_genotype_updated",
   ks = ks)
 dev.off()
 
 # Plots: Individual replicates, all imputed read counts ------------------------
 
-# TODO
 ks <- seq(1, 15, 2)
 names(ks) <- ks
 
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.standard_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.careful_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_read_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Individual replicates, group imputed read counts ----------------------
 
-# TODO
 ks <- seq(1, 15, 2)
 names(ks) <- ks
 
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.standard_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_group,
+  exprs_values = "imputed_read_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_group,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_standard_group,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.careful_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_careful_group,
+  exprs_values = "imputed_read_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_careful_group,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_read_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_reads_careful_group,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Individual replicates, UMI counts -------------------------------------
 
 ks <- seq(1, 15, 2)
 names(ks) <- ks
 
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.standard_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard,
+  exprs_values = "UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard,
+  exprs_values = "UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard,
+  exprs_values = "UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.careful_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful,
+  exprs_values = "UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful,
+  exprs_values = "UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful,
+  exprs_values = "UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Individual replicates, all imputed UMI counts -------------------------
 
-# TODO
 ks <- seq(1, 15, 2)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.standard_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.careful_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.all_imputed_UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Individual replicates, group imputed UMI counts -----------------------
 
-# TODO
 ks <- seq(1, 15, 2)
 names(ks) <- ks
 
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.standard_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_standard_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.careful_filtering.mouse_number.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "mouse_number",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.individual_replicates.group_imputed_UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_umis_careful_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
 # Plots: Summed replicates, read counts ----------------------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.read_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard,
+  exprs_values = "read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.read_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard,
+  exprs_values = "read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.read_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful,
+  exprs_values = "read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.read_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful,
+  exprs_values = "read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Summed replicates, all imputed read counts ----------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_read_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_read_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard_all,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_read_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful_all,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_read_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful_all,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Summed replicates, group imputed read counts --------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_read_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard_group,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_read_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_standard_group,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_read_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful_group,
+  exprs_values = "imputed_read_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_read_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_reads_careful_group,
+  exprs_values = "imputed_read_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Summed replicates, UMI counts -----------------------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard,
+  exprs_values = "UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard,
+  exprs_values = "UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful,
+  exprs_values = "UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful,
+  exprs_values = "UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Summed replicates, all imputed UMI counts -----------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.all_imputed_UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful_all,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
 
 # Plots: Summed replicates, group imputed UMI counts ---------------------------
 
-# TODO
 ks <- seq(1, 7, 1)
 names(ks) <- ks
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_UMI_counts.standard_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_UMI_counts.standard_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_standard_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_UMI_counts.careful_filtering.genotype_sex.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "genotype_sex",
+  ks = ks)
+dev.off()
+
+pdf(
+  here("output/figures/for_Terry/RUV.aggregated_replicates.group_imputed_UMI_counts.careful_filtering.genotype.pdf"),
+  width = 9,
+  height = 9)
+runRUVs(
+  sce = sce_aggr_umis_careful_group,
+  exprs_values = "imputed_UMI_counts",
+  g = "smchd1_genotype_updated",
+  ks = ks)
+dev.off()
