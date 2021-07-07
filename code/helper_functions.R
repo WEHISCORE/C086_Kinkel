@@ -180,7 +180,7 @@ deterministicImputation <- function(sce, exprs_values, method) {
     # NOTE: This could be further sped up by pre-allocating a matrix, `y2`,
     #       and filling it directly.
     y2s <- lapply(levels(sce$smchd1_genotype_updated), function(j) {
-      y <- y[, sce$smchd1_genotype_updated == j]
+      y <- y[, sce$smchd1_genotype_updated == j, drop = FALSE]
       num <- rowSums(y)
       N <- matrix(
         colSums(y),
@@ -199,7 +199,12 @@ deterministicImputation <- function(sce, exprs_values, method) {
         ncol = nrow(y),
         dimnames = list(NULL, rownames(y)))
       # NOTE: Don't know why I need `[,]` but I do.
-      y_imp <- pi_nonzero[, ] * N[, ]
+      y_imp <- pi_nonzero[,] * N[,]
+      if (is.null(dim(y_imp))) {
+        # NOTE: Needed for WT when using summed tech reps (n=1).
+        dim(y_imp) <- dim(y)
+        dimnames(y_imp) <- dimnames(y)
+      }
       y2 <- y_imp
       y2[which(I > 0)] <- y[which(I > 0)]
       y2
