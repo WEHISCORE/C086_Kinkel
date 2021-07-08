@@ -1,6 +1,6 @@
 # RUVs
 # Peter Hickey
-# 2021-07-07
+# 2021-07-08
 
 # Setup ------------------------------------------------------------------------
 
@@ -16,6 +16,10 @@ sce <- sce[, order(sce$smchd1_genotype_updated, sce$sex, sce$mouse_number)]
 
 # NOTE: Filter to only retain protein coding genes.
 sce <- sce[any(grepl("protein_coding", rowData(sce)$ENSEMBL.GENEBIOTYPE)), ]
+
+# NOTE: Filter out WT samples
+sce <- sce[, sce$smchd1_genotype_updated != "WT"]
+colData(sce) <- droplevels(colData(sce))
 
 sce$genotype_sex <- paste0(sce$smchd1_genotype_updated, "_", sce$sex)
 
