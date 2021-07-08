@@ -7,8 +7,8 @@
 # - Summed counts
 # - Raw counts rather than imputed counts
 # - Standard filtering
-# - Group by genotype
-# - K = 1
+# - Group by genotype:sex
+# - K = 3
 
 # Setup ------------------------------------------------------------------------
 
@@ -67,14 +67,14 @@ sce_aggr_reads_standard <- filterCountMatrix(
 
 sce <- sce_aggr_reads_standard
 exprs_values <- "read_counts"
-g <- "smchd1_genotype_updated"
+g <- "genotype_sex"
 dgel <- DGEList(
   counts = as.matrix(assay(sce, exprs_values)),
   samples = colData(sce),
   group = factor(sce$smchd1_genotype_updated),
   genes = flattenDF(rowData(sce)))
 dgel <- calcNormFactors(dgel, method = "upperquartile")
-k <- 1
+k <- 3
 differences <- makeGroups(dgel$samples[[g]])
 set_hk <- RUVs(
   x = betweenLaneNormalization(dgel$counts, "upper"),
@@ -113,16 +113,36 @@ plotPCA(
   col = dgel$samples$smchd1_genotype_updated_colours,
   main = "All")
 
-par(mfrow = c(1, 1))
+par(mfrow = c(2, 2))
 plot(
-  set_hk$W,
-  set_all$W,
+  set_hk$W[, 1],
+  set_all$W[, 1],
   main = "W1",
   xlab = "HK",
   ylab = "All",
-  sub = paste0("cor = ", round(cor(set_hk$W, set_all$W), 2)),
-  xlim = range(c(set_hk$W, set_all$W)),
-  ylim = range(c(set_hk$W, set_all$W)))
+  sub = paste0("cor = ", round(cor(set_hk$W[, 1], set_all$W[, 1]), 2)),
+  xlim = range(c(set_hk$W[, 1], set_all$W[, 1])),
+  ylim = range(c(set_hk$W[, 1], set_all$W[, 1])))
+abline(a = 0, b = 1, lty = 2)
+plot(
+  set_hk$W[, 2],
+  set_all$W[, 2],
+  main = "W1",
+  xlab = "HK",
+  ylab = "All",
+  sub = paste0("cor = ", round(cor(set_hk$W[, 2], set_all$W[, 2]), 2)),
+  xlim = range(c(set_hk$W[, 2], set_all$W[, 2])),
+  ylim = range(c(set_hk$W[, 2], set_all$W[, 2])))
+abline(a = 0, b = 1, lty = 2)
+plot(
+  set_hk$W[, 3],
+  set_all$W[, 3],
+  main = "W1",
+  xlab = "HK",
+  ylab = "All",
+  sub = paste0("cor = ", round(cor(set_hk$W[, 3], set_all$W[, 3]), 2)),
+  xlim = range(c(set_hk$W[, 3], set_all$W[, 3])),
+  ylim = range(c(set_hk$W[, 3], set_all$W[, 3])))
 abline(a = 0, b = 1, lty = 2)
 
 sets <- list(HK = set_hk, All = set_all)
@@ -140,6 +160,7 @@ lapply(names(sets), function(n) {
   contrasts <- makeContrasts(Het - Del, levels = design)
   dgelrt <- glmLRT(dgeglm, contrast = contrasts)
   tt <- topTags(dgelrt, n = Inf)
+  print(summary(decideTests(dgelrt)))
 
   # Plots
   par(mfrow = c(2, 3))
