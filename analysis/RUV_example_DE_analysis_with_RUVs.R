@@ -198,7 +198,7 @@ differences <- makeGroups(
 ruv <- RUVs(
     x = betweenLaneNormalization(y$counts, "upper"),
     cIdx = rownames(y),
-    k = 4,
+    k = 3,
     scIdx = differences)
 
 design <- model.matrix(
@@ -468,7 +468,7 @@ differences <- makeGroups(y$samples$smchd1_genotype_updated)
 ruv <- RUVs(
   x = betweenLaneNormalization(y$counts, "upper"),
   cIdx = rownames(y),
-  k = 2,
+  k = 1,
   scIdx = differences)
 
 design <- model.matrix(
