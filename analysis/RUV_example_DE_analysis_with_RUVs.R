@@ -51,6 +51,7 @@ x <- DGEList(
   samples = colData(sce),
   group = sce$smchd1_genotype_updated,
   genes = flattenDF(rowData(sce)))
+x <- x[rowSums(x$counts) > 0, ]
 
 # Variation of technical replicates --------------------------------------------
 
