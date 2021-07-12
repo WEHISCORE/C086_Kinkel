@@ -8,11 +8,7 @@ navbar:
     - text: "Preprocessing"
       href: C086_Kinkel.preprocess.html
     - text: "Differential analyses"
-      menu:
-        - text: "Read-based"
-          href: C086_Kinkel.multi-sample_comparisons.reads.html
-        - text: "UMI-based"
-          href: C086_Kinkel.multi-sample_comparisons.UMIs.html
+      href: C086_Kinkel.multi-sample_comparisons.html
     - text: "Supplementary files"
       menu:
         - text: "scPipe reports"
