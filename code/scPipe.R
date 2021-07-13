@@ -352,7 +352,7 @@ no_dedup_sce <- Reduce(
   function(x, y) .combine(x, y, rowData_by = NULL),
   list_of_no_dedup_sce)
 no_dedup_sce$UMI_deduped <- FALSE
-colnames(no_dedup_sce) <- paste0(colnames(sce), ".not_UMI_deduped")
+colnames(no_dedup_sce) <- paste0(colnames(no_dedup_sce), ".not_UMI_deduped")
 assay(no_dedup_sce, withDimnames = FALSE) <- unname(
   as(assay(no_dedup_sce, withDimnames = FALSE), "dgCMatrix"))
 no_dedup_sce <- splitAltExps(
