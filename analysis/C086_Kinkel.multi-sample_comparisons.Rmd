@@ -555,7 +555,12 @@ y_index <- list(
 ```
 
 ```{r}
-fry(y, index = y_index, design = y_design, contrast = y_contrast) %>%
+fry(
+  y,
+  index = y_index,
+  design = y_design,
+  contrast = y_contrast, 
+  sort = "none") %>%
     knitr::kable(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
@@ -777,7 +782,12 @@ ym_index <- list(
 ```
 
 ```{r}
-fry(ym, index = ym_index, design = ym_design, contrast = ym_contrast) %>%
+fry(
+  ym, 
+  index = ym_index, 
+  design = ym_design,
+  contrast = ym_contrast,
+  sort = "none") %>%
     knitr::kable(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
@@ -1000,7 +1010,12 @@ yf_index <- list(
 ```
 
 ```{r}
-fry(yf, index = yf_index, design = yf_design, contrast = yf_contrast) %>%
+fry(
+  yf,
+  index = yf_index,
+  design = yf_design, 
+  contrast = yf_contrast,
+  sort = "none") %>%
     knitr::kable(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
