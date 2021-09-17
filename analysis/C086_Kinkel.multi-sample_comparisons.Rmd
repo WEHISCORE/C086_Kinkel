@@ -697,7 +697,7 @@ par(mfrow = c(1, 1))
 plotMD(ym_dgelrt)
 ```
 
-An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html).
+An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.males.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.males.md-plot.html).
 
 ```{r}
 ym_tt <- topTags(ym_dgelrt, n = Inf, sort.by = "none")
@@ -925,7 +925,7 @@ par(mfrow = c(1, 1))
 plotMD(yf_dgelrt)
 ```
 
-An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.md-plot.html).
+An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/reads/glimma-plots/aggregated_tech_reps.females.md-plot.html`](../output/DEGs/reads/glimma-plots/aggregated_tech_reps.females.md-plot.html).
 
 ```{r}
 yf_tt <- topTags(yf_dgelrt, n = Inf, sort.by = "none")
