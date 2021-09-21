@@ -361,21 +361,68 @@ p1 + p2 + p3 + p4 + plot_layout(ncol = 2)
 
 Marnie and Sarah interested in the following gene sets:
 
-- Non-directional gene sets (i.e. no logFC available from previous data)
+<aside>
+These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs_gene_lists). These genes are matched to the present dataset using the supplied gene symbol.
+</aside>
+
+- **Non-directional gene sets** (i.e. no logFC available from previous data)
   - `X-linked`: Anything with `ENSEMBL.SEQNAME` set as '`X`').
   - `Protocadherin`: Genes with symbol of the form *Pcdh#*.
   - `Prader-Willi`: Imprinted genes from the Prader-Willi cluster (*Ndn*, *Mkrn3*, *Peg12*)
-- Directional gene sets (i.e. logFC available from previous data). These are the DEGs from a "previous RNA-seq experiment on male and female Smchd1-het and -del B cells from aged mice (>12 months old). [Sarah] used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah). These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs_gene_lists)
-  - `Male: Het vs. Del`: DEGs from the comparison of male samples.
-  - `Female: Het vs. Del`: DEGs from the comparison of female samples.
+- **Directional gene sets** (i.e. logFC available from previous data). 
+  - `Male: Het vs. Del`: DEGs from a comparison of male Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]
+  - `Female: Het vs. Del`: DEGs from a comparison of female Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).] Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah). 
+  - `Sun (2014)`: DEGs from a comparison of HSCs from young (2mo) and aged (24mo) male mice [@sun2014epigenomic].
+  - `Chambers (2007)`: Upregulated DEGs from a comparison of HSCs to an average of all other cell types analysed [@chambers2007hematopoietic].
+  - `Gazit (2013)`: Genes with "enriched expression in HSCs"^[My understanding of this terms translates as 'upregulated DEGs'.] compared with all other hematopoietic cell types [@gazit2013transcriptome].
+    - Although no logFC is available, by definition these genes have a logFC > 0.
+  - `Chambers (2007) & Gazit (2013)`: The union of `Chambers (2007)` and `Gazit (2013)` with the logFC preferentially taken from `Chambers (2007)`.
+    - This is in the spirit of @vizan2020polycomb who do a gene set enrichment analysis using "a merge of differentially expressed genes provided by `Gazit (2013)` and `Chambers (2007)`" but do not explain how they 'merge' these gene lists.
+  - `Proliferation Group Venezia (2004)`: Genes that have their maximum expression at peak-cycling times (**T**ime **O**f **M**ax = TOM = 2, 3, and 6 days post-treatment) in a time-course experiment designed to stimulate adult HSCs to proliferate [@venezia2004molecular].
+    - The p-value (ANOVA) is based on about 1500 genes that changed significantly over the time course while the logFC is a separate comparison between FL HSCs (naturally proliferative) and adult HSCs (naturally quiescent).
+  - `Quiescence Group Venezia (2004)`: Genes that have their maximum expression at non-cycling times (**T**ime **O**f **M**ax = TOM = 0, 1, 10, and 30 days post-treatment) in a time-course experiment designed to stimulate adult HSCs to proliferate [@venezia2004molecular].
+    - The p-value (ANOVA) is based on about 1500 genes that changed significantly over the time course while the logFC is a separate comparison between FL HSCs (naturally proliferative) and adult HSCs (naturally quiescent).
 
 ```{r}
-male_het_vs_del <- readxl::read_excel(
+# NOTE: The `as.data.frame()` calls are needed because read_excel() returns a 
+#       tibble but `limma::fry()` does not support tibbles.
+library(readxl)
+male_het_vs_del <- read_excel(
   here("data", "sarahs_gene_lists", "MaleHetvDel_EdgeR.xlsx"))
 male_het_vs_del <- as.data.frame(male_het_vs_del)
-female_het_vs_del <- readxl::read_excel(
+female_het_vs_del <- read_excel(
   here("data", "sarahs_gene_lists", "Bcell_female_HetvDel_EdgeR_mRNA.xlsx"))
 female_het_vs_del <- as.data.frame(female_het_vs_del)
+sun_2014 <- read_excel(
+  here("data", "sarahs_gene_lists", "Sun_2014_CellStemCell_DE_HSC_aging.xlsx"),
+  sheet = "Differentially expressed genes")
+sun_2014 <- as.data.frame(sun_2014)
+chambers_2007 <- read_excel(
+  here("data", "sarahs_gene_lists", "HSC_signature_genes.xlsx"),
+  sheet = "Chambers_2007_CellStemCell",
+  na = "NA")
+chambers_2007 <- as.data.frame(chambers_2007)
+gazit_2013 <- read_excel(
+  here("data", "sarahs_gene_lists", "HSC_signature_genes.xlsx"),
+  sheet = "Gazit_2013_StemCellRep",
+  range = "A3:C325")
+gazit_2013 <- as.data.frame(gazit_2013)
+# NOTE: File manually downloaded from   
+#       https://doi.org/10.1371/journal.pbio.0020301.st002 and converted to a 
+#       CSV file using LibreOffice.
+venezia_proliferation <- read.csv(
+  here("data", "sarahs_gene_lists", "pbio.0020301.st002.csv"),
+  header = TRUE,
+  skip = 1,
+  nrow = 680)
+# NOTE: File manually downloaded from   
+#       https://doi.org/10.1371/journal.pbio.0020301.st004 and converted to a 
+#       CSV file using LibreOffice.
+venezia_quiescence <- read.csv(
+  here("data", "sarahs_gene_lists", "pbio.0020301.st004.csv"),
+  header = TRUE,
+  skip = 1,
+  nrow = 808)
 ```
 
 # Analysis of aggregated technical replicates
@@ -544,13 +591,43 @@ y_protocadherin <- grepl("Pcdh", rownames(y))
 y_pw <- rownames(y) %in% c("Ndn", "Mkrn3", "Peg12")
 y_male <- male_het_vs_del[, c("Probe", "Differential expression")]
 y_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+y_sun <- sun_2014[, c("geneSymbol", "log2FC")]
+y_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
+y_chambers$logFC <- log2(y_chambers$`Fold Difference`)
+y_chambers$`Fold Difference` <- NULL
+y_chambers <- y_chambers[!is.na(y_chambers$`Gene Symbol`), ]
+y_chambers <- y_chambers[!duplicated(y_chambers$`Gene Symbol`), ]
+y_gazit <- gazit_2013[, c("Symbol"), drop = FALSE]
+y_gazit$Symbol <- paste(
+  substring(y_gazit$Symbol, 1, 1), 
+  tolower(substring(y_gazit$Symbol, 2)),
+  sep = "")
+y_gazit$logFC <- 1
+y_chambers_gazit <- data.frame(
+  Symbol = c(y_chambers$`Gene Symbol`, y_gazit$Symbol),
+  logFC = c(y_chambers$logFC, y_gazit$logFC))
+y_chambers_gazit <- y_chambers_gazit[!duplicated(y_chambers_gazit$Symbol), ]
+y_venezia_proliferation <- venezia_proliferation[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+y_venezia_proliferation <- y_venezia_proliferation[
+  !duplicated(y_venezia_proliferation$`Gene.Symbol`), ]
+y_venezia_quiescence <- venezia_quiescence[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+y_venezia_quiescence <- y_venezia_quiescence[
+  !duplicated(y_venezia_quiescence$`Gene.Symbol`), ]
 
 y_index <- list(
   `X-linked` = y_X,
   Protocadherin = y_protocadherin,
   `Prader-Willi` = y_pw,
   `Male: Het vs. Del` = y_male,
-  `Female: Het vs. Del` = y_female)
+  `Female: Het vs. Del` = y_female,
+  `Sun (2014)` = y_sun,
+  `Chambers (2007)` = y_chambers,
+  `Gazit (2013)` = y_gazit,
+  `Chambers (2007) & Gazit (2013)` = y_chambers_gazit,
+  `Proliferation Group Venezia (2004)` = y_venezia_proliferation,
+  `Quiescence Group Venezia (2004)` = y_venezia_quiescence)
 ```
 
 ```{r}
@@ -564,7 +641,7 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(y_index), 2))
 for (n in names(y_index)) {
   if (is.data.frame(y_index[[n]])) {
@@ -771,13 +848,43 @@ ym_protocadherin <- grepl("Pcdh", rownames(ym))
 ym_pw <- rownames(ym) %in% c("Ndn", "Mkrn3", "Peg12")
 ym_male <- male_het_vs_del[, c("Probe", "Differential expression")]
 ym_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+ym_sun <- sun_2014[, c("geneSymbol", "log2FC")]
+ym_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
+ym_chambers$logFC <- log2(ym_chambers$`Fold Difference`)
+ym_chambers$`Fold Difference` <- NULL
+ym_chambers <- ym_chambers[!is.na(ym_chambers$`Gene Symbol`), ]
+ym_chambers <- ym_chambers[!duplicated(ym_chambers$`Gene Symbol`), ]
+ym_gazit <- gazit_2013[, c("Symbol"), drop = FALSE]
+ym_gazit$Symbol <- paste(
+  substring(ym_gazit$Symbol, 1, 1), 
+  tolower(substring(ym_gazit$Symbol, 2)),
+  sep = "")
+ym_gazit$logFC <- 1
+ym_chambers_gazit <- data.frame(
+  Symbol = c(ym_chambers$`Gene Symbol`, ym_gazit$Symbol),
+  logFC = c(ym_chambers$logFC, ym_gazit$logFC))
+ym_chambers_gazit <- ym_chambers_gazit[!duplicated(ym_chambers_gazit$Symbol), ]
+ym_venezia_proliferation <- venezia_proliferation[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+ym_venezia_proliferation <- ym_venezia_proliferation[
+  !duplicated(ym_venezia_proliferation$`Gene.Symbol`), ]
+ym_venezia_quiescence <- venezia_quiescence[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+ym_venezia_quiescence <- ym_venezia_quiescence[
+  !duplicated(ym_venezia_quiescence$`Gene.Symbol`), ]
 
 ym_index <- list(
   `X-linked` = ym_X,
   Protocadherin = ym_protocadherin,
   `Prader-Willi` = ym_pw,
   `Male: Het vs. Del` = ym_male,
-  `Female: Het vs. Del` = ym_female)
+  `Female: Het vs. Del` = ym_female,
+  `Sun (2014)` = ym_sun,
+  `Chambers (2007)` = ym_chambers,
+  `Gazit (2013)` = ym_gazit,
+  `Chambers (2007) & Gazit (2013)` = ym_chambers_gazit,
+  `Proliferation Group Venezia (2004)` = ym_venezia_proliferation,
+  `Quiescence Group Venezia (2004)` = ym_venezia_quiescence)
 ```
 
 ```{r}
@@ -791,7 +898,7 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(ym_index), 2))
 for (n in names(ym_index)) {
   if (is.data.frame(ym_index[[n]])) {
@@ -999,13 +1106,43 @@ yf_protocadherin <- grepl("Pcdh", rownames(yf))
 yf_pw <- rownames(yf) %in% c("Ndn", "Mkrn3", "Peg12")
 yf_male <- male_het_vs_del[, c("Probe", "Differential expression")]
 yf_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+yf_sun <- sun_2014[, c("geneSymbol", "log2FC")]
+yf_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
+yf_chambers$logFC <- log2(yf_chambers$`Fold Difference`)
+yf_chambers$`Fold Difference` <- NULL
+yf_chambers <- yf_chambers[!is.na(yf_chambers$`Gene Symbol`), ]
+yf_chambers <- yf_chambers[!duplicated(yf_chambers$`Gene Symbol`), ]
+yf_gazit <- gazit_2013[, c("Symbol"), drop = FALSE]
+yf_gazit$Symbol <- paste(
+  substring(yf_gazit$Symbol, 1, 1), 
+  tolower(substring(yf_gazit$Symbol, 2)),
+  sep = "")
+yf_gazit$logFC <- 1
+yf_chambers_gazit <- data.frame(
+  Symbol = c(yf_chambers$`Gene Symbol`, yf_gazit$Symbol),
+  logFC = c(yf_chambers$logFC, yf_gazit$logFC))
+yf_chambers_gazit <- yf_chambers_gazit[!duplicated(yf_chambers_gazit$Symbol), ]
+yf_venezia_proliferation <- venezia_proliferation[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+yf_venezia_proliferation <- yf_venezia_proliferation[
+  !duplicated(yf_venezia_proliferation$`Gene.Symbol`), ]
+yf_venezia_quiescence <- venezia_quiescence[
+  , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
+yf_venezia_quiescence <- yf_venezia_quiescence[
+  !duplicated(yf_venezia_quiescence$`Gene.Symbol`), ]
 
 yf_index <- list(
   `X-linked` = yf_X,
   Protocadherin = yf_protocadherin,
   `Prader-Willi` = yf_pw,
   `Male: Het vs. Del` = yf_male,
-  `Female: Het vs. Del` = yf_female)
+  `Female: Het vs. Del` = yf_female,
+  `Sun (2014)` = yf_sun,
+  `Chambers (2007)` = yf_chambers,
+  `Gazit (2013)` = yf_gazit,
+  `Chambers (2007) & Gazit (2013)` = yf_chambers_gazit,
+  `Proliferation Group Venezia (2004)` = yf_venezia_proliferation,
+  `Quiescence Group Venezia (2004)` = yf_venezia_quiescence)
 ```
 
 ```{r}
@@ -1019,7 +1156,7 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 5 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(yf_index), 2))
 for (n in names(yf_index)) {
   if (is.data.frame(yf_index[[n]])) {

@@ -1,0 +1,683 @@
+,,Proliferation group,,,,
+Probe Set ID,Gene Symbol,Gene name,Chromosome,Log2 Fold Change (FL-HSC vs Adult HSC)*,Day of max (TOM),p-value of ANOVA (time course)
+100066_at,Gart,phosphoribosylglycinamide formyltransferase,chr16 ,1.415,2,0.007
+100574_f_at,Gpi1,glucose phosphate isomerase 1,chr7 ,0.171,2,0.041
+100753_at,Atp5a1,"ATP synthase, H+ transporting, mitochondrial F1 complex, alpha subunit, isoform 1",---,-0.077,2,0.029
+101042_f_at,Pep4,peptidase 4,---,0.494,2,0.003
+101461_f_at,Pja1,"praja1, RING-H2 motif containing",chrX ,0.613,2,0.034
+101466_at,Pigf,"phosphatidylinositol glycan, class F",chr17 ,0.537,2,0.006
+101518_at,0610009H04Rik,RIKEN cDNA 0610009H04 gene,chr11 ,0.157,2,0.019
+101959_r_at,Tfdp1,transcription factor Dp 1,chr8 ,1.111,2,0.004
+101984_at,Atox1,ATX1 (antioxidant protein 1) homolog 1 (yeast),chr11 ,0.652,2,0.025
+102124_f_at,Cox4i1,cytochrome c oxidase subunit IV isoform 1,chr8 ,0.279,2,0.035
+102649_s_at,Raet1c,retinoic acid early transcript gamma,---,0.219,2,0.038
+103057_at,Pold1,"polymerase (DNA directed), delta 1, catalytic subunit",chr7 ,3.176,2,0.034
+103377_at,Lrp2,low density lipoprotein receptor-related protein 2,chr2 ,0.013,2,0.037
+103862_r_at,D7Wsu128e,"DNA segment, Chr 7, Wayne State University 128, expressed",chr7 ,-0.099,2,0.042
+103873_i_at,2310015N07Rik,RIKEN cDNA 2310015N07 gene,---,0.684,2,0.022
+103874_r_at,2310015N07Rik,RIKEN cDNA 2310015N07 gene,---,0.141,2,0.016
+104089_at,2810026P18Rik,RIKEN cDNA 2810026P18 gene,chr9 ,0.457,2,0.023
+104303_i_at,1500004O14Rik,RIKEN cDNA 1500004O14 gene,chr2 ,1.473,2,0.007
+104304_r_at,1500004O14Rik,RIKEN cDNA 1500004O14 gene,---,0.905,2,0.011
+104305_at,Rarsl,arginyl-tRNA synthetase-like,chr4 ,2.295,2,0.005
+104343_f_at,Pla2g12,"phospholipase A2, group XII",chr3 ,0.319,2,0.003
+104662_at,Tnfrsf18,"tumor necrosis factor receptor superfamily, member 18",chr4 ,-0.049,2,0.002
+160291_at,Sec61a1,Sec61 alpha 1 subunit (S. cerevisiae),chr6 ,-0.097,2,0.007
+160341_at,Jtv1-pending,JTV1 gene,chr5 ,2.15,2,0.033
+160633_at,Refbp1,RNA and export factor binding protein 1,---,0.652,2,0.028
+160803_at,D0H8S2298E,"DNA segment, Human S2298E",chr8 ,-0.598,2,0.002
+161386_f_at,Ddx1,DEAD (Asp-Glu-Ala-Asp) box polypeptide 1,---,0.123,2,0.048
+161400_f_at,NoneAvailable,---,---,0.17,2,0.002
+161466_r_at,Asb3,ankyrin repeat and SOCS box-containing protein 3,---,0.163,2,0.046
+161635_f_at,1110008H02Rik,RIKEN cDNA 1110008H02 gene,chr1 ,0.113,2,0.019
+161703_f_at,NoneAvailable,---,---,0.175,2,0
+162131_f_at,NoneAvailable,Mus musculus transcribed sequence,---,0.274,2,0.026
+162301_f_at,2310016M24Rik,RIKEN cDNA 2310016M24 gene,chr15 ,-0.1,2,0.011
+92633_at,Ctsz,cathepsin Z,chr2 ,0.866,2,0.003
+92794_f_at,Nme1,"expressed in non-metastatic cells 1, protein",chr11 ,2.156,2,0
+92810_at,Pdk3,"pyruvate dehydrogenase kinase, isoenzyme 3",chrX ,-0.996,2,0.017
+93038_f_at,Anxa1,annexin A1,chr19 ,0.074,2,0
+93070_at,Kpnb3,karyopherin (importin) beta 3,chr14 ,0.784,2,0.004
+93352_at,Tgm2,"transglutaminase 2, C polypeptide",---,-0.153,2,0.034
+93529_at,2310047C21Rik,RIKEN cDNA 2310047C21 gene,chr8 ,0.295,2,0.013
+93740_at,Nsep1,nuclease sensitive element binding protein 1,---,0.564,2,0.038
+93822_at,Rpl37a,ribosomal protein L37a,---,0.979,2,0.019
+93968_at,Pdcd5,programmed cell death 5,chr7 ,0.125,2,0.024
+94450_at,D13Wsu123e,"DNA segment, Chr 13, Wayne State University 123, expressed",chr13 ,1.019,2,0.014
+95034_f_at,Ipo4,importin 4,chr14 ,-0.595,2,0.002
+95709_at,D7Wsu86e,"DNA segment, Chr 7, Wayne State University 86, expressed",chr7 ,-0.199,2,0.025
+95755_at,Csda,cold shock domain protein A,---,0.101,2,0.02
+96042_at,Sod2,"superoxide dismutase 2, mitochondrial",chr17 ,0.163,2,0.002
+96827_at,Cad,"carbamoyl-phosphate synthetase 2, aspartate transcarbamylase, and dihydroorotase",chr5 ,1.06,2,0.014
+96855_at,5730406I15Rik,RIKEN cDNA 5730406I15 gene,---,0.755,2,0.018
+97272_at,Hnrpa1,heterogeneous nuclear ribonucleoprotein A1,---,0.019,2,0.041
+97496_f_at,6330514M23Rik,RIKEN cDNA 6330514M23 gene,chr7 ,-1.202,2,0.002
+98099_at,Nudt9,nudix (nucleoside diphosphate linked moiety X)-type motif 9,---,0.494,2,0.048
+98127_at,Capza2,"capping protein (actin filament) muscle Z-line, alpha 2",chr6 ,-1.156,2,0.03
+98573_r_at,Ranbp1,RAN binding protein 1,chr16 ,1.404,2,0.046
+99158_at,Sh3d3,SH3 domain protein 3,chr19 ,1.284,2,0.048
+100062_at,Mcm3,minichromosome maintenance deficient 3 (S. cerevisiae),chr1 ,1.792,3,0.005
+100225_f_at,Psmc3,"proteasome (prosome, macropain) 26S subunit, ATPase 3",chr2 ,0.602,3,0.01
+100290_f_at,6230416J20Rik,RIKEN cDNA 6230416J20 gene,chr4 ,0.452,3,0.022
+101001_at,5031439A09Rik,RIKEN cDNA 5031439A09 gene,chr3 ,-1.852,3,0.044
+101004_f_at,Sfrs3,"splicing factor, arginine/serine-rich 3 (SRp20)",---,0.867,3,0.032
+101372_at,Trip13,thyroid hormone receptor interactor 13,chr13 ,1.578,3,0.014
+101445_at,Dnmt1,DNA methyltransferase (cytosine-5) 1,chr9 ,0.6,3,0.041
+101589_at,Hmgn2,high mobility group nucleosomal binding domain 2,chr13 ,0.392,3,0.016
+101920_at,Pole2,"polymerase (DNA directed), epsilon 2 (p59 subunit)",---,1.432,3,0.025
+101957_f_at,Adprt1,ADP-ribosyltransferase (NAD+; poly (ADP-ribose) polymerase) 1,chr1 ,0.266,3,0.007
+101958_f_at,Tfdp1,transcription factor Dp 1,chr8 ,0.364,3,0.003
+102047_at,Nmt1,N-myristoyltransferase 1,chr11 ,1.098,3,0.008
+102103_f_at,NoneAvailable,---,---,1.173,3,0
+102105_f_at,Ptgds,prostaglandin D2 synthase (brain),chr2 ,0.54,3,0.024
+102128_f_at,Mrps25,mitochondrial ribosomal protein S25,---,1.148,3,0.01
+102134_f_at,Atp5g2,"ATP synthase, H+ transporting, mitochondrial F0 complex, subunit c (subunit 9), isoform 2",---,0.56,3,0.011
+102280_at,Pcdh7,protocadherin 7,chr5 ,0.597,3,0.032
+102848_f_at,2610524H06Rik,RIKEN cDNA 2610524H06 gene,---,0.197,3,0.026
+103064_at,Chek1,checkpoint kinase 1 homolog (S. pombe),chr9 ,1.251,3,0.01
+103094_at,Serf1,small EDRK-rich factor 1,chr13 ,0.583,3,0.009
+103201_at,Ttk,Ttk protein kinase,chr9 ,2.66,3,0.018
+103203_f_at,NoneAvailable,Mus musculus transcribed sequence with moderate similarity to protein ref:NP_078956.1 (H.sapiens)  hypothetical protein FLJ23311 [Homo sapiens],chr7 ,2.324,3,0.019
+103204_r_at,NoneAvailable,Mus musculus transcribed sequence with moderate similarity to protein ref:NP_078956.1 (H.sapiens)  hypothetical protein FLJ23311 [Homo sapiens],chr7 ,1.738,3,0.048
+103207_at,Pola1,"polymerase (DNA directed), alpha 1",chrX ,2.502,3,0.025
+103212_at,BC006933,cDNA sequence BC006933,chr12 ,1.151,3,0.045
+103240_f_at,Rnase2,"ribonuclease, RNase A family, 2",---,0.537,3,0.016
+103444_at,E130315B21Rik,RIKEN cDNA E130315B21 gene,chr10 ,1.296,3,0.016
+103797_at,Cdc7,cell division cycle 7 (S. cerevisiae),chr5 ,0.917,3,0.008
+103821_at,Cdc6,cell division cycle 6 homolog (S. cerevisiae),---,2.833,3,0.016
+103910_at,NoneAvailable,---,chr10 ,0.788,3,0.045
+103944_at,Rad51l1,RAD51-like 1 (S. cerevisiae),chr12 ,0.358,3,0.006
+104058_at,1110018J12Rik,RIKEN cDNA 1110018J12 gene,chr17 ,0.83,3,0.027
+104258_at,Acyp2,"acylphosphatase 2, muscle type",chr11 ,-0.071,3,0.046
+104313_at,Pgm2,phosphoglucomutase 2,chr4 ,0.87,3,0
+160069_at,Gmnn,geminin,chr13 ,2.598,3,0.009
+160377_at,Tardbp,TAR DNA binding protein,chr4 ,0.603,3,0.017
+160496_s_at,Mcm3,minichromosome maintenance deficient 3 (S. cerevisiae),chr1 ,1.482,3,0.021
+160518_at,1110060F11Rik,RIKEN cDNA 1110060F11 gene,chr4 ,0.42,3,0.019
+160595_at,2310042P20Rik,RIKEN cDNA 2310042P20 gene,chr15 ,0.875,3,0.031
+160907_at,C81234,expressed sequence C81234,chrX ,0.285,3,0.016
+160988_r_at,D3Ertd330e,"DNA segment, Chr 3, ERATO Doi 330, expressed",chr3 ,0.265,3,0
+161038_at,Prps2,phosphoribosyl pyrophosphate synthetase 2,chrX ,0.523,3,0.031
+161122_f_at,Ndufab1,"NADH dehydrogenase (ubiquinone) 1, alpha/beta subcomplex, 1",---,1.68,3,0.003
+161134_at,2610201A13Rik,RIKEN cDNA 2610201A13 gene,---,0.08,3,0.01
+161232_r_at,Gpiap1,GPI-anchored membrane protein 1,---,0.227,3,0.019
+161268_f_at,Gcs1,glucosidase 1,---,0.563,3,0.036
+161492_i_at,NoneAvailable,---,---,0.081,3,0.017
+161757_f_at,NoneAvailable,Mus musculus transcribed sequence,chr14 ,-0.117,3,0.001
+161787_f_at,Ris2,retroviral integration site 2,chr8 ,0.401,3,0.018
+162009_f_at,Msh2,mutS homolog 2 (E. coli),---,0.28,3,0.03
+162327_f_at,Ndufv2,NADH dehydrogenase (ubiquinone) flavoprotein 2,---,0.242,3,0.022
+92478_at,Stag1,stromal antigen 1,chr9 ,0.82,3,0.014
+92551_at,Lig1,"ligase I, DNA, ATP-dependent",chr7 ,1.152,3,0.033
+92561_at,Entpd5,ectonucleoside triphosphate diphosphohydrolase 5,chr12 ,-0.37,3,0.036
+92593_at,Osf2-pending,osteoblast specific factor 2 (fasciclin I-like),chr3 ,1.316,3,0.006
+92647_at,Rbbp4,retinoblastoma binding protein 4,chr4 ,-0.165,3,0.028
+92782_at,Tmpo,thymopoietin,chr10 ,0.653,3,0
+93228_at,Hells,"helicase, lymphoid specific",chr19 ,0.826,3,0.023
+93248_at,D730042P09Rik,RIKEN cDNA D730042P09 gene,chr9 ,0.282,3,0.011
+93333_at,Tbca,tubulin cofactor a,chr13 ,0.666,3,0.002
+93439_f_at,Pawr,"PRKC, apoptosis, WT1, regulator",chr10 ,-0.266,3,0.017
+93445_at,Cd5l,CD5 antigen-like,---,1.122,3,0.013
+93459_s_at,Fzd4,frizzled homolog 4 (Drosophila),chr7 ,-2.581,3,0.006
+94078_at,1110020P15Rik,RIKEN cDNA 1110020P15 gene,---,0.74,3,0.014
+94228_at,Xpo1,"exportin 1, CRM1 homolog (yeast)",chr11 ,1.337,3,0.001
+94376_s_at,Mre11a,meiotic recombination 11 homolog A (S. cerevisiae),chr9 ,2.127,3,0.035
+94534_at,Idh3a,isocitrate dehydrogenase 3 (NAD+) alpha,chr9 ,0.587,3,0.023
+94788_f_at,Tubb5,"tubulin, beta 5",chr17 ,1.367,3,0.026
+94907_f_at,1110001J03Rik,RIKEN cDNA 1110001J03 gene,chr6 ,1.71,3,0.003
+95063_at,2310021G01Rik,RIKEN cDNA 2310021G01 gene,chr2 ,2.4,3,0.041
+95084_f_at,Grhpr,glyoxylate reductase/hydroxypyruvate reductase,chr4 ,2.569,3,0.006
+95118_r_at,Kif22,kinesin family member 22,chr7 ,0.237,3,0.034
+95131_f_at,Ndufb2,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 2",chr2 ,1.121,3,0.003
+95292_at,Itga4,integrin alpha 4,chr2 ,1.618,3,0.02
+95456_r_at,Shfdg1,split hand/foot deleted gene 1,chr6 ,1.322,3,0.026
+95462_at,Bzw2,basic leucine zipper and W2 domains 2,chr12 ,1.226,3,0.049
+95527_at,Chaf1a,"chromatin assembly factor 1, subunit A (p150)",chr17 ,1.001,3,0
+95611_at,Lpl,lipoprotein lipase,chr8 ,-0.268,3,0.028
+95612_at,Rfc5,replication factor C (activator 1) 5,---,2.137,3,0.009
+95703_at,Uble1a,ubiquitin-like 1 (sentrin) activating enzyme E1A,---,0.674,3,0.022
+95732_at,1110005L13Rik,RIKEN cDNA 1110005L13 gene,chr10 ,2.644,3,0.028
+95927_f_at,2610201A13Rik,RIKEN cDNA 2610201A13 gene,chr11 ,1.536,3,0.02
+95967_at,NoneAvailable,Mus musculus transcribed sequences,chr13 ,-0.136,3,0.035
+96156_at,1110008H02Rik,RIKEN cDNA 1110008H02 gene,chr1 ,0.334,3,0.001
+96280_at,Ndufa2,"NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 2",chr18 ,0.957,3,0.002
+96625_at,D630024B06Rik,RIKEN cDNA D630024B06 gene,chr14 ,1.795,3,0.01
+96629_at,D7Rp2e,"DNA segment, Chr 7, Roswell Park 2 complex, expressed",---,0.862,3,0.034
+96686_i_at,2010100O12Rik,RIKEN cDNA 2010100O12 gene,chr2 ,1.279,3,0.005
+96687_f_at,2010100O12Rik,RIKEN cDNA 2010100O12 gene,chr2 ,1.093,3,0
+96710_at,C530002L11Rik,RIKEN cDNA C530002L11 gene,chr11 ,0.039,3,0.007
+96858_at,Pdcd8,programmed cell death 8,chrX ,0.932,3,0.013
+96891_at,Anp32b,"acidic nuclear phosphoprotein 32 family, member B",chr4 ,0.977,3,0.024
+96916_at,Mrpl33,mitochondrial ribosomal protein L33,chr5 ,-0.061,3,0.009
+97095_at,Bub1,budding uninhibited by benzimidazoles 1 homolog (S. cerevisiae),---,3.241,3,0.008
+97358_at,Lphn1,latrophilin 1,chr8 ,0.169,3,0.021
+97393_at,Vrk1,vaccinia related kinase 1,chr12 ,1.381,3,0.035
+97411_at,Ect2,ect2 oncogene,chr3 ,2.597,3,0.019
+97492_at,0610040B21Rik,RIKEN cDNA 0610040B21 gene,chr4 ,0.189,3,0.032
+97909_at,Stmn1,stathmin 1,chr4 ,0.912,3,0.004
+98072_r_at,Dck,deoxycytidine kinase,chr5 ,0.4,3,0.018
+98140_at,Cdh1,cadherin 1,---,0.145,3,0.017
+98550_at,Set,SET translocation,chr1 ,1.359,3,0.045
+98618_at,Dtymk,deoxythymidylate kinase,chr1 ,1.551,3,0.004
+98922_at,Itm1,intergral membrane protein 1,chr9 ,-0.602,3,0.01
+98929_at,1110018B13Rik,RIKEN cDNA 1110018B13 gene,chr13 ,1.14,3,0.032
+98956_at,Tram1,translocating chain-associating membrane protein 1,chr1 ,-0.019,3,0.049
+98993_at,Ppp2r5c,"protein phosphatase 2, regulatory subunit B (B56), gamma isoform",chr12 ,-0.394,3,0.047
+98999_at,Adsl,adenylosuccinate lyase,chr15 ,2.382,3,0.036
+99111_at,Skd3,suppressor of K+ transport defect 3,chr7 ,-0.206,3,0.017
+99119_at,Cfl1,"cofilin 1, non-muscle",chr19 ,0.325,3,0.012
+99439_at,Mas1,MAS1 oncogene,chr17 ,0.063,3,0.048
+99457_at,Mki67,antigen identified by monoclonal antibody Ki 67,chr7 ,2.708,3,0.002
+99475_at,Socs2,suppressor of cytokine signaling 2,chr10 ,-3.55,3,0.012
+99513_at,Pla2g4a,"phospholipase A2, group IVA (cytosolic, calcium-dependent)",chr1 ,0.589,3,0.032
+99581_at,Hint,histidine triad nucleotide binding protein,---,1.503,3,0.038
+99631_f_at,Cox6a1,"cytochrome c oxidase, subunit VI a, polypeptide 1",chr5 ,0.75,3,0.004
+99658_f_at,1110025H10Rik,RIKEN cDNA 1110025H10 gene,chr17 ,0.702,3,0.043
+99660_f_at,Cox7c,"cytochrome c oxidase, subunit VIIc",chr11 ,0.349,3,0.021
+99777_s_at,6230416J20Rik,RIKEN cDNA 6230416J20 gene,chr4 ,0.516,3,0.01
+100039_at,Tmem4,transmembrane protein 4,chr10 ,1.81,6,0.003
+100057_at,2510027N19Rik,RIKEN cDNA 2510027N19 gene,chr7 ,3.001,6,0
+100059_at,Cyba,"cytochrome b-245, alpha polypeptide",chr8 ,1.77,6,0.038
+100073_at,2510005D08Rik,RIKEN cDNA 2510005D08 gene,chr14 ,2.121,6,0.012
+100079_at,Ndufb9,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 9",chr15 ,1.058,6,0.013
+100089_at,Ppic,peptidylprolyl isomerase C,chr18 ,-0.435,6,0.039
+100116_at,2810417H13Rik,RIKEN cDNA 2810417H13 gene,chr1 ,2.111,6,0.026
+100128_at,Cdc2a,cell division cycle 2 homolog A (S. pombe),---,4.133,6,0.002
+100156_at,Mcm5,"minichromosome maintenance deficient 5, cell division cycle 46 (S. cerevisiae)",chr8 ,5.137,6,0.012
+100331_g_at,Prdx2,peroxiredoxin 2,chr1 ,1.095,6,0.001
+100400_at,4921531G14Rik,RIKEN cDNA 4921531G14 gene,chr15 ,0.81,6,0.045
+100459_at,Rad50,RAD50 homolog (S. cerevisiae),---,2.337,6,0.009
+100512_at,Uchl5,ubiquitin carboxyl-terminal esterase L5,chr1 ,1.055,6,0.006
+100527_at,D11Ertd99e,"DNA segment, Chr 11, ERATO Doi 99, expressed",chr11 ,2.559,6,0.038
+100539_at,2410041A17Rik,RIKEN cDNA 2410041A17 gene,chr4 ,0.756,6,0.007
+100543_s_at,Brd7,bromodomain containing 7,chr8 ,1.094,6,0.003
+100550_f_at,Cox6c,"cytochrome c oxidase, subunit VIc",chr15 ,0.466,6,0
+100568_at,Abce1,"ATP-binding cassette, sub-family E (OABP), member 1",---,1.485,6,0.011
+100569_at,Anxa2,annexin A2,chr9 ,-0.123,6,0.003
+100576_at,Pafah1b3,"platelet-activating factor acetylhydrolase, isoform 1b, alpha1 subunit",---,1.257,6,0.004
+100577_at,Snrpd1,small nuclear ribonucleoprotein D1,chr18 ,1.295,6,0
+100588_at,Psme2,"proteasome (prosome, macropain) 28 subunit, beta",chr14 ,0.648,6,0
+100592_at,Ghitm,growth hormone inducible transmembrane protein,chr14 ,1.179,6,0.024
+100612_at,Rrm1,ribonucleotide reductase M1,---,1.929,6,0.045
+100618_f_at,Slc25a5,"solute carrier family 25 (mitochondrial carrier; adenine nucleotide translocator), member 5",---,1.078,6,0.012
+100628_at,Ndufc1,"NADH dehydrogenase (ubiquinone) 1, subcomplex unknown, 1",---,1.336,6,0.006
+100633_at,2810484M10Rik,RIKEN cDNA 2810484M10 gene,---,-0.323,6,0.045
+100733_at,Psma2,"proteasome (prosome, macropain) subunit, alpha type 2",chr13 ,1.64,6,0.006
+100917_at,NoneAvailable,---,chr18 ,1.316,6,0.037
+100990_g_at,Itgb1bp1,integrin beta 1 binding protein 1,---,0.369,6,0.031
+101061_at,Ssr2,"signal sequence receptor, beta",chr3 ,1.296,6,0.034
+101065_at,Pcna,proliferating cell nuclear antigen,chr19 ,0.251,6,0.008
+101067_at,2010005E08Rik,RIKEN cDNA 2010005E08 gene,chr3 ,0.448,6,0.01
+101096_s_at,Hs1bp1,HS1 binding protein,chr2 ,1.123,6,0.018
+101097_at,BC028768,cDNA sequence BC028768,chr19 ,0.818,6,0.019
+101105_at,Banf1,barrier to autointegration factor 1,chr19 ,2.053,6,0.002
+101207_at,Ppia,peptidylprolyl isomerase A,chr11 ,0.267,6,0.011
+101254_at,Ran,"RAN, member RAS oncogene family",chr2 ,1.149,6,0.002
+101380_at,Nudt14,nudix (nucleoside diphosphate linked moiety X)-type motif 14,chr12 ,0.228,6,0.033
+101407_at,Frda,Friedreich ataxia,chr19 ,1.288,6,0.027
+101421_at,Rnf5,ring finger protein 5,chr17 ,1.067,6,0.044
+101440_at,1110033L15Rik,RIKEN cDNA 1110033L15 gene,chr2 ,0.499,6,0.027
+101486_at,Psmb10,"proteasome (prosome, macropain) subunit, beta type 10",chr8 ,1.623,6,0.012
+101506_at,Snrpa1,small nuclear ribonucleoprotein polypeptide A',chr7 ,1.197,6,0.003
+101521_at,Birc5,baculoviral IAP repeat-containing 5,chr11 ,2.475,6,0.01
+101525_at,Ndufb10,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 10",chr17 ,0.565,6,0.008
+101558_s_at,Psmb5,"proteasome (prosome, macropain) subunit, beta type 5",chr14 ,1.051,6,0.018
+101562_at,Hsp70-4,heat shock protein 4,chr2 ,2.149,6,0.047
+101579_at,Srp9,signal recognition particle 9,chr1 ,0.56,6,0.028
+101580_at,Cox7b,cytochrome c oxidase subunit VIIb,chr1 ,1.791,6,0
+101634_at,Npm1,nucleophosmin 1,chr11 ,0.582,6,0.008
+101680_at,Rpl27a,ribosomal protein L27a,chr13 ,-0.081,6,0
+101741_at,NoneAvailable,---,chr11 ,0.952,6,0.004
+101866_at,Arfrp1,ADP-ribosylation factor related protein 1,chr2 ,0.898,6,0.011
+101890_f_at,Dnajc2,"DnaJ (Hsp40) homolog, subfamily C, member 2",chr5 ,1.708,6,0.027
+101954_at,H2afz,"H2A histone family, member Z",chr12 ,0.014,6,0.023
+101964_at,Tkt,transketolase,chr14 ,1.087,6,0.001
+101992_at,Psmb6,"proteasome (prosome, macropain) subunit, beta type 6",chr11 ,1.47,6,0.016
+102001_at,Rrm2,ribonucleotide reductase M2,chr12 ,1.74,6,0.02
+102019_at,Mrpl13,mitochondrial ribosomal protein L13,chr15 ,1.841,6,0.001
+102022_at,1110007A04Rik,RIKEN cDNA 1110007A04 gene,---,1.16,6,0.009
+102126_at,Rps12,ribosomal protein S12,chr10 ,0.076,6,0.03
+102194_at,2810432D09Rik,RIKEN cDNA 2810432D09 gene,chr4 ,0.91,6,0.031
+102197_at,Nucb2,nucleobindin 2,chr7 ,0.931,6,0.019
+102409_at,Lsm8,"LSM8 homolog, U6 small nuclear RNA associated (S. cerevisiae)",chr6 ,1.406,6,0.001
+102412_at,AW541137,expressed sequence AW541137,chr10 ,2.049,6,0.032
+102631_at,Blm,Bloom syndrome homolog (human),chr7 ,1.408,6,0.003
+102791_at,Psmb8,"proteosome (prosome, macropain) subunit, beta type 8 (large multifunctional protease 7)",chr17 ,-0.163,6,0.016
+102821_s_at,Rasl2-9,"RAS-like, family 2, locus 9",chr2 ,1.55,6,0
+102838_at,Sell,"selectin, lymphocyte",chr1 ,0.254,6,0.004
+102853_at,Cspg6,chondroitin sulfate proteoglycan 6,chr19 ,1.265,6,0.037
+102970_at,Psmc3ip,"proteasome (prosome, macropain) 26S subunit, ATPase 3, interacting protein",chr11 ,0.86,6,0.028
+103038_at,Guca1a,guanylate cyclase activator 1a (retina),chr17 ,-0.105,6,0.007
+103089_at,Cd48,CD48 antigen,chr1 ,7.012,6,0
+103319_at,Psmd10,"proteasome (prosome, macropain) 26S subunit, non-ATPase, 10",chrX ,0.731,6,0.01
+103334_at,Crcp,calcitonin gene-related peptide-receptor component protein,chr5 ,1.088,6,0.015
+103335_at,Lgals9,"lectin, galactose binding, soluble 9",chr11 ,2.142,6,0.019
+103418_at,Rfc4,replication factor C (activator 1) 4,chr16 ,2.864,6,0.041
+103442_at,BC003479,cDNA sequence BC003479,chr11 ,1.965,6,0.007
+103468_at,Mns1,meiosis-specific nuclear structural protein 1,chr9 ,3.961,6,0.026
+103534_at,NoneAvailable,---,chr7 ,2.111,6,0.006
+103581_at,Cte1,cytosolic acyl-CoA thioesterase 1,chr12 ,0.169,6,0.01
+103598_at,Dhx9,DEAH (Asp-Glu-Ala-His) box polypeptide 9,chr1 ,0.862,6,0.032
+103605_g_at,Rgs19,regulator of G-protein signaling 19,chr2 ,0.421,6,0.01
+103608_at,2810431B21Rik,RIKEN cDNA 2810431B21 gene,chr13 ,0.933,6,0.047
+103619_at,1810044O22Rik,RIKEN cDNA 1810044O22 gene,chr8 ,1.634,6,0.009
+103654_at,Nsbp1,nucleosome binding protein 1,chrX ,0.032,6,0.02
+103671_at,Htatip2,"HIV-1 tat interactive protein 2, homolog (human)",chr7 ,0.743,6,0.01
+103683_at,Dhodh,dihydroorotate dehydrogenase,chr8 ,1.175,6,0.041
+103805_at,Nbn,nibrin,chr4 ,0.182,6,0
+103881_at,1110013G13Rik,RIKEN cDNA 1110013G13 gene,chr3 ,1.342,6,0.006
+103885_at,1500019O16Rik,RIKEN cDNA 1500019O16 gene,chr7 ,5.88,6,0.011
+103939_at,2610509I15Rik,RIKEN cDNA 2610509I15 gene,---,0.597,6,0.008
+104042_at,Slc35b1,"solute carrier family 35, member B1",chr17 ,1.214,6,0.037
+104044_at,1300006N24Rik,RIKEN cDNA 1300006N24 gene,chr9 ,1.315,6,0.044
+104057_at,Grpel1,"GrpE-like 1, mitochondrial",chr5 ,1.548,6,0.026
+104077_at,1110049G11Rik,RIKEN cDNA 1110049G11 gene,chrX ,1.238,6,0.01
+104078_g_at,1110049G11Rik,RIKEN cDNA 1110049G11 gene,chrX ,3.329,6,0.001
+104080_at,Pdap1,PDGFA associated protein 1,chr5 ,2.918,6,0.01
+104135_at,Arl3,ADP-ribosylation factor-like 3,chr19 ,0.196,6,0.008
+104145_at,Tcof1,"Treacher Collins Franceschetti syndrome 1, homolog",chr18 ,1.073,6,0.043
+104147_at,Nans,N-acetylneuraminic acid synthase (sialic acid synthase),chr4 ,1.196,6,0.022
+104212_at,Lrpprc,leucine-rich PPR-motif containing,---,0.574,6,0.023
+104234_at,Mrps25,mitochondrial ribosomal protein S25,chr6 ,1.243,6,0.029
+104237_at,2700061N24Rik,RIKEN cDNA 2700061N24 gene,chr13 ,1.881,6,0.016
+104248_at,0610038P07Rik,RIKEN cDNA 0610038P07 gene,chr3 ,0.168,6,0.046
+104297_at,Ipo11,importin 11,chr13 ,1.447,6,0.02
+104301_at,2410018G20Rik,RIKEN cDNA 2410018G20 gene,chr16 ,1.631,6,0.002
+104322_at,Ckap2,cytoskeleton associated protein 2,chr8 ,1.598,6,0.003
+104356_at,4921516M08Rik,RIKEN cDNA 4921516M08 gene,---,1.385,6,0
+104380_at,Slc35a1,"solute carrier family 35 (CMP-sialic acid transporter), member 1",chr4 ,0.449,6,0.002
+104390_at,Anp32a,"acidic (leucine-rich) nuclear phosphoprotein 32 family, member A",---,1.176,6,0.045
+104423_at,2810047L02Rik,RIKEN cDNA 2810047L02 gene,chr1 ,3.018,6,0.009
+104476_at,Rbl1,retinoblastoma-like 1 (p107),chr2 ,1.983,6,0.011
+104541_at,Prtn3,proteinase 3,chr10 ,1.916,6,0.042
+104567_at,Mrpl46,mitochondrial ribosomal protein L46,chr7 ,1.995,6,0.031
+104733_at,Cetn2,centrin 2,chrX ,0.012,6,0.015
+104738_at,Zrf2,zuotin related factor 2,chr6 ,1.861,6,0.008
+104762_r_at,1500015J03Rik,RIKEN cDNA 1500015J03 gene,chr2 ,1.459,6,0.042
+104766_at,Nola1,"nucleolar protein family A, member 1 (H/ACA small nucleolar RNPs)",---,1.457,6,0.002
+160076_at,Mtx2,metaxin 2,chr2 ,1.76,6,0.035
+160107_at,Hprt,hypoxanthine guanine phosphoribosyl transferase,chrX ,0.226,6,0.028
+160125_at,D11Ertd497e,"DNA segment, Chr 11, ERATO Doi 497, expressed",---,0.876,6,0.007
+160126_at,Map2k1ip1,mitogen-activated protein kinase kinase 1 interacting protein 1,chr3 ,0.372,6,0.049
+160135_at,D16Ertd502e,"DNA segment, Chr 16, ERATO Doi 502, expressed",chr16 ,1.284,6,0.007
+160152_at,Psmc1,"protease (prosome, macropain) 26S subunit, ATPase 1",chr16 ,1.442,6,0.02
+160165_at,Ubc-rs2,"ubiquitin C, related sequence 2",chr7 ,0.51,6,0.046
+160176_at,Hirip5,histone cell cycle regulation defective interacting protein 5,chr15 ,1.669,6,0
+160193_at,5730551F12Rik,RIKEN cDNA 5730551F12 gene,chr10 ,0.6,6,0.002
+160203_at,5330419I01Rik,RIKEN cDNA 5330419I01 gene,chr1 ,0.873,6,0.017
+160214_at,1700003F10Rik,RIKEN cDNA 1700003F10 gene,chr6 ,0.072,6,0.039
+160218_at,2310056P07Rik,RIKEN cDNA 2310056P07 gene,chr16 ,0.971,6,0.002
+160225_at,Gtf2b,general transcription factor IIB,chr3 ,0.477,6,0.012
+160235_at,5033425B17Rik,RIKEN cDNA 5033425B17 gene,chr7 ,0.992,6,0.006
+160247_at,Ube2v2,ubiquitin-conjugating enzyme E2 variant 2,chr15 ,1.044,6,0.003
+160256_at,1110020J08Rik,RIKEN cDNA 1110020J08 gene,---,0.939,6,0.001
+160262_at,Mtch2,mitochondrial carrier homolog 2 (C. elegans),chr2 ,0.99,6,0.01
+160266_r_at,1110064N10Rik,RIKEN cDNA 1110064N10 gene,chr15 ,0.96,6,0.041
+160293_at,2700038L12Rik,RIKEN cDNA 2700038L12 gene,chr9 ,1.194,6,0.048
+160297_at,MGC36453,hypothetical protein LOC381045,chr14 ,2.932,6,0.003
+160299_at,Rwdd1,RWD domain containing 1,chr10 ,1.08,6,0.034
+160314_at,2010317E03Rik,RIKEN cDNA 2010317E03 gene,chr10 ,0.092,6,0.007
+160324_at,Rpa3,replication protein A3,chr1 ,1.959,6,0.009
+160344_at,Npc2,Niemann Pick type C2,chr12 ,0.888,6,0.036
+160360_at,Sep15-pending,selenoprotein,chr3 ,-0.129,6,0.012
+160412_at,Pdcd2,programmed cell death 2,chr17 ,0.662,6,0.048
+160416_at,Fkbp3,FK506 binding protein 3,chr12 ,0.512,6,0.006
+160426_at,Rpo1-1,RNA polymerase 1-1,chr17 ,0.705,6,0.029
+160431_at,Mrpl12,mitochondrial ribosomal protein L12,chr11 ,2.077,6,0.009
+160444_at,2010319C14Rik,RIKEN cDNA 2010319C14 gene,chr16 ,0.548,6,0.042
+160456_at,1100001J08Rik,RIKEN cDNA 1100001J08 gene,---,0.642,6,0.011
+160485_r_at,Ywhae,"tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein, epsilon polypeptide",---,0.185,6,0.012
+160503_at,Fbl,fibrillarin,chr17 ,1.886,6,0
+160531_at,Grcc2f,"gene rich cluster, C2f gene",chr6 ,0.73,6,0.036
+160536_at,Hras1,Harvey rat sarcoma virus oncogene 1,---,0.429,6,0.031
+160538_at,Cdk4,cyclin-dependent kinase 4,chr10 ,2.296,6,0.032
+160543_at,Snx3,sorting nexin 3,chr10 ,0.395,6,0.023
+160550_i_at,Magoh,"mago-nashi homolog, proliferation-associated (Drosophila)",chr4 ,0.676,6,0.016
+160551_at,Vdac3,voltage-dependent anion channel 3,chr13 ,0.534,6,0.006
+160556_at,1810020G14Rik,RIKEN cDNA 1810020G14 gene,chr12 ,0.101,6,0.023
+160569_at,2310008M10Rik,RIKEN cDNA 2310008M10 gene,chr3 ,1.341,6,0.006
+160585_at,2810470K21Rik,RIKEN cDNA 2810470K21 gene,---,2.814,6,0.011
+160621_at,Mrps22,mitochondrial ribosomal protein S22,chr9 ,0.891,6,0.017
+160659_at,2310057G13Rik,RIKEN cDNA 2310057G13 gene,chr10 ,0.89,6,0
+160709_at,1110001A16Rik,RIKEN cDNA 1110001A16 gene,chr17 ,0.843,6,0
+160711_at,Decr1,"2,4-dienoyl CoA reductase 1, mitochondrial",chr4 ,0.759,6,0.006
+160723_at,1500001M20Rik,RIKEN cDNA 1500001M20 gene,chr6 ,1.3,6,0.044
+160743_at,Pole3,"polymerase (DNA directed), epsilon 3 (p17 subunit)",chr4 ,0.238,6,0.008
+160805_s_at,Mpdu1,mannose-P-dolichol utilization defect 1,chr11 ,0.143,6,0.011
+160844_at,Pts,6-pyruvoyl-tetrahydropterin synthase,chr9 ,0.175,6,0.049
+160856_at,Ubl4,ubiquitin-like 4,---,0.36,6,0.007
+160872_f_at,2310008H09Rik,RIKEN cDNA 2310008H09 gene,chr7 ,0.592,6,0.016
+160876_at,Bcap29,B-cell receptor-associated protein 29,chr12 ,1.484,6,0.023
+161004_at,1700097N02Rik,RIKEN cDNA 1700097N02 gene,---,0.221,6,0.005
+161147_f_at,1110046L09Rik,RIKEN cDNA 1110046L09 gene,chr8 ,3.517,6,0.013
+161359_s_at,Apoa1bp,apolipoprotein A-I binding protein,chr3 ,0.755,6,0.006
+161487_f_at,NoneAvailable,"Mus musculus transcribed sequence with strong similarity to protein sp:P48201 (H.sapiens) AT93_HUMAN ATP synthase lipid-binding protein, mitochondrial precursor (ATP synthase proteolipid P3) (ATPase protein 9) (ATPase subunit C)",---,0.986,6,0.005
+161522_i_at,Cst3,cystatin C,chr2 ,0.465,6,0.046
+161872_f_at,1110049G11Rik,RIKEN cDNA 1110049G11 gene,---,1.026,6,0.01
+161897_f_at,Prps1,phosphoribosyl pyrophosphate synthetase 1,chrX ,0.02,6,0.026
+162013_f_at,D4Ertd786e,"DNA segment, Chr 4, ERATO Doi 786, expressed",chr7 ,0.907,6,0.006
+162235_f_at,D19Wsu55e,"DNA segment, Chr 19, Wayne State University 55, expressed",chr19 ,0.378,6,0.003
+162417_at,1500001M20Rik,RIKEN cDNA 1500001M20 gene,---,0.537,6,0.003
+162466_at,1810004D07Rik,RIKEN cDNA 1810004D07 gene,---,0.295,6,0.031
+92388_at,BC038311,cDNA sequence BC038311,chr5 ,0.478,6,0.025
+92540_f_at,Srm,spermidine synthase,chr4 ,6.091,6,0.001
+92547_at,Hip2,huntingtin interacting protein 2,chr5 ,0.567,6,0.04
+92565_at,1110005A23Rik,RIKEN cDNA 1110005A23 gene,chr19 ,0.994,6,0.007
+92574_at,3110001M13Rik,RIKEN cDNA 3110001M13 gene,chr9 ,1.899,6,0.011
+92578_at,Scye1,"small inducible cytokine subfamily E, member 1",chr3 ,0.839,6,0.011
+92589_at,Psph,phosphoserine phosphatase,chr5 ,0.853,6,0.013
+92596_at,Cacybp,calcyclin binding protein,chr1 ,0.523,6,0.039
+92615_at,AI837181,expressed sequence AI837181,chr4 ,2.807,6,0.001
+92625_at,Nme2,"expressed in non-metastatic cells 2, protein",chr10 ,1.732,6,0.004
+92629_f_at,Hdgf,hepatoma-derived growth factor,---,0.521,6,0.019
+92636_f_at,Sec61g,"SEC61, gamma subunit",chr1 ,1.533,6,0.004
+92646_at,Mrpl23,mitochondrial ribosomal protein L23,chr2 ,2.152,6,0.028
+92770_at,S100a6,S100 calcium binding protein A6 (calcyclin),chr3 ,-3.204,6,0
+92778_i_at,NoneAvailable,---,---,-1.238,6,0.049
+92788_f_at,Cetn3,centrin 3,chr13 ,1.678,6,0.018
+92798_at,Atp5c1,"ATP synthase, H+ transporting, mitochondrial F1 complex, gamma polypeptide 1",chrX ,1.327,6,0.003
+92799_g_at,Atp5c1,"ATP synthase, H+ transporting, mitochondrial F1 complex, gamma polypeptide 1",chr2 ,1.541,6,0.001
+92800_i_at,Atp5c1,"ATP synthase, H+ transporting, mitochondrial F1 complex, gamma polypeptide 1",chr13 ,0.86,6,0
+92824_at,Nme6,"expressed in non-metastatic cells 6, protein",chr9 ,1.781,6,0.001
+92826_at,Gdap3,ganglioside-induced differentiation-associated-protein 3,---,0.209,6,0.003
+92829_at,Hspe1,heat shock protein 1 (chaperonin 10),chr1 ,1.429,6,0.001
+92831_at,Sfxn1,sideroflexin 1,---,1.223,6,0.005
+92874_f_at,Cops7a,"COP9 (constitutive photomorphogenic) homolog, subunit 7a (Arabidopsis thaliana)",chr6 ,1.098,6,0.003
+92876_at,Ndufs4,NADH dehydrogenase (ubiquinone) Fe-S protein 4,chr13 ,0.222,6,0.002
+93008_at,Lsm4,"LSM4 homolog, U6 small nuclear RNA associated (S. cerevisiae)",chr8 ,2.177,6,0.021
+93014_at,Atp5l,"ATP synthase, H+ transporting, mitochondrial F0 complex, subunit g",chr11 ,1.668,6,0.019
+93029_at,Idh3g,"isocitrate dehydrogenase 3 (NAD+), gamma",chrX ,0.845,6,0.006
+93041_at,Mcm4,minichromosome maintenance deficient 4 homolog (S. cerevisiae),chr16 ,1.922,6,0.039
+93042_at,Bzrp,"benzodiazepine receptor, peripheral",chr15 ,0.924,6,0.021
+93062_at,Mrpl39,mitochondrial ribosomal protein L39,chr16 ,1.936,6,0.016
+93078_at,Ly6a,"lymphocyte antigen 6 complex, locus A",chr15 ,-3.737,6,0.008
+93084_at,Slc25a4,"solute carrier family 25 (mitochondrial carrier; adenine nucleotide translocator), member 4",chr8 ,0.194,6,0.005
+93085_at,Psmb9,"proteosome (prosome, macropain) subunit, beta type 9 (large multifunctional protease 2)",chr17 ,0.307,6,0.015
+93095_at,Hmgb1,high mobility group box 1,chr11 ,0.963,6,0.03
+93101_s_at,Nedd4,"neural precursor cell expressed, developmentally down-regulted gene 4",chr9 ,-0.095,6,0.003
+93112_at,Mcm2,minichromosome maintenance deficient 2 mitotin (S. cerevisiae),chr6 ,2.139,6,0.018
+93117_at,Hnrpa2b1,heterogeneous nuclear ribonucleoprotein A2/B1,chr6 ,0.4,6,0.006
+93139_at,4432411H13Rik,RIKEN cDNA 4432411H13 gene,chr5 ,-0.583,6,0.031
+93203_f_at,3230402J05Rik,RIKEN cDNA 3230402J05 gene,chr17 ,-0.003,6,0.01
+93236_s_at,Tyms,thymidylate synthase,chr10 ,3.228,6,0.012
+93237_s_at,Tyms,thymidylate synthase,chr10 ,2.144,6,0.021
+93251_at,Nipsnap1,4-nitrophenylphosphatase domain and non-neuronal SNAP25-like protein homolog 1 (C. elegans),chr11 ,0.772,6,0.027
+93258_at,Hmbs,hydroxymethylbilane synthase,chr9 ,2.914,6,0.046
+93277_at,Hspd1,heat shock protein 1 (chaperonin),chr1 ,1.14,6,0.029
+93290_at,Pnp,purine-nucleoside phosphorylase,chr14 ,1.213,6,0.044
+93323_at,Plp2,proteolipid protein 2,chr2 ,-0.4,6,0.008
+93336_at,1110014C03Rik,RIKEN cDNA 1110014C03 gene,chr12 ,0.813,6,0.041
+93456_r_at,NoneAvailable,---,chr14 ,-0.076,6,0.01
+93495_at,Prdx4,peroxiredoxin 4,chrX ,0.796,6,0.013
+93512_f_at,Adk,adenosine kinase,chr14 ,0.798,6,0
+93519_s_at,Nedd8,"neural precursor cell expressed, developmentally down-regulated gene 8",chr14 ,2.012,6,0.002
+93531_at,Ndufa8,"NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 8",chr2 ,1.477,6,0.042
+93533_at,1500011L16Rik,RIKEN cDNA 1500011L16 gene,---,2.198,6,0.022
+93539_at,1810004D07Rik,RIKEN cDNA 1810004D07 gene,---,1.406,6,0
+93542_at,Pter,phosphotriesterase related,chr2 ,1.123,6,0.022
+93548_at,Sec61b,Sec61 beta subunit,chr4 ,2.149,6,0.005
+93551_at,Tm4sf7,transmembrane 4 superfamily member 7,chr7 ,0.862,6,0.008
+93559_at,Apex1,apurinic/apyrimidinic endonuclease 1,chr14 ,1.957,6,0.002
+93560_at,Acyp1,"acylphosphatase 1, erythrocyte (common) type",chr12 ,3.035,6,0.029
+93562_at,Ndufb3,NADH dehydrogenase (ubiquinone) 1 beta subcomplex 3,---,0.903,6,0.001
+93579_at,5830427H10Rik,RIKEN cDNA 5830427H10 gene,chr6 ,1.438,6,0.034
+93581_at,Ndufb8,NADH dehydrogenase (ubiquinone) 1 beta subcomplex 8,chr19 ,2.79,6,0.003
+93582_at,Coq7,demethyl-Q 7,chr7 ,3.745,6,0.001
+93593_f_at,Emp3,epithelial membrane protein 3,chr7 ,0.001,6,0.046
+93596_i_at,Atp5e,"ATP synthase, H+ transporting, mitochondrial F1 complex, epsilon subunit",chr2 ,1.737,6,0.006
+93734_i_at,Psmc3,"proteasome (prosome, macropain) 26S subunit, ATPase 3",chr2 ,0.698,6,0.002
+93735_f_at,Psmc3,"proteasome (prosome, macropain) 26S subunit, ATPase 3",chr2 ,1.365,6,0.011
+93742_at,5730449L18Rik,RIKEN cDNA 5730449L18 gene,chr1 ,0.944,6,0.026
+93754_at,Ech1,"enoyl coenzyme A hydratase 1, peroxisomal",chr7 ,0.716,6,0.015
+93764_at,Grim19-pending,genes associated with retinoid-IFN-induced mortality 19,---,0.229,6,0.005
+93780_at,Them2,thioesterase superfamily member 2,chr13 ,1.504,6,0.012
+93784_at,Cfdp,craniofacial development protein 1,chr8 ,1.424,6,0.031
+93786_i_at,Mrpl18,mitochondrial ribosomal protein L18,chr17 ,2.577,6,0.013
+93787_f_at,Mrpl18,mitochondrial ribosomal protein L18,---,2.215,6,0.009
+93812_at,Clns1a,"chloride channel, nucleotide-sensitive, 1A",chr7 ,1.373,6,0.031
+93815_at,0610041L09Rik,RIKEN cDNA 0610041L09 gene,chr6 ,0.912,6,0.013
+93820_at,Cox7a2,"cytochrome c oxidase, subunit VIIa 2",chr9 ,1.951,6,0.002
+93833_s_at,Hist1h2bc,"histone 1, H2bc",chr13 ,1.06,6,0.043
+93838_at,2700038C09Rik,RIKEN cDNA 2700038C09 gene,chr2 ,3.273,6,0.025
+93952_r_at,2810417H13Rik,RIKEN cDNA 2810417H13 gene,---,0.619,6,0.014
+93970_at,Ipo7,importin 7,chr7 ,0.551,6,0.018
+93984_at,Atpi,ATPase inhibitor,---,1.332,6,0
+93988_at,Psma7,"proteasome (prosome, macropain) subunit, alpha type 7",chr2 ,1.392,6,0.02
+93991_at,Mor1,"malate dehydrogenase, mitochondrial",chr5 ,1.136,6,0.009
+93993_at,Lman2,"lectin, mannose-binding 2",chr13 ,1.647,6,0.002
+93999_at,Snrpg,small nuclear ribonucleoprotein polypeptide G,chr17 ,0.927,6,0.002
+94014_at,2510048O06Rik,RIKEN cDNA 2510048O06 gene,---,1.798,6,0
+94025_at,Psmb3,"proteasome (prosome, macropain) subunit, beta type 3",chr16 ,1.932,6,0.035
+94032_at,Apoa1bp,apolipoprotein A-I binding protein,chr3 ,0.949,6,0.008
+94034_at,Smfn,small fragment nuclease,chr9 ,0.778,6,0
+94040_at,Erh,enhancer of rudimentary homolog (Drosophila),chr12 ,1.929,6,0.001
+94062_at,Ndufv2,NADH dehydrogenase (ubiquinone) flavoprotein 2,chr17 ,1.3,6,0.045
+94110_f_at,NoneAvailable,"Mus musculus 0 day neonate thymus cDNA, RIKEN full-length enriched library, clone:A430088G18 product:hypothetical Zinc finger, C2H2 type containing protein, full insert sequence",---,0.488,6,0.033
+94206_at,Grcc10,"gene rich cluster, C10 gene",chr6 ,0.906,6,0
+94210_at,Timm9,translocase of inner mitochondrial membrane 9 homolog (yeast),chr10 ,3.713,6,0.022
+94252_at,Eif2s3x,"eukaryotic translation initiation factor 2, subunit 3, structural gene X-linked",chrX ,0.381,6,0.049
+94263_f_at,Psmb7,"proteasome (prosome, macropain) subunit, beta type 7",chr2 ,1.959,6,0.018
+94267_i_at,NoneAvailable,---,chr9 ,0.902,6,0.037
+94268_f_at,NoneAvailable,---,chr9 ,0.316,6,0.004
+94275_at,Urod,uroporphyrinogen decarboxylase,chr4 ,1.492,6,0.015
+94276_at,Hsd17b12,hydroxysteroid (17-beta) dehydrogenase 12,chr2 ,0.315,6,0.041
+94277_at,Mtx1,metaxin 1,chr3 ,1.276,6,0.007
+94278_at,Lcp1,lymphocyte cytosolic protein 1,chr14 ,-0.14,6,0.027
+94294_at,Ccnb2,cyclin B2,chr9 ,4.408,6,0.001
+94313_at,Snrp1c,U1 small nuclear ribonucleoprotein 1C,chr15 ,-0.007,6,0.002
+94323_at,D630012G11Rik,RIKEN cDNA D630012G11 gene,chr19 ,1.879,6,0
+94360_at,2700029M09Rik,RIKEN cDNA 2700029M09 gene,chr8 ,1.272,6,0.009
+94372_at,Nudt1,nudix (nucleoside diphosphate linked moiety X)-type motif 1,---,3.289,6,0.003
+94394_at,Rras,"Harvey rat sarcoma oncogene, subgroup R",chr7 ,-0.442,6,0.049
+94455_at,Lsm3,"LSM3 homolog, U6 small nuclear RNA associated (S. cerevisiae)",chr6 ,2.688,6,0.002
+94494_at,Farsl,phenylalanine-tRNA synthetase-like,chr1 ,1.832,6,0.008
+94506_at,Cpsf5,cleavage and polyadenylation specific factor 5,chr3 ,0.914,6,0.007
+94526_at,D10Ertd214e,"DNA segment, Chr 10, ERATO Doi 214, expressed",chr10 ,2.227,6,0
+94558_g_at,Gtf3a,general transcription factor III A,chr5 ,1.943,6,0.011
+94789_r_at,Tubb5,"tubulin, beta 5",chr17 ,3.275,6,0.044
+94841_at,Psma5,"proteasome (prosome, macropain) subunit, alpha type 5",chr10 ,1.755,6,0.007
+94862_i_at,Dncl2a,"dynein, cytoplasmic, light chain 2A",---,0.742,6,0.043
+94870_f_at,2310075M17Rik,RIKEN cDNA 2310075M17 gene,chr11 ,1.008,6,0.02
+94892_r_at,Mea1,male enhanced antigen 1,chr17 ,1.005,6,0.017
+94897_at,Gpx4,glutathione peroxidase 4,---,0.101,6,0.046
+94908_r_at,1110001J03Rik,RIKEN cDNA 1110001J03 gene,chr6 ,0.276,6,0.029
+94912_at,Mrps21,mitochondrial ribosomal protein S21,chr3 ,1.449,6,0.017
+94925_at,1810055D05Rik,RIKEN cDNA 1810055D05 gene,chr3 ,0.976,6,0.021
+94931_at,1810045K17Rik,RIKEN cDNA 1810045K17 gene,chr3 ,1.276,6,0.034
+94933_at,BC008155,cDNA sequence BC008155,chr17 ,1.315,6,0.039
+95015_at,Akr1c13,"aldo-keto reductase family 1, member C13",chr13 ,0.179,6,0.002
+95042_at,C030002N13Rik,RIKEN cDNA C030002N13 gene,chr4 ,0.462,6,0.014
+95045_at,0610012D09Rik,RIKEN cDNA 0610012D09 gene,chr7 ,1.41,6,0
+95049_at,Snrpd2,small nuclear ribonucleoprotein D2,chr10 ,1.485,6,0.03
+95052_at,1110035L05Rik,RIKEN cDNA 1110035L05 gene,chr4 ,0.243,6,0.025
+95053_s_at,Sdhb,"succinate dehydrogenase complex, subunit B, iron sulfur (Ip)",chr4 ,2.681,6,0.023
+95061_at,Bcas2,breast carcinoma amplified sequence 2,chr3 ,0.334,6,0
+95064_at,Acaa2,acetyl-Coenzyme A acyltransferase 2 (mitochondrial 3-oxoacyl-Coenzyme A thiolase),chr18 ,0.479,6,0.016
+95067_at,Mrpl2,mitochondrial ribosomal protein L2,chr17 ,1.667,6,0.023
+95091_at,Sec13r,SEC13 related gene (S. cerevisiae),---,1.672,6,0.001
+95105_at,2010110M21Rik,RIKEN cDNA 2010110M21 gene,chr13 ,0.297,6,0.025
+95132_r_at,Ndufb2,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 2",chr6 ,1.988,6,0.024
+95408_at,2310003F16Rik,RIKEN cDNA 2310003F16 gene,chr2 ,0.987,6,0.023
+95413_at,6030432N09Rik,RIKEN cDNA 6030432N09 gene,chr5 ,0.123,6,0.035
+95426_at,Echs1,"enoyl Coenzyme A hydratase, short chain, 1, mitochondrial",chr7 ,0.838,6,0.02
+95441_at,Timm23,translocase of inner mitochondrial membrane 23 homolog (yeast),chr1 ,1.675,6,0.042
+95448_at,Psmc2,"proteasome (prosome, macropain) 26S subunit, ATPase 2",chr5 ,1.408,6,0.017
+95460_at,Cops5,"COP9 (constitutive photomorphogenic) homolog, subunit 5 (Arabidopsis thaliana)",chr1 ,1.564,6,0.025
+95472_f_at,Uqcrb,ubiquinol-cytochrome c reductase binding protein,chr13 ,0.734,6,0.006
+95479_at,1110036E10Rik,RIKEN cDNA 1110036E10 gene,chr11 ,0.426,6,0.049
+95480_at,D11Wsu68e,"DNA segment, Chr 11, Wayne State University 68, expressed",chr11 ,1.471,6,0.003
+95485_at,Hadhsc,"L-3-hydroxyacyl-Coenzyme A dehydrogenase, short chain",chr3 ,0.06,6,0.011
+95491_at,Park7,"Parkinson disease (autosomal recessive, early onset) 7",chr4 ,1.248,6,0.002
+95497_at,1110005A05Rik,RIKEN cDNA 1110005A05 gene,chr9 ,3.276,6,0.011
+95498_at,Mrps15,mitochondrial ribosomal protein S15,chr4 ,2.035,6,0.005
+95561_at,1700013H19Rik,RIKEN cDNA 1700013H19 gene,chr8 ,0.899,6,0.003
+95590_at,Alg5,"asparagine-linked glycosylation 5 homolog (yeast, dolichyl-phosphate beta-glucosyltransferase)",chr3 ,1.43,6,0.003
+95593_at,Golph2,golgi phosphoprotein 2,chr13 ,1.191,6,0.018
+95606_at,Nsap1l-pending,NS1-associated protein 1-like,chr9 ,1.239,6,0.005
+95620_at,2310016E22Rik,RIKEN cDNA 2310016E22 gene,chr12 ,0.069,6,0.004
+95634_at,0610010K14Rik,RIKEN cDNA 0610010K14 gene,---,1.777,6,0.023
+95635_g_at,0610010K14Rik,RIKEN cDNA 0610010K14 gene,chr11 ,0.403,6,0.036
+95636_at,0610010K14Rik,RIKEN cDNA 0610010K14 gene,chr11 ,2.424,6,0.007
+95649_at,Phf5a,PHD finger protein 5A,chr15 ,1.933,6,0.012
+95654_at,Clic1,chloride intracellular channel 1,chr17 ,-0.179,6,0.033
+95656_i_at,D13Wsu177e,"DNA segment, Chr 13, Wayne State University 177, expressed",chr13 ,2.603,6,0.011
+95660_at,0610025L15Rik,RIKEN cDNA 0610025L15 gene,chr7 ,2.58,6,0
+95677_at,0610009C03Rik,RIKEN cDNA 0610009C03 gene,---,2.789,6,0.026
+95690_at,1110030L07Rik,RIKEN cDNA 1110030L07 gene,chr15 ,3.584,6,0.007
+95693_at,Idh2,"isocitrate dehydrogenase 2 (NADP+), mitochondrial",chr7 ,1.921,6,0.021
+95696_at,Txnl2,thioredoxin-like 2,chr4 ,1.145,6,0.009
+95698_at,Ndufb7,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 7",chr8 ,2.162,6,0.008
+95707_at,2900010M23Rik,RIKEN cDNA 2900010M23 gene,chr17 ,2.087,6,0.032
+95714_at,0610009D07Rik,RIKEN cDNA 0610009D07 gene,chr12 ,1.473,6,0.027
+95718_f_at,Usmg5,upregulated during skeletal muscle growth 5,chr19 ,1.302,6,0.006
+95760_at,1110011K10Rik,RIKEN cDNA 1110011K10 gene,chr9 ,2.372,6,0.002
+95891_at,NoneAvailable,Mus musculus transcribed sequences,chr16 ,3.953,6,0.017
+96016_at,NoneAvailable,"Mus musculus cDNA clone MGC:67366 IMAGE:5683334, complete cds",chr2 ,3.771,6,0.015
+96029_at,Sf3a3,"splicing factor 3a, subunit 3, 60kDa",chr4 ,2.16,6,0.047
+96041_at,Rbm3,RNA binding motif protein 3,chr1 ,-0.448,6,0.038
+96048_at,Hrsp12,heat-responsive protein 12,chr15 ,0.196,6,0.037
+96052_at,Acp1,"acid phosphatase 1, soluble",---,1.712,6,0.022
+96081_at,Tk1,thymidine kinase 1,chr11 ,2.893,6,0.014
+96089_at,4931406C07Rik,RIKEN cDNA 4931406C07 gene,chr9 ,1.515,6,0.003
+96093_at,ORF11,open reading frame 11,---,0.678,6,0.01
+96112_at,Etfa,"electron transferring flavoprotein, alpha polypeptide",chr9 ,1.779,6,0.006
+96231_at,2010012D11Rik,RIKEN cDNA 2010012D11 gene,chr13 ,0.868,6,0.031
+96249_at,Sep15-pending,selenoprotein,chr3 ,0.398,6,0.031
+96261_at,NoneAvailable,"Mus musculus cDNA clone MGC:67622 IMAGE:6410794, complete cds",chr4 ,1.384,6,0
+96267_at,Ndufv1,NADH dehydrogenase (ubiquinone) flavoprotein 1,chr19 ,1.004,6,0.016
+96268_at,Suclg1,"succinate-CoA ligase, GDP-forming, alpha subunit",chr6 ,1.173,6,0.015
+96289_at,Stoml2,stomatin (Epb7.2)-like 2,chr4 ,2.901,6,0.001
+96291_f_at,NoneAvailable,"Mus musculus cDNA clone IMAGE:6772417, with apparent retained intron",chr13 ,2.298,6,0
+96292_r_at,NoneAvailable,"Mus musculus cDNA clone IMAGE:6772417, with apparent retained intron",chr13 ,1.544,6,0.01
+96293_at,2410015N17Rik,RIKEN cDNA 2410015N17 gene,chr7 ,4.422,6,0.006
+96319_at,Cdc20,cell division cycle 20 homolog (S. cerevisiae),---,4.591,6,0.004
+96321_at,Ndufa9,"NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 9",chr6 ,1.871,6,0.001
+96336_at,Gatm,glycine amidinotransferase (L-arginine:glycine amidinotransferase),---,0.529,6,0.022
+96345_at,Sdbcag84,serologically defined breast cancer antigen 84,chr2 ,0.341,6,0.049
+96353_at,1110021D01Rik,RIKEN cDNA 1110021D01 gene,chr13 ,2.999,6,0.003
+96355_at,2900055D03Rik,RIKEN cDNA 2900055D03 gene,---,0.736,6,0.01
+96605_at,0610011I04Rik,RIKEN cDNA 0610011I04 gene,chr6 ,-1.492,6,0.012
+96611_at,NoneAvailable,"Mus musculus cDNA clone IMAGE:5694421, partial cds",chr17 ,0.414,6,0.001
+96613_at,5730536A07Rik,RIKEN cDNA 5730536A07 gene,chr9 ,2.658,6,0.014
+96627_at,Ebp,phenylalkylamine Ca2+ antagonist (emopamil) binding protein,chrX ,1.299,6,0.009
+96634_at,5730469M10Rik,RIKEN cDNA 5730469M10 gene,---,-0.064,6,0.037
+96652_at,Mrpl28,mitochondrial ribosomal protein L28,chr17 ,1.368,6,0.026
+96668_at,Timm17b,translocator of inner mitochondrial membrane b,chrX ,2.162,6,0.003
+96670_at,Gstk1,glutathione S-transferase kappa 1,chr6 ,-0.369,6,0.033
+96678_at,Dhrs4,dehydrogenase/reductase (SDR family) member 4,chr14 ,0.742,6,0.006
+96696_at,Hrmt1l2,heterogeneous nuclear ribonucleoproteins  methyltransferase-like 2 (S. cerevisiae),chr7 ,2.608,6,0.013
+96699_at,Hmgn1,high mobility group nucleosomal binding domain 1,chr11 ,0.795,6,0.001
+96733_at,Rap1gds1,"RAP1, GTP-GDP dissociation stimulator 1",chr3 ,0.959,6,0.024
+96734_at,Synj2bp,synaptojanin 2 binding protein,chr12 ,0.397,6,0.031
+96743_at,Skiip,SKI interacting protein,---,1.897,6,0.005
+96775_at,Cbx1,chromobox homolog 1 (Drosophila HP1 beta),chr11 ,0.466,6,0.008
+96840_at,Gabarapl2,GABA(A) receptor-associated protein like 2,chr5 ,-0.619,6,0.016
+96849_at,Timm8a,translocase of inner mitochondrial membrane 8 homolog a (yeast),chr10 ,0.859,6,0.048
+96861_at,Mrpl50,mitochondrial ribosomal protein L50,chr4 ,1.687,6,0.015
+96888_at,Akr1a4,"aldo-keto reductase family 1, member A4 (aldehyde reductase)",chr4 ,0.887,6,0.042
+96892_at,Psma1,"proteasome (prosome, macropain) subunit, alpha type 1",chr7 ,1.257,6,0.017
+96899_at,Ndufs3,NADH dehydrogenase (ubiquinone) Fe-S protein 3,chr11 ,1.275,6,0.019
+96902_at,2900091E11Rik,RIKEN cDNA 2900091E11 gene,chr10 ,1.339,6,0.042
+96909_at,Ndufab1,"NADH dehydrogenase (ubiquinone) 1, alpha/beta subcomplex, 1",chr7 ,1.256,6,0.014
+96947_at,Etfb,"electron transferring flavoprotein, beta polypeptide",chr7 ,2.477,6,0
+96948_at,Qdpr,quininoid dihydropteridine reductase,chr5 ,0.591,6,0.006
+96952_at,Psma6,"proteasome (prosome, macropain) subunit, alpha type 6",chr12 ,1.235,6,0.004
+96956_at,0610038D11Rik,RIKEN cDNA 0610038D11 gene,chr19 ,0.405,6,0.016
+97013_f_at,Cyba,"cytochrome b-245, alpha polypeptide",chr8 ,0.992,6,0.013
+97055_s_at,NoneAvailable,---,chr16 ,1.087,6,0.01
+97164_at,2610207P08Rik,RIKEN cDNA 2610207P08 gene,---,3.233,6,0.011
+97179_at,NoneAvailable,"Mus musculus mRNA similar to putative c-Myc-responsive (cDNA clone MGC:54855 IMAGE:5388297), complete cds",---,2.605,6,0.001
+97200_f_at,Snrpe,small nuclear ribonucleoprotein E,chr1 ,0.59,6,0.041
+97201_s_at,Ndufa5,"NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 5",chr6 ,1.857,6,0.001
+97207_f_at,Lypla1,lysophospholipase 1,chr1 ,0.831,6,0.047
+97220_at,Dscr2,Down syndrome critical region homolog 2 (human),chr16 ,5.415,6,0
+97248_at,Dbi,diazepam binding inhibitor,---,1.56,6,0
+97268_i_at,0610010I12Rik,RIKEN cDNA 0610010I12 gene,chr3 ,1.265,6,0.003
+97274_at,Psmd14,"proteasome (prosome, macropain) 26S subunit, non-ATPase, 14",chr2 ,2.128,6,0.001
+97276_at,Ckap1,cytoskeleton-associated protein 1,---,0.402,6,0.044
+97279_at,6430402H10Rik,RIKEN cDNA 6430402H10 gene,chr6 ,-0.199,6,0.016
+97307_f_at,Ndufb5,"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 5",---,1.376,6,0.003
+97311_at,6720456B07Rik,RIKEN cDNA 6720456B07 gene,chr6 ,0.701,6,0
+97318_at,Hars2,histidyl tRNA synthetase 2,chr2 ,0.864,6,0
+97342_at,Mrps14,mitochondrial ribosomal protein S14,chr1 ,2.351,6,0.001
+97346_at,2610001J05Rik,RIKEN cDNA 2610001J05 gene,chr6 ,0.616,6,0.03
+97356_at,1810008O21Rik,RIKEN cDNA 1810008O21 gene,chr7 ,0.227,6,0.037
+97374_at,2810025M15Rik,RIKEN cDNA 2810025M15 gene,chr1 ,2.124,6,0.003
+97395_at,D19Wsu55e,"DNA segment, Chr 19, Wayne State University 55, expressed",---,0.449,6,0.015
+97412_at,3300001G02Rik,RIKEN cDNA 3300001G02 gene,chr11 ,2.545,6,0.004
+97419_at,2310010I22Rik,RIKEN cDNA 2310010I22 gene,chr2 ,0.687,6,0.007
+97424_at,Arl6ip5,ADP-ribosylation factor-like 6 interacting protein 5,chr6 ,0.945,6,0.001
+97449_at,Aldh7a1,"aldehyde dehydrogenase family 7, member A1",chr18 ,0.856,6,0.043
+97459_at,Psma4,"proteasome (prosome, macropain) subunit, alpha type 4",chr18 ,1.676,6,0.03
+97460_at,Ube2r2,ubiquitin-conjugating enzyme E2R 2,---,0.681,6,0.047
+97468_at,Cks1,CDC28 protein kinase 1,chr3 ,2.843,6,0
+97477_at,Timm8b,translocase of inner mitochondrial membrane 8 homolog b (yeast),chr9 ,1.26,6,0.04
+97478_at,C030004C14Rik,RIKEN cDNA C030004C14 gene,chr13 ,0.351,6,0.002
+97512_at,2010107E04Rik,RIKEN cDNA 2010107E04 gene,chr12 ,0.955,6,0.007
+97538_at,Gus,beta-glucuronidase,chr5 ,1.607,6,0.033
+97751_f_at,NoneAvailable,---,---,0.47,6,0.022
+97758_at,Prdx1,peroxiredoxin 1,chr8 ,1.211,6,0.01
+97807_at,1110021H02Rik,RIKEN cDNA 1110021H02 gene,chr1 ,1.1,6,0.015
+97819_at,Gsto1,glutathione S-transferase omega 1,chr19 ,0.024,6,0.001
+97820_at,Galk1,galactokinase 1,chr11 ,2.703,6,0.004
+97824_at,D11Ertd175e,"DNA segment, Chr 11, ERATO Doi 175, expressed",chr11 ,1.494,6,0.006
+97828_at,Siva-pending,Cd27 binding protein (Hindu God of destruction),chr12 ,1.387,6,0
+97884_at,Mrps11,mitochondrial ribosomal protein S11,chr7 ,1.959,6,0.019
+97885_at,1810009M01Rik,RIKEN cDNA 1810009M01 gene,chr6 ,-0.938,6,0.043
+97907_at,Lsm7,"LSM7 homolog, U6 small nuclear RNA associated (S. cerevisiae)",chr10 ,1.945,6,0.002
+97979_at,Ppp1r7,"protein phosphatase 1, regulatory (inhibitor) subunit 7",chr1 ,2.977,6,0.019
+98039_at,2410015M20Rik,RIKEN cDNA 2410015M20 gene,chr17 ,1.43,6,0.019
+98075_at,G431001I09Rik,RIKEN cDNA G431001I09 gene,chr2 ,3.225,6,0.001
+98077_at,Snrpd3,small nuclear ribonucleoprotein D3,chr10 ,1.794,6,0.001
+98081_at,Rpo1-3,RNA polymerase 1-3,chr4 ,0.959,6,0.001
+98092_at,Plac8,placenta-specific 8,chr5 ,2.981,6,0.004
+98120_at,Mrpl27,mitochondrial ribosomal protein L27,chr11 ,3.683,6,0.001
+98153_at,Cct3,chaperonin subunit 3 (gamma),chr3 ,1.573,6,0.02
+98440_at,Ltb4dh,leukotriene B4 12-hydroxydehydrogenase,chr4 ,3.855,6,0
+98456_at,Stk19,serine/threonine kinase 19,---,0.189,6,0.008
+98492_at,Cklfsf7,chemokine-like factor super family 7,chr9 ,1.661,6,0.036
+98516_at,NoneAvailable,"Mus musculus cDNA clone MGC:67360 IMAGE:6823629, complete cds",chr8 ,0.615,6,0.016
+98524_f_at,NoneAvailable,---,---,2.603,6,0.008
+98527_at,Dci,"dodecenoyl-Coenzyme A delta isomerase (3,2 trans-enoyl-Coenyme A isomerase)",chr17 ,1.306,6,0.011
+98557_f_at,Psmb4,"proteasome (prosome, macropain) subunit, beta type 4",---,0.285,6,0.018
+98564_f_at,Rps26,ribosomal protein S26,chr10 ,0.016,6,0.025
+98587_at,Nap1l1,nucleosome assembly protein 1-like 1,chr10 ,0.829,6,0.015
+98595_at,Irak1,interleukin-1 receptor-associated kinase 1,---,-0.518,6,0.02
+98610_at,Mrps28,mitochondrial ribosomal protein S28,chr3 ,1.473,6,0.04
+98613_at,2700085E05Rik,RIKEN cDNA 2700085E05 gene,chr11 ,0.873,6,0.02
+98904_at,Mrpl35,mitochondrial ribosomal protein L35,chr6 ,2.237,6,0.002
+98910_at,D030012E24Rik,RIKEN cDNA D030012E24 gene,chr11 ,0.973,6,0.008
+98920_g_at,2410018G23Rik,RIKEN cDNA 2410018G23 gene,chrX ,-2.085,6,0.004
+98921_at,2410018G23Rik,RIKEN cDNA 2410018G23 gene,chr8 ,-1.976,6,0.004
+98930_at,Cope,"coatomer protein complex, subunit epsilon",chr8 ,1.116,6,0.022
+98934_at,0610007P06Rik,RIKEN cDNA 0610007P06 gene,chr7 ,4.269,6,0
+98938_at,1500026D16Rik,RIKEN cDNA 1500026D16 gene,chr19 ,1.602,6,0.013
+98959_at,0610016J10Rik,RIKEN cDNA 0610016J10 gene,chr17 ,0.606,6,0.011
+98966_at,Dbt,dihydrolipoamide branched chain transacylase E2,chr3 ,1.257,6,0.033
+98975_at,2410008G02Rik,RIKEN cDNA 2410008G02 gene,chr8 ,0.732,6,0.033
+99056_at,Pcbd,6-pyruvoyl-tetrahydropterin synthase/dimerization cofactor of hepatocyte nuclear factor 1 alpha (TCF1),chr10 ,0.111,6,0.008
+99106_at,Cops6,"COP9 (constitutive photomorphogenic) homolog, subunit 6 (Arabidopsis thaliana)",chr5 ,2.396,6,0.029
+99128_at,Atp5o,"ATP synthase, H+ transporting, mitochondrial F1 complex, O subunit",chr16 ,1.704,6,0.021
+99129_at,Clast3-pending,CD40 ligand-activated specific transcript 3,chr18 ,1.773,6,0.039
+99147_at,Znhit1,"zinc finger, HIT domain containing 1",---,0.46,6,0.042
+99148_at,Fh1,fumarate hydratase 1,chr1 ,2.824,6,0.009
+99151_at,2610002K22Rik,RIKEN cDNA 2610002K22 gene,---,3.469,6,0.004
+99156_at,2700099C19Rik,RIKEN cDNA 2700099C19 gene,chrX ,0.68,6,0.049
+99164_at,2010111E04Rik,RIKEN cDNA 2010111E04 gene,chr3 ,2.906,6,0.006
+99179_at,3010002G01Rik,RIKEN cDNA 3010002G01 gene,chr19 ,0.465,6,0.011
+99182_at,2610511E03Rik,RIKEN cDNA 2610511E03 gene,chr14 ,0.954,6,0.044
+99522_at,Gsg2,germ cell-specific gene 2,---,0.308,6,0.008
+99537_at,Ruvbl1,RuvB-like protein 1,chr1 ,3.012,6,0.022
+99544_at,Dguok,deoxyguanosine kinase,chr6 ,0.647,6,0.034
+99546_at,Fkbp2,FK506 binding protein 2,---,2.273,6,0.001
+99566_at,Tpi,triosephosphate isomerase,chr6 ,1.133,6,0.048
+99583_at,Gstp2,"glutathione S-transferase, pi 2",chr19 ,1.142,6,0.003
+99586_at,Cst3,cystatin C,chr2 ,0.348,6,0.003
+99594_at,Mrpl51,mitochondrial ribosomal protein L51,chr6 ,2.427,6,0
+99613_at,Mut,methylmalonyl-Coenzyme A mutase,chr17 ,0.426,6,0.012
+99618_at,0710008D09Rik,RIKEN cDNA 0710008D09 gene,chr10 ,2.5,6,0
+99632_at,Mad2l1,"MAD2 (mitotic arrest deficient, homolog)-like 1 (yeast)",chr6 ,1.589,6,0.018
+99651_at,2610209M04Rik,RIKEN cDNA 2610209M04 gene,chr6 ,1.176,6,0.024
+99655_at,1810012E07Rik,RIKEN cDNA 1810012E07 gene,chr7 ,0.653,6,0.001
+99991_at,Il17r,interleukin 17 receptor,chr6 ,0.281,6,0.036
+* Positive log2 fold changes represent genes expressed higher in FL-HSC; Negative log2 fold changes represent genes expressed higher in adult HSC (fold change=2 is equivalent to log2 fold change=1),,,,,,
