@@ -267,7 +267,7 @@ colnames(design) <- sub(
 y <- estimateDisp(y, design)
 
 dgeglm <- glmFit(y, design)
-contrasts <- makeContrasts(Het - Del, levels = design)
+contrasts <- makeContrasts(Del - Het, levels = design)
 dgelrt <- glmLRT(dgeglm, contrast = contrasts)
 tt <- topTags(dgelrt, n = Inf)
 summary(decideTests(dgelrt))
@@ -505,7 +505,7 @@ plotBCV(y)
 
 ```{r, fig.asp = 1}
 y_dgeglm <- glmFit(y, y_design)
-y_contrast <- makeContrasts(Het - Del, levels = y_design)
+y_contrast <- makeContrasts(Del - Het, levels = y_design)
 y_dgelrt <- glmLRT(y_dgeglm, contrast = y_contrast)
 y_dt <- decideTests(y_dgelrt)
 
@@ -761,7 +761,7 @@ plotBCV(ym)
 
 ```{r, fig.asp = 1}
 ym_dgeglm <- glmFit(ym, ym_design)
-ym_contrast <- makeContrasts(Het - Del, levels = ym_design)
+ym_contrast <- makeContrasts(Del - Het, levels = ym_design)
 ym_dgelrt <- glmLRT(ym_dgeglm, contrast = ym_contrast)
 ym_dt <- decideTests(ym_dgelrt)
 
@@ -1019,7 +1019,7 @@ plotBCV(yf)
 
 ```{r, fig.asp = 1}
 yf_dgeglm <- glmFit(yf, yf_design)
-yf_contrast <- makeContrasts(Het - Del, levels = yf_design)
+yf_contrast <- makeContrasts(Del - Het, levels = yf_design)
 yf_dgelrt <- glmLRT(yf_dgeglm, contrast = yf_contrast)
 yf_dt <- decideTests(yf_dgelrt)
 
