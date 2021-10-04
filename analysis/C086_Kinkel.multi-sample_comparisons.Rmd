@@ -547,7 +547,7 @@ if (nrow(y_tt)) {
 }
 ```
 
-CSV file of results available from [`output/DEGs/reads/aggregated_tech_reps.DEGs.csv.gz`](../output/DEGs/reads/aggregated_tech_reps.DEGs.csv.gz).
+CSV file of results available from [`output/DEGs/reads/`](../output/DEGs/reads/).
 
 ```{r}
 gzout <- gzfile(
@@ -584,6 +584,145 @@ pheatmap(
 ```
 
 ## Gene set tests
+
+Gene set testing is commonly used to interpret the differential expression results in
+a biological context.
+Here we apply various gene set tests to the DEG lists.
+
+### goana
+
+We use the `goana()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of gene ontology (GO) terms in each DEG list.
+
+```{r, results = "hide"}
+list_of_go <- lapply(colnames(y_contrast), function(j) {
+  dgelrt <- glmLRT(y_dgeglm, contrast = y_contrast[, j])
+  
+  go <- goana(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.goana.csv.gz"),
+    open = "wb")
+  write.csv(
+    topGO(go, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  go
+})
+names(list_of_go) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topGO(list_of_go[[1]]) %>%
+  knitr::kable(
+    caption = '`goana()` produces a table with a row for each GO term and the following columns: **Term** (GO term); **Ont** (ontology that the GO term belongs to. Possible values are "BP", "CC" and "MF"); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of GO term in up-regulated genes); **P.Down** (p-value for over-representation of GO term in down-regulated genes)')
+```
+
+### kegga
+
+We use the `kegga()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of KEGG pathways in each DEG list.
+
+```{r, results = "hide"}
+list_of_kegg <- lapply(colnames(y_contrast), function(j) {
+  dgelrt <- glmLRT(y_dgeglm, contrast = y_contrast[, j])
+  
+  kegg <- kegga(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.kegga.csv.gz"),
+    open = "wb")
+  write.csv(
+    topKEGG(kegg, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  kegg
+})
+names(list_of_kegg) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topKEGG(list_of_kegg[[1]]) %>%
+  knitr::kable(
+    caption = '`kegga()` produces a table with a row for each KEGG pathway ID and the following columns: **Pathway** (KEGG pathway); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of KEGG pathway in up-regulated genes); **P.Down** (p-value for over-representation of KEGG pathway in down-regulated genes)')
+```
+
+### camera with MSigDB gene sets
+
+We use the `camera()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test whether a set of genes is highly ranked relative to other genes in terms of differential expression, accounting for inter-gene correlation.
+Specifically, we test using gene sets from [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb), namely:
+
+<aside>
+We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](http://bioinf.wehi.edu.au/MSigDB/index.html)
+</aside>
+
+- **H**: **hallmark gene sets** are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
+- **C2**: **curated gene sets** from online pathway databases, publications in PubMed, and knowledge of domain experts.
+
+```{r}
+# NOTE: Using BiocFileCache to avoid re-downloading these gene sets everytime 
+#       the report is rendered.
+library(BiocFileCache)
+bfc <- BiocFileCache()
+# NOTE: Creating list of gene sets in this slightly convoluted way so that each 
+#       gene set name is prepended by its origin (e.g. H, C2, or C7).
+msigdb <- do.call(
+  c, 
+  list(
+    H = readRDS(
+      bfcrpath(
+        bfc,
+        "http://bioinf.wehi.edu.au/MSigDB/v7.1/Mm.h.all.v7.1.entrez.rds")),
+    C2 = readRDS(
+      bfcrpath(
+        bfc, 
+        "http://bioinf.wehi.edu.au/MSigDB/v7.1/Mm.c2.all.v7.1.entrez.rds"))))
+
+y_idx <- ids2indices(
+  msigdb, 
+  id = sapply(strsplit(y$genes$NCBI.ENTREZID, ";"), "[[", 1))
+list_of_camera <- lapply(colnames(y_contrast), function(j) {
+  cam <- camera(
+    y = y, 
+    index = y_idx,
+    design = y_design, 
+    contrast = y_contrast[, j])
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.camera.csv.gz"),
+    open = "wb")
+  write.csv(
+    cam,
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  cam
+})
+names(list_of_camera) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+head(list_of_camera[[1]]) %>%
+  knitr::kable(
+    caption = '`camera()` produces a table with a row for each gene set (prepended by which MSigDB collection it comes from) and the following columns: **NGenes** (number of genes in set); **Direction** (direction of change); **PValue** (two-tailed p-value); **FDR** (Benjamini and Hochberg FDR adjusted p-value).')
+```
+
+### Sarah's gene lists
 
 ```{r}
 y_X <- y$genes$ENSEMBL.SEQNAME == "X"
@@ -629,6 +768,10 @@ y_index <- list(
   `Proliferation Group Venezia (2004)` = y_venezia_proliferation,
   `Quiescence Group Venezia (2004)` = y_venezia_quiescence)
 ```
+
+Sarah requested testing a number of gene sets (see [Gene sets]).
+
+We use the `fry()` function from the `r BiocStyle::Biocpkg("edgeR")` R/Bioconductor package to perform a self-contained gene set test against the null hypothesis that none of the genes in the set are differentially expressed.
 
 ```{r}
 fry(
@@ -842,6 +985,127 @@ pheatmap(
 
 ## Gene set tests
 
+Gene set testing is commonly used to interpret the differential expression results in
+a biological context.
+Here we apply various gene set tests to the DEG lists.
+
+### goana
+
+We use the `goana()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of gene ontology (GO) terms in each DEG list.
+
+```{r, results = "hide"}
+list_of_go <- lapply(colnames(ym_contrast), function(j) {
+  dgelrt <- glmLRT(ym_dgeglm, contrast = ym_contrast[, j])
+  
+  go <- goana(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.males.goana.csv.gz"),
+    open = "wb")
+  write.csv(
+    topGO(go, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  go
+})
+names(list_of_go) <- colnames(ym_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topGO(list_of_go[[1]]) %>%
+  knitr::kable(
+    caption = '`goana()` produces a table with a row for each GO term and the following columns: **Term** (GO term); **Ont** (ontology that the GO term belongs to. Possible values are "BP", "CC" and "MF"); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of GO term in up-regulated genes); **P.Down** (p-value for over-representation of GO term in down-regulated genes)')
+```
+
+### kegga
+
+We use the `kegga()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of KEGG pathways in each DEG list.
+
+```{r, results = "hide"}
+list_of_kegg <- lapply(colnames(ym_contrast), function(j) {
+  dgelrt <- glmLRT(ym_dgeglm, contrast = ym_contrast[, j])
+  
+  kegg <- kegga(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.males.kegga.csv.gz"),
+    open = "wb")
+  write.csv(
+    topKEGG(kegg, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  kegg
+})
+names(list_of_kegg) <- colnames(ym_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topKEGG(list_of_kegg[[1]]) %>%
+  knitr::kable(
+    caption = '`kegga()` produces a table with a row for each KEGG pathway ID and the following columns: **Pathway** (KEGG pathway); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of KEGG pathway in up-regulated genes); **P.Down** (p-value for over-representation of KEGG pathway in down-regulated genes)')
+```
+
+### camera with MSigDB gene sets
+
+We use the `camera()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test whether a set of genes is highly ranked relative to other genes in terms of differential expression, accounting for inter-gene correlation.
+Specifically, we test using gene sets from [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb), namely:
+
+<aside>
+We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](http://bioinf.wehi.edu.au/MSigDB/index.html)
+</aside>
+
+- **H**: **hallmark gene sets** are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
+- **C2**: **curated gene sets** from online pathway databases, publications in PubMed, and knowledge of domain experts.
+
+```{r}
+ym_idx <- ids2indices(
+  msigdb, 
+  id = sapply(strsplit(ym$genes$NCBI.ENTREZID, ";"), "[[", 1))
+list_of_camera <- lapply(colnames(ym_contrast), function(j) {
+  cam <- camera(
+    y = ym, 
+    index = ym_idx,
+    design = ym_design, 
+    contrast = ym_contrast[, j])
+  gzout <- gzfile(
+    description = file.path(outdir, "aggregated_tech_reps.males.camera.csv.gz"),
+    open = "wb")
+  write.csv(
+    cam,
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  cam
+})
+names(list_of_camera) <- colnames(ym_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+head(list_of_camera[[1]]) %>%
+  knitr::kable(
+    caption = '`camera()` produces a table with a row for each gene set (prepended by which MSigDB collection it comes from) and the following columns: **NGenes** (number of genes in set); **Direction** (direction of change); **PValue** (two-tailed p-value); **FDR** (Benjamini and Hochberg FDR adjusted p-value).')
+```
+
+### Sarah's gene lists
+
 ```{r}
 ym_X <- ym$genes$ENSEMBL.SEQNAME == "X"
 ym_protocadherin <- grepl("Pcdh", rownames(ym))
@@ -886,6 +1150,10 @@ ym_index <- list(
   `Proliferation Group Venezia (2004)` = ym_venezia_proliferation,
   `Quiescence Group Venezia (2004)` = ym_venezia_quiescence)
 ```
+
+Sarah requested testing a number of gene sets (see [Gene sets]).
+
+We use the `fry()` function from the `r BiocStyle::Biocpkg("edgeR")` R/Bioconductor package to perform a self-contained gene set test against the null hypothesis that none of the genes in the set are differentially expressed.
 
 ```{r}
 fry(
@@ -938,7 +1206,6 @@ for (n in names(ym_index)) {
   }
 }
 ```
-
 
 # Female-only: analysis of aggregated technical replicates
 
@@ -1100,12 +1367,139 @@ pheatmap(
 
 ## Gene set tests
 
+Gene set testing is commonly used to interpret the differential expression results in
+a biological context.
+Here we apply various gene set tests to the DEG lists.
+
+### goana
+
+We use the `goana()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of gene ontology (GO) terms in each DEG list.
+
+```{r, results = "hide"}
+list_of_go <- lapply(colnames(yf_contrast), function(j) {
+  dgelrt <- glmLRT(yf_dgeglm, contrast = yf_contrast[, j])
+  
+  go <- goana(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(
+      outdir, 
+      "aggregated_tech_reps.females.goana.csv.gz"),
+    open = "wb")
+  write.csv(
+    topGO(go, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  go
+})
+names(list_of_go) <- colnames(yf_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topGO(list_of_go[[1]]) %>%
+  knitr::kable(
+    caption = '`goana()` produces a table with a row for each GO term and the following columns: **Term** (GO term); **Ont** (ontology that the GO term belongs to. Possible values are "BP", "CC" and "MF"); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of GO term in up-regulated genes); **P.Down** (p-value for over-representation of GO term in down-regulated genes)')
+```
+
+### kegga
+
+We use the `kegga()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of KEGG pathways in each DEG list.
+
+```{r, results = "hide"}
+list_of_kegg <- lapply(colnames(yf_contrast), function(j) {
+  dgelrt <- glmLRT(yf_dgeglm, contrast = yf_contrast[, j])
+  
+  kegg <- kegga(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(
+      outdir,
+      "aggregated_tech_reps.females.kegga.csv.gz"),
+    open = "wb")
+  write.csv(
+    topKEGG(kegg, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  kegg
+})
+names(list_of_kegg) <- colnames(yf_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads/`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+topKEGG(list_of_kegg[[1]]) %>%
+  knitr::kable(
+    caption = '`kegga()` produces a table with a row for each KEGG pathway ID and the following columns: **Pathway** (KEGG pathway); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of KEGG pathway in up-regulated genes); **P.Down** (p-value for over-representation of KEGG pathway in down-regulated genes)')
+```
+
+### camera with MSigDB gene sets
+
+We use the `camera()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test whether a set of genes is highly ranked relative to other genes in terms of differential expression, accounting for inter-gene correlation.
+Specifically, we test using gene sets from [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb), namely:
+
+<aside>
+We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](http://bioinf.wehi.edu.au/MSigDB/index.html)
+</aside>
+
+- **H**: **hallmark gene sets** are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
+- **C2**: **curated gene sets** from online pathway databases, publications in PubMed, and knowledge of domain experts.
+
+```{r}
+yf_idx <- ids2indices(
+  msigdb, 
+  id = sapply(strsplit(yf$genes$NCBI.ENTREZID, ";"), "[[", 1))
+list_of_camera <- lapply(colnames(yf_contrast), function(j) {
+  cam <- camera(
+    y = yf, 
+    index = yf_idx,
+    design = yf_design, 
+    contrast = yf_contrast[, j])
+  gzout <- gzfile(
+    description = file.path(
+      outdir, 
+      "aggregated_tech_reps.females.camera.csv.gz"),
+    open = "wb")
+  write.csv(
+    cam,
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  cam
+})
+names(list_of_camera) <- colnames(yf_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/reads`](../output/DEGs/reads/).
+
+An example of the results are shown below.
+
+```{r}
+head(list_of_camera[[1]]) %>%
+  knitr::kable(
+    caption = '`camera()` produces a table with a row for each gene set (prepended by which MSigDB collection it comes from) and the following columns: **NGenes** (number of genes in set); **Direction** (direction of change); **PValue** (two-tailed p-value); **FDR** (Benjamini and Hochberg FDR adjusted p-value).')
+```
+
+### Sarah's gene lists
+
 ```{r}
 yf_X <- yf$genes$ENSEMBL.SEQNAME == "X"
 yf_protocadherin <- grepl("Pcdh", rownames(yf))
 yf_pw <- rownames(yf) %in% c("Ndn", "Mkrn3", "Peg12")
-yf_male <- male_het_vs_del[, c("Probe", "Differential expression")]
 yf_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+yf_male <- male_het_vs_del[, c("Probe", "Differential expression")]
 yf_sun <- sun_2014[, c("geneSymbol", "log2FC")]
 yf_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
 yf_chambers$logFC <- log2(yf_chambers$`Fold Difference`)
@@ -1135,8 +1529,8 @@ yf_index <- list(
   `X-linked` = yf_X,
   Protocadherin = yf_protocadherin,
   `Prader-Willi` = yf_pw,
+  `female: Het vs. Del` = yf_female,
   `Male: Het vs. Del` = yf_male,
-  `Female: Het vs. Del` = yf_female,
   `Sun (2014)` = yf_sun,
   `Chambers (2007)` = yf_chambers,
   `Gazit (2013)` = yf_gazit,
@@ -1145,11 +1539,15 @@ yf_index <- list(
   `Quiescence Group Venezia (2004)` = yf_venezia_quiescence)
 ```
 
+Sarah requested testing a number of gene sets (see [Gene sets]).
+
+We use the `fry()` function from the `r BiocStyle::Biocpkg("edgeR")` R/Bioconductor package to perform a self-contained gene set test against the null hypothesis that none of the genes in the set are differentially expressed.
+
 ```{r}
 fry(
-  yf,
-  index = yf_index,
-  design = yf_design, 
+  yf, 
+  index = yf_index, 
+  design = yf_design,
   contrast = yf_contrast,
   sort = "none") %>%
     knitr::kable(
