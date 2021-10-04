@@ -52,16 +52,32 @@ colnames(sce_not_deduped) <- sub(
   "\\.not_UMI_deduped",
   "",
   colnames(sce_not_deduped))
+altExp(sce_not_deduped, "ERCC") <- altExp(
+  sce_not_deduped,
+  "ERCC")[rownames(altExp(sce_deduped, "ERCC"))]
 stopifnot(
   identical(rownames(sce_deduped), rownames(sce_not_deduped)),
-  identical(colnames(sce_deduped), colnames(sce_not_deduped))) 
+  identical(colnames(sce_deduped), colnames(sce_not_deduped)),
+  identical(
+    colnames(altExp(sce_deduped, "ERCC")),
+    colnames(altExp(sce_not_deduped, "ERCC"))),
+  identical(
+    rownames(altExp(sce_deduped, "ERCC")), 
+    rownames(altExp(sce_not_deduped, "ERCC"))))
 
 # Combine UMI and read counts a single SCE.
 sce <- sce_deduped
 assay(sce, "UMI_counts") <- assay(sce_deduped, "counts")
 assay(sce, "read_counts") <- assay(sce_not_deduped, "counts")
+assay(altExp(sce, "ERCC"), "UMI_counts") <- assay(
+  altExp(sce_deduped, "ERCC"), 
+  "counts")
+assay(altExp(sce, "ERCC"), "read_counts") <- assay(
+  altExp(sce_not_deduped, "ERCC"),
+  "counts")
 # NOTE: Nullify some now-unrequired data.
 assay(sce, "counts") <- NULL
+assay(altExp(sce, "ERCC"), "counts") <- NULL
 sce$UMI_deduped <- NULL
 ```
 
