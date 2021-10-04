@@ -1,6 +1,6 @@
 # Prepare C086_Kinkel data for GEO submission
 # Peter Hickey
-# 2021-09-21
+# 2021-10-04
 
 library(here)
 
@@ -25,21 +25,23 @@ file.copy(
 # SCEs -------------------------------------------------------------------------
 
 dir.create(file.path(outdir, "SCE"))
+# NOTE: Starting from the SCE used for the DE analysis.
 sce <- readRDS(here("data", "SCEs", "C086_Kinkel.preprocessed.SCE.rds"))
-# Restrict analysis to read counts
-assays(sce) <- list(counts = assay(sce, "read_counts"))
-
-# TODO: Any sample-level filtering? If so, will need to modify FASTQ files.
+# NOTE: Revert some of the changes to the rowData.
+rownames(sce) <- rowData(sce)$ENSEMBL.GENEID
+rowData(sce) <- S4Vectors::make_zero_col_DFrame(nrow(sce))
 
 # Gene counts
+# NOTE: Exporting read counts.
 write.csv(
-  x = as.data.frame(as.matrix(counts(sce))),
+  x = as.data.frame(as.matrix(assay(sce, "read_counts"))),
   file = gzfile(file.path(outdir, "SCE", "gene_counts.csv.gz")),
   row.names = TRUE)
 
 # ERCC counts
+# NOTE: Exporting read counts.
 write.csv(
-  x = as.data.frame(as.matrix(counts(altExp(sce)))),
+  x = as.data.frame(as.matrix(assay(altExp(sce, "ERCC"), "read_counts"))),
   file = gzfile(file.path(outdir, "SCE", "ERCC_counts.csv.gz")),
   row.names = TRUE)
 
