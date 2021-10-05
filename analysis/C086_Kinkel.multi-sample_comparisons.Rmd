@@ -1344,25 +1344,43 @@ write.csv(
 close(gzout)
 ```
 
+```{r}
+heatmapForPaper <- function() {
+  pheatmap(
+    cpm(yf, log = TRUE)[rownames(yf_tt), ],
+    cluster_rows = TRUE,
+    cluster_cols = FALSE,
+    color = hcl.colors(101, "Blue-Red 3"),
+    breaks = seq(-3, 3, length.out = 101),
+    scale = "row",
+    annotation_col = data.frame(
+      genotype = yf$samples$smchd1_genotype_updated,
+      sex = yf$samples$sex,
+      row.names = colnames(yf)),
+    annotation_colors = list(
+      genotype = smchd1_genotype_updated_colours,
+      sex = sex_colours),
+    main = "Female samples",
+    fontsize = 9)
+}
+```
+
 Figure \@ref(fig:heatmap-yf) is a heatmap showing the expression of the DEGs.
 
+<aside>
+A PDF version of this figure is available in [`output/figures/paper/heatmap.pdf`](../output/figures/paper/heatmap.pdf).
+</aside>
+
 ```{r heatmap-yf, fig.asp = 1.5, fig.cap = "Heatmap of upper-quartile-normalzied logCPM values for the DEGs."}
-pheatmap(
-  cpm(yf, log = TRUE)[rownames(yf_tt), ],
-  cluster_rows = TRUE,
-  cluster_cols = FALSE,
-  color = hcl.colors(101, "Blue-Red 3"),
-  breaks = seq(-3, 3, length.out = 101),
-  scale = "row",
-  annotation_col = data.frame(
-    genotype = yf$samples$smchd1_genotype_updated,
-    sex = yf$samples$sex,
-    row.names = colnames(yf)),
-  annotation_colors = list(
-    genotype = smchd1_genotype_updated_colours,
-    sex = sex_colours),
-  main = "Female samples",
-  fontsize = 9)
+heatmapForPaper()
+```
+
+```{r}
+dir.create(here("output/figures/paper"))
+pdf(here("output/figures/paper/heatmap.pdf"), height = 9, width = 6)
+par(mfrow = c(1, 1))
+heatmapForPaper()
+dev.off()
 ```
 
 ## Gene set tests
@@ -1554,47 +1572,67 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
-par(mfrow = c(length(yf_index), 2))
-for (n in names(yf_index)) {
-  if (is.data.frame(yf_index[[n]])) {
-    yf_status <- rep(0, nrow(yf_dgelrt))
-    yf_status[rownames(yf) %in% yf_index[[n]][, 1]] <-
-      sign(yf_index[[n]][yf_index[[n]][, 1] %in% rownames(yf), 2])
-    plotMD(
-      yf_dgelrt,
-      status = yf_status,
-      hl.col = c("red", "blue"),
-      legend = "bottomright",
-      main = n)
-    abline(h = 0, col = "darkgrey")
-  } else {
-    yf_status <- rep("Other", nrow(yf_dgelrt))
-    yf_status[yf_index[[n]]] <- n
-    plotMD(
-      yf_dgelrt,
-      status = yf_status,
-      values = n,
-      hl.col = "red",
-      legend = "bottomright",
-      main = n)
-    abline(h = 0, col = "darkgrey")
-  }
-  
-  if (is.data.frame(yf_index[[n]])) {
-    barcodeplot(
-      yf_dgelrt$table$logFC,
-      rownames(yf) %in% yf_index[[n]][, 1],
-      gene.weights = yf_index[[n]][
-        yf_index[[n]][, 1] %in% rownames(yf), 2])
-  } else {
-    barcodeplot(
-      yf_dgelrt$table$logFC,
-      yf_index[[n]])
+```{r}
+geneSetTestFiguresForPaper <- function() {
+  for (n in names(yf_index)) {
+    if (is.data.frame(yf_index[[n]])) {
+      yf_status <- rep(0, nrow(yf_dgelrt))
+      yf_status[rownames(yf) %in% yf_index[[n]][, 1]] <-
+        sign(yf_index[[n]][yf_index[[n]][, 1] %in% rownames(yf), 2])
+      plotMD(
+        yf_dgelrt,
+        status = yf_status,
+        hl.col = c("red", "blue"),
+        legend = "bottomright",
+        main = n)
+      abline(h = 0, col = "darkgrey")
+    } else {
+      yf_status <- rep("Other", nrow(yf_dgelrt))
+      yf_status[yf_index[[n]]] <- n
+      plotMD(
+        yf_dgelrt,
+        status = yf_status,
+        values = n,
+        hl.col = "red",
+        legend = "bottomright",
+        main = n)
+      abline(h = 0, col = "darkgrey")
+    }
+    
+    if (is.data.frame(yf_index[[n]])) {
+      barcodeplot(
+        yf_dgelrt$table$logFC,
+        rownames(yf) %in% yf_index[[n]][, 1],
+        gene.weights = yf_index[[n]][
+          yf_index[[n]][, 1] %in% rownames(yf), 2],
+        main = n)
+    } else {
+      barcodeplot(
+        yf_dgelrt$table$logFC,
+        yf_index[[n]],
+        main = n)
+    }
   }
 }
 ```
 
+```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+par(mfrow = c(length(yf_index), 2))
+geneSetTestFiguresForPaper()  
+```
+
+<aside>
+A PDF version of these figures are available in [`output/figures/paper/gene_set_tests.pdf`](../output/figures/paper/gene_set_tests.pdf).
+</aside>
+
+```{r, results = "hide"}
+dir.create(here("output/figures/paper"))
+pdf(here("output/figures/paper/gene_set_tests.pdf"), height = 6, width = 6)
+par(mfrow = c(1, 1))
+geneSetTestFiguresForPaper()
+dev.off()
+```
+  
 # Session info {.appendix}
 
 <summary>The analysis and this document were prepared using the following software (click triangle to expand)</summary>
