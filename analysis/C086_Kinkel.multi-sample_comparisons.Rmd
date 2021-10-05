@@ -370,8 +370,8 @@ These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs
   - `Protocadherin`: Genes with symbol of the form *Pcdh#*.
   - `Prader-Willi`: Imprinted genes from the Prader-Willi cluster (*Ndn*, *Mkrn3*, *Peg12*)
 - **Directional gene sets** (i.e. logFC available from previous data). 
-  - `Male: Het vs. Del`: DEGs from a comparison of male Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]
-  - `Female: Het vs. Del`: DEGs from a comparison of female Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).] Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah). 
+  - `Male: Het vs. Del`: DEGs from a comparison of male Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah "used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]
+  - `Female: Het vs. Del`: DEGs from a comparison of female Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah "used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]. 
   - `Sun (2014)`: DEGs from a comparison of HSCs from young (2mo) and aged (24mo) male mice [@sun2014epigenomic].
   - `Chambers (2007)`: Upregulated DEGs from a comparison of HSCs to an average of all other cell types analysed [@chambers2007hematopoietic].
   - `Gazit (2013)`: Genes with "enriched expression in HSCs"^[My understanding of this terms translates as 'upregulated DEGs'.] compared with all other hematopoietic cell types [@gazit2013transcriptome].
@@ -382,6 +382,9 @@ These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs
     - The p-value (ANOVA) is based on about 1500 genes that changed significantly over the time course while the logFC is a separate comparison between FL HSCs (naturally proliferative) and adult HSCs (naturally quiescent).
   - `Quiescence Group Venezia (2004)`: Genes that have their maximum expression at non-cycling times (**T**ime **O**f **M**ax = TOM = 0, 1, 10, and 30 days post-treatment) in a time-course experiment designed to stimulate adult HSCs to proliferate [@venezia2004molecular].
     - The p-value (ANOVA) is based on about 1500 genes that changed significantly over the time course while the logFC is a separate comparison between FL HSCs (naturally proliferative) and adult HSCs (naturally quiescent).
+  - `Smchd1 female B cells (chrX)`: logFCs for X chromosome genes from a comparison of Smchd1-del versus Smchd1-het B cells from female mice
+    - Sarah performed this analysis in SeqMonk and exported the complete DE results as a CSV file.
+    - These data are from the same experiment as the `Female: Het vs. Del` gene list.
 
 ```{r}
 # NOTE: The `as.data.frame()` calls are needed because read_excel() returns a 
@@ -423,6 +426,9 @@ venezia_quiescence <- read.csv(
   header = TRUE,
   skip = 1,
   nrow = 808)
+smchd1_femBcells <- data.table::fread(
+  here("data", "sarahs_gene_lists", "210923_EdgeR stats p1.0 log2.txt"),
+  data.table = FALSE)
 ```
 
 # Analysis of aggregated technical replicates
@@ -754,6 +760,20 @@ y_venezia_quiescence <- venezia_quiescence[
   , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
 y_venezia_quiescence <- y_venezia_quiescence[
   !duplicated(y_venezia_quiescence$`Gene.Symbol`), ]
+# TODO: Clarify how this gene set is to be used.
+# y_smchd1_femBcells <- smchd1_femBcells[
+#   smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05, 
+#   c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+# y_smchd1_femBcells <- y_smchd1_femBcells[
+#   !duplicated(y_smchd1_femBcells$Feature), ]
+y_smchd1_femBcells <- smchd1_femBcells[
+    # smchd1_femBcells$Chromosome == "X", 
+  smchd1_femBcells$Chromosome == "X" &
+    smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05,
+  c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+y_smchd1_femBcells <- y_smchd1_femBcells[
+  !duplicated(y_smchd1_femBcells$Feature), ]
+
 
 y_index <- list(
   `X-linked` = y_X,
@@ -766,7 +786,8 @@ y_index <- list(
   `Gazit (2013)` = y_gazit,
   `Chambers (2007) & Gazit (2013)` = y_chambers_gazit,
   `Proliferation Group Venezia (2004)` = y_venezia_proliferation,
-  `Quiescence Group Venezia (2004)` = y_venezia_quiescence)
+  `Quiescence Group Venezia (2004)` = y_venezia_quiescence,
+  `Smchd1 female B cells (chrX)` = y_smchd1_femBcells)
 ```
 
 Sarah requested testing a number of gene sets (see [Gene sets]).
@@ -784,7 +805,7 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 12 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(y_index), 2))
 for (n in names(y_index)) {
   if (is.data.frame(y_index[[n]])) {
@@ -1136,6 +1157,19 @@ ym_venezia_quiescence <- venezia_quiescence[
   , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
 ym_venezia_quiescence <- ym_venezia_quiescence[
   !duplicated(ym_venezia_quiescence$`Gene.Symbol`), ]
+# TODO: Clarify how this gene set is to be used.
+# ym_smchd1_femBcells <- smchd1_femBcells[
+#   smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05, 
+#   c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+# ym_smchd1_femBcells <- ym_smchd1_femBcells[
+#   !duplicated(ym_smchd1_femBcells$Feature), ]
+ym_smchd1_femBcells <- smchd1_femBcells[
+    # smchd1_femBcells$Chromosome == "X", 
+  smchd1_femBcells$Chromosome == "X" & 
+    smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05,
+  c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+ym_smchd1_femBcells <- ym_smchd1_femBcells[
+  !duplicated(ym_smchd1_femBcells$Feature), ]
 
 ym_index <- list(
   `X-linked` = ym_X,
@@ -1148,7 +1182,8 @@ ym_index <- list(
   `Gazit (2013)` = ym_gazit,
   `Chambers (2007) & Gazit (2013)` = ym_chambers_gazit,
   `Proliferation Group Venezia (2004)` = ym_venezia_proliferation,
-  `Quiescence Group Venezia (2004)` = ym_venezia_quiescence)
+  `Quiescence Group Venezia (2004)` = ym_venezia_quiescence,
+  `Smchd1 female B cells (chrX)` = ym_smchd1_femBcells)
 ```
 
 Sarah requested testing a number of gene sets (see [Gene sets]).
@@ -1166,7 +1201,7 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 12 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(ym_index), 2))
 for (n in names(ym_index)) {
   if (is.data.frame(ym_index[[n]])) {
@@ -1375,7 +1410,7 @@ A PDF version of this figure is available in [`output/figures/paper/heatmap.pdf`
 heatmapForPaper()
 ```
 
-```{r}
+```{r, results = "hide"}
 dir.create(here("output/figures/paper"))
 pdf(here("output/figures/paper/heatmap.pdf"), height = 9, width = 6)
 par(mfrow = c(1, 1))
@@ -1542,19 +1577,33 @@ yf_venezia_quiescence <- venezia_quiescence[
   , c("Gene.Symbol", "Log2.Fold.Change..FL.HSC.vs.Adult.HSC..")]
 yf_venezia_quiescence <- yf_venezia_quiescence[
   !duplicated(yf_venezia_quiescence$`Gene.Symbol`), ]
+# TODO: Clarify how this gene set is to be used.
+# yf_smchd1_femBcells <- smchd1_femBcells[
+#   smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05, 
+#   c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+# yf_smchd1_femBcells <- yf_smchd1_femBcells[
+#   !duplicated(yf_smchd1_femBcells$Feature), ]
+yf_smchd1_femBcells <- smchd1_femBcells[
+    # smchd1_femBcells$Chromosome == "X", 
+  smchd1_femBcells$Chromosome == "X" & 
+    smchd1_femBcells$`FDR (EdgeR stats p<1.0 after correction)` < 0.05,
+  c("Feature", "Log2 Fold Change (EdgeR stats p<1.0 after correction)")]
+yf_smchd1_femBcells <- yf_smchd1_femBcells[
+  !duplicated(yf_smchd1_femBcells$Feature), ]
 
 yf_index <- list(
   `X-linked` = yf_X,
   Protocadherin = yf_protocadherin,
   `Prader-Willi` = yf_pw,
-  `female: Het vs. Del` = yf_female,
   `Male: Het vs. Del` = yf_male,
+  `Female: Het vs. Del` = yf_female,
   `Sun (2014)` = yf_sun,
   `Chambers (2007)` = yf_chambers,
   `Gazit (2013)` = yf_gazit,
   `Chambers (2007) & Gazit (2013)` = yf_chambers_gazit,
   `Proliferation Group Venezia (2004)` = yf_venezia_proliferation,
-  `Quiescence Group Venezia (2004)` = yf_venezia_quiescence)
+  `Quiescence Group Venezia (2004)` = yf_venezia_quiescence,
+  `Smchd1 female B cell (chrX)` = yf_smchd1_femBcells)
 ```
 
 Sarah requested testing a number of gene sets (see [Gene sets]).
@@ -1616,7 +1665,7 @@ geneSetTestFiguresForPaper <- function() {
 }
 ```
 
-```{r, fig.asp = 11 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 12 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(yf_index), 2))
 geneSetTestFiguresForPaper()  
 ```
