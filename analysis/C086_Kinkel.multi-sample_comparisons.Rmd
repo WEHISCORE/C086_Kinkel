@@ -605,7 +605,7 @@ list_of_go <- lapply(colnames(y_contrast), function(j) {
   
   go <- goana(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(outdir, "aggregated_tech_reps.goana.csv.gz"),
@@ -640,7 +640,7 @@ list_of_kegg <- lapply(colnames(y_contrast), function(j) {
   
   kegg <- kegga(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(outdir, "aggregated_tech_reps.kegga.csv.gz"),
@@ -698,7 +698,7 @@ msigdb <- do.call(
 
 y_idx <- ids2indices(
   msigdb, 
-  id = sapply(strsplit(y$genes$NCBI.ENTREZID, ";"), "[[", 1))
+  id = sapply(strsplit(y$genes$NCBI.ENTREZID, "; "), "[[", 1))
 list_of_camera <- lapply(colnames(y_contrast), function(j) {
   cam <- camera(
     y = y, 
@@ -1020,7 +1020,7 @@ list_of_go <- lapply(colnames(ym_contrast), function(j) {
   
   go <- goana(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(outdir, "aggregated_tech_reps.males.goana.csv.gz"),
@@ -1055,7 +1055,7 @@ list_of_kegg <- lapply(colnames(ym_contrast), function(j) {
   
   kegg <- kegga(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(outdir, "aggregated_tech_reps.males.kegga.csv.gz"),
@@ -1095,7 +1095,7 @@ We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](h
 ```{r}
 ym_idx <- ids2indices(
   msigdb, 
-  id = sapply(strsplit(ym$genes$NCBI.ENTREZID, ";"), "[[", 1))
+  id = sapply(strsplit(ym$genes$NCBI.ENTREZID, "; "), "[[", 1))
 list_of_camera <- lapply(colnames(ym_contrast), function(j) {
   cam <- camera(
     y = ym, 
@@ -1434,7 +1434,7 @@ list_of_go <- lapply(colnames(yf_contrast), function(j) {
   
   go <- goana(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(
@@ -1471,7 +1471,7 @@ list_of_kegg <- lapply(colnames(yf_contrast), function(j) {
   
   kegg <- kegga(
     de = dgelrt,
-    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, ";"), "[[", 1),
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
     species = "Mm")
   gzout <- gzfile(
     description = file.path(
@@ -1513,7 +1513,7 @@ We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](h
 ```{r}
 yf_idx <- ids2indices(
   msigdb, 
-  id = sapply(strsplit(yf$genes$NCBI.ENTREZID, ";"), "[[", 1))
+  id = sapply(strsplit(yf$genes$NCBI.ENTREZID, "; "), "[[", 1))
 list_of_camera <- lapply(colnames(yf_contrast), function(j) {
   cam <- camera(
     y = yf, 
