@@ -12,6 +12,18 @@ x <- data.table::fread(
   data.table = FALSE)
 # TODO: What are the unique gene IDs? There are genes with duplicated `Probe`
 #       or `Feature` or `ID`.
+# This could explain how we end up with probes with the same name because:
+#   Almost all rows in the count matrix have a unique ID​ value and Ensembl gene IDs are unambiguous and highly stable
+# The exception are 56 features where the ID​ is blank but there is a I'm not sure what happened there.
+# There are probes with the same name because multiple Ensembl genes can map to the same gene symbol.
+# An example is Nav1​ which has 2 entries in the count matrix.
+# We need to filter/aggregate these 2 entries prior to analysis
+# > x[x$Feature == "Nav1", c("Probe", "ID", grep("bam", colnames(x), value = TRUE))]
+#     Probe                 ID Bcell_B167het_trim.bam Bcell_B189het_trim.bam
+# 847  Nav1 ENSMUSG00000009418                     36                     30
+# 849  Nav1 ENSMUSG00000090399                      2                      0
+#
+# ENSMUSG00000009418 is 'active' whereas ENSMUSG00000090399 has been 'archived'.
 
 y <- DGEList(
   counts = as.matrix(x[, grep("bam", colnames(x))]),
@@ -236,3 +248,5 @@ barcodeplot(
   y_index[[n]],
   sub = "My analysis",
   main = n)
+
+# TODO: SeqMonk uses exactTest() and no gene filtering; https://github.com/s-andrews/SeqMonk/blob/master/uk/ac/babraham/SeqMonk/Filters/EdgeRFilter/edger_template.r
