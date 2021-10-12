@@ -8,7 +8,13 @@ navbar:
     - text: "Preprocessing"
       href: C086_Kinkel.preprocess.html
     - text: "Differential analyses"
-      href: C086_Kinkel.multi-sample_comparisons.html
+      menu:
+        - text: "HSCs"
+          href: C086_Kinkel.multi-sample_comparisons.html
+        - text: "Female B cells"
+          href: C086_Kinkel.female_B_cells.multi-sample_comparisons.html
+        - text: "Male B cells"
+          href: C086_Kinkel.male_B_cells.multi-sample_comparisons.html
     - text: "Supplementary files"
       menu:
         - text: "scPipe reports"

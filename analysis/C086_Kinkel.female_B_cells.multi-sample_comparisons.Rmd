@@ -1,0 +1,453 @@
+---
+title: "Multi-sample comparisons of the Kinkel (C086) female B cells RNA-seq data set"
+description: "Read-based analysis"
+author:
+  - name: Peter Hickey
+    url: https://peterhickey.org
+    affiliation: WEHI SCORE
+    affiliation_url: https://www.wehi.edu.au/people/shalin-naik/3310/score
+date: "`r Sys.Date()`"
+editor_options:
+  chunk_output_type: console
+bibliography: ref.bib
+---
+
+# Summary
+
+This report analyses the `Del` and `Het` female samples only.
+The report begins with some general [Setup] and is followed by various analyses denoted by a prefix (`y`)
+
+  - `y`: [Analysis of female B cell samples]
+
+# Setup
+
+```{r}
+library(here)
+library(edgeR)
+library(scales)
+library(Glimma)
+
+source(here("code/helper_functions.R"))
+
+outdir <- here("output", "DEGs", "female_B_cells")
+dir.create(outdir, recursive = TRUE)
+```
+
+## Load data
+
+```{r}
+x <- data.table::fread(
+  here("data", "raw_counts", "Smchd1_femBcells_rawcounts.txt"),
+  data.table = FALSE)
+```
+
+There are `r number(nrow(x), big.mark = ",")` features.
+
+## Cleaning up duplicate features
+
+There are `r number(sum(x$ID == ""), big.mark = ",")` features with a blank `ID`^[Ensembl gene ID].
+These are shown in the table below.
+
+```{r}
+tmp <- x[
+  x$ID == "",
+  c("Probe", "Chromosome", "Start", "End", "Probe Strand", "Feature", "ID")]
+
+DT::datatable(
+  tmp,
+  caption = "Features with duplicate 'Probe' values or blank 'ID' values.")
+```
+
+It's not clear why this has happened, but such features complicate downstream analysis.
+To remedy this, we use the value in the `Probe` column to look up the corresponding Ensembl ID.
+
+```{r}
+library(EnsDb.Mmusculus.v79)
+
+id <- mapIds(
+  x = EnsDb.Mmusculus.v79, 
+  keys = x$Probe[x$ID == ""],
+  keytype = "GENENAME",
+  column = "GENEID",
+  multiVals = "first")
+
+x$ID[x$ID == ""] <- id
+tmp2 <- tmp[!is.na(id), ]
+tmp3 <- tmp[is.na(id), ]
+```
+
+This provides an `ID` for `r number(sum(!is.na(id)), big.mark = ",")` / `r number(length(id), big.mark = ",")` features.
+
+```{r}
+DT::datatable(
+  tmp2,
+  caption = "Features successfully mapped to an 'ID' by the 'Probe' value.")
+```
+
+This leaves `r number(sum(is.na(id)), big.mark = ",")` / `r number(length(id), big.mark = ",")` features for which we can't map the `Probe` to an `ID`. 
+
+```{r}
+DT::datatable(
+  tmp3,
+  caption = "Features that cannot be mapped to an 'ID' by the 'Probe' value.")
+```
+
+We opt to remove these features from the dataset.
+
+```{r}
+x <- x[!is.na(x$ID), ]
+```
+
+Finally, there are `r number(sum(duplicated(x$ID)), big.mark = ",")` `ID` values that appear more than once.
+We pool (sum) together counts from features with the same `ID`.
+
+```{r}
+counts <- rowsum(
+  x = as.matrix(x[, grep("bam", colnames(x))]),
+  group = x$ID,
+  reorder = FALSE)
+```
+
+## Create DGEList objects
+
+```{r}
+# NOTE: Only retain a small subset of columns since we re-annotate the 
+#       gene-based metadata, below.
+genes <- x[!duplicated(x$ID), c("ID", "Description")]
+stopifnot(identical(rownames(counts), genes$ID))
+y <- DGEList(counts = counts, genes = genes)
+y$samples$genotype <- ifelse(grepl("het", colnames(y)), "Het", "Del")
+y$samples$mouse <- substr(colnames(y), 7, 10)
+y$samples$group <- y$samples$genotype
+colnames(y) <- sub("\\_trim\\.bam", "", sub("Bcell\\_", "", colnames(y)))
+zero_counts <- rowSums(y$counts) == 0
+```
+
+We exclude `r number(sum(zero_counts), big.mark = ",")` genes with zero counts in all `r number(ncol(y), big.mark = ",")` samples.
+
+```{r}
+y <- y[!zero_counts, ]
+```
+
+## Incorporating gene-based annotation
+
+We obtain gene-based annotations from the NCBI/RefSeq and Ensembl databases, such as the chromosome and gene symbol, using the `r BiocStyle::Biocpkg("Mus.musculus")` and `r BiocStyle::Biocpkg("EnsDb.Mmusculus.v79")` packages.
+
+```{r}
+# Extract rownames (Ensembl IDs) to use as key in database lookups.
+ensembl <- y$genes$ID
+
+# Pull out useful gene-based annotations from the Ensembl-based database.
+library(EnsDb.Mmusculus.v79)
+library(ensembldb)
+# NOTE: These columns were customised for this project.
+ensdb_columns <- c(
+  "GENEBIOTYPE", "GENENAME", "GENESEQSTART", "GENESEQEND", "SEQNAME", "SYMBOL")
+names(ensdb_columns) <- paste0("ENSEMBL.", ensdb_columns)
+stopifnot(all(ensdb_columns %in% columns(EnsDb.Mmusculus.v79)))
+ensdb_df <- DataFrame(
+  lapply(ensdb_columns, function(column) {
+    mapIds(
+      x = EnsDb.Mmusculus.v79, 
+      # NOTE: Need to remove gene version number prior to lookup.
+      keys = gsub("\\.[0-9]+$", "", ensembl),
+      keytype = "GENEID",
+      column = column,
+      multiVals = "CharacterList")
+  }),
+  row.names = ensembl)
+# NOTE: Can't look up GENEID column with GENEID key, so have to add manually.
+ensdb_df$ENSEMBL.GENEID <- ensembl
+
+# NOTE: Mus.musculus combines org.Mm.eg.db and
+#       TxDb.Mmusculus.UCSC.mm10.knownGene (as well as others) and therefore 
+#       uses entrez gene and RefSeq based data.
+library(Mus.musculus)
+# NOTE: These columns were customised for this project.
+ncbi_columns <- c(
+  # From TxDB: None required
+  # From OrgDB
+  "ALIAS", "ENTREZID", "GENENAME", "REFSEQ", "SYMBOL")
+names(ncbi_columns) <- paste0("NCBI.", ncbi_columns)
+stopifnot(all(ncbi_columns %in% columns(Mus.musculus)))
+ncbi_df <- DataFrame(
+  lapply(ncbi_columns, function(column) {
+    mapIds(
+      x = Mus.musculus, 
+      # NOTE: Need to remove gene version number prior to lookup.
+      keys = gsub("\\.[0-9]+$", "", ensembl),
+      keytype = "ENSEMBL",
+      column = column,
+      multiVals = "CharacterList")
+  }),
+  row.names = ensembl)
+
+y$genes <- cbind(y$genes, flattenDF(cbind(ensdb_df, ncbi_df)))
+```
+
+Having quantified gene expression against the Ensembl gene annotation, we have Ensembl-style identifiers for the genes. 
+These identifiers are used as they are unambiguous and highly stable. 
+However, they are difficult to interpret compared to the gene symbols which are more commonly used in the literature.
+Henceforth, we will use gene symbols (where available) to refer to genes in our analysis and otherwise use the Ensembl-style gene identifiers^[Some care is taken to account for missing and duplicate gene symbols; missing symbols are replaced with the Ensembl identifier and duplicated symbols are concatenated with the (unique) Ensembl identifiers.].
+
+```{r}
+# Replace the row names of the SCE by the gene symbols (where available).
+rownames(y) <- scuttle::uniquifyFeatureNames(
+  ID = ensembl, 
+  # NOTE: An Ensembl ID may map to 0, 1, 2, 3, ... gene symbols.
+  #       When there are multiple matches only the 1st match is used.
+  names = sapply(strsplit(y$genes$ENSEMBL.SYMBOL, "; "), function(x) {
+    if (length(x)) {
+      x[[1]]
+    } else {
+      NA_character_
+    }
+  }))
+```
+
+```{r}
+# Some useful gene sets
+mito_set <- rownames(y)[y$genes$ENSEMBL.SEQNAME == "MT"]
+ribo_set <- grep("^Rp(s|l)", rownames(y), value = TRUE)
+# NOTE: A more curated approach for identifying ribosomal protein genes 
+#       (https://github.com/Bioconductor/OrchestratingSingleCellAnalysis-base/blob/ae201bf26e3e4fa82d9165d8abf4f4dc4b8e5a68/feature-selection.Rmd#L376-L380)
+library(msigdbr)
+c2_sets <- msigdbr(species = "Mus musculus", category = "C2")
+ribo_set <- union(
+  ribo_set,
+  c2_sets[c2_sets$gs_name == "KEGG_RIBOSOME", ]$gene_symbol)
+sex_set <- rownames(y)[y$genes$ENSEMBL.SEQNAME %in% c("X", "Y")]
+pseudogene_set <- rownames(y)[grepl("pseudogene", y$genes$ENSEMBL.GENEBIOTYPE)]
+```
+
+## Gene filtering
+
+We exclude genes with insufficient counts for DE testing.
+Shown below are the number of genes that have sufficient counts to test for DE (`TRUE`) or not (`FALSE`).
+
+```{r}
+y_keep_exprs <- filterByExpr(y, group = y$samples$group)
+y <- y[y_keep_exprs, , keep.lib.sizes = FALSE]
+table(y_keep_exprs)
+```
+
+## Normalization
+
+**TODO** TMM?
+
+Normalization with upper-quartile (UQ) normalization.
+
+```{r}
+y <- calcNormFactors(y, method = "upperquartile")
+```
+
+# Analysis of female B cell samples
+
+```{r}
+y_design <- model.matrix(~0 + genotype, y$samples)
+colnames(y_design) <- sub("genotype", "", colnames(y_design))
+```
+
+## MDS
+
+```{r, fig.cap = "MDS plot coloured by `genotype`.", fig.asp = 1}
+plotMDS(y, col = as.integer(factor(y$samples$genotype)))
+```
+
+## DE analysis
+
+Fit a model with a term for `genotype` using the quasi-likelihood pipeline from `r BiocStyle::Biocpkg("edgeR")`.
+
+```{r, fig.show = "hide"}
+y <- estimateDisp(y, y_design)
+par(mfrow = c(1, 2))
+plotBCV(y)
+y_dgeglm <- glmQLFit(y, y_design, robust = TRUE)
+plotQLDisp(y_dgeglm)
+```
+
+```{r, fig.asp = 1}
+y_contrast <- makeContrasts(Del - Het, levels = y_design)
+y_dgelrt <- glmQLFTest(y_dgeglm, contrast = y_contrast)
+y_dt <- decideTests(y_dgelrt)
+
+summary(y_dt) %>%
+  knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
+```
+
+```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
+par(mfrow = c(1, 1))
+plotMD(y_dgelrt)
+```
+
+An interactive `r BiocStyle::Biocpkg("Glimma")` MD plot of the differential expression results is available from [`output/DEGs/female_B_cells/glimma-plots/female_B_cells.md-plot.html`](../output/DEGs/female_B_cells/glimma-plots/female_B_cells.md-plot.html).
+
+```{r}
+glMDPlot(
+  x = y_dgelrt,
+  counts = y,
+  anno = y$genes,
+  display.columns = c("ENSEMBL.SYMBOL"),
+  groups = y$samples$group,
+  samples = colnames(y),
+  status = y_dt,
+  transform = TRUE,
+  sample.cols = as.integer(factor(y$samples$genotype)),
+  path = outdir,
+  html = "female_B_cells.md-plot",
+  launch = FALSE)
+```
+
+## Gene set tests
+
+Gene set testing is commonly used to interpret the differential expression results in
+a biological context.
+Here we apply various gene set tests to the DEG lists.
+
+### goana
+
+We use the `goana()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of gene ontology (GO) terms in each DEG list.
+
+```{r, results = "hide"}
+list_of_go <- lapply(colnames(y_contrast), function(j) {
+  dgelrt <- glmLRT(y_dgeglm, contrast = y_contrast[, j])
+  
+  go <- goana(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "female_B_cells.goana.csv.gz"),
+    open = "wb")
+  write.csv(
+    topGO(go, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  go
+})
+names(list_of_go) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/female_B_cells/`](../output/DEGs/female_B_cells/).
+
+An example of the results are shown below.
+
+```{r}
+topGO(list_of_go[[1]]) %>%
+  knitr::kable(
+    caption = '`goana()` produces a table with a row for each GO term and the following columns: **Term** (GO term); **Ont** (ontology that the GO term belongs to. Possible values are "BP", "CC" and "MF"); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of GO term in up-regulated genes); **P.Down** (p-value for over-representation of GO term in down-regulated genes)')
+```
+
+### kegga
+
+We use the `kegga()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test for over-representation of KEGG pathways in each DEG list.
+
+```{r, results = "hide"}
+list_of_kegg <- lapply(colnames(y_contrast), function(j) {
+  dgelrt <- glmLRT(y_dgeglm, contrast = y_contrast[, j])
+  
+  kegg <- kegga(
+    de = dgelrt,
+    geneid = sapply(strsplit(dgelrt$genes$NCBI.ENTREZID, "; "), "[[", 1),
+    species = "Mm")
+  gzout <- gzfile(
+    description = file.path(outdir, "female_B_cells.kegga.csv.gz"),
+    open = "wb")
+  write.csv(
+    topKEGG(kegg, number = Inf),
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  kegg
+})
+names(list_of_kegg) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/female_B_cells/`](../output/DEGs/female_B_cells/).
+
+An example of the results are shown below.
+
+```{r}
+topKEGG(list_of_kegg[[1]]) %>%
+  knitr::kable(
+    caption = '`kegga()` produces a table with a row for each KEGG pathway ID and the following columns: **Pathway** (KEGG pathway); **N** (number of genes in the GO term); **Up** (number of up-regulated differentially expressed genes); **Down** (number of down-regulated differentially expressed genes); **P.Up** (p-value for over-representation of KEGG pathway in up-regulated genes); **P.Down** (p-value for over-representation of KEGG pathway in down-regulated genes)')
+```
+
+### camera with MSigDB gene sets
+
+We use the `camera()` function from the `r BiocStyle::Biocpkg("limma")` R/Bioconductor package to test whether a set of genes is highly ranked relative to other genes in terms of differential expression, accounting for inter-gene correlation.
+Specifically, we test using gene sets from [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb), namely:
+
+<aside>
+We download these gene sets from [http://bioinf.wehi.edu.au/MSigDB/index.html](http://bioinf.wehi.edu.au/MSigDB/index.html)
+</aside>
+
+- **H**: **hallmark gene sets** are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
+- **C2**: **curated gene sets** from online pathway databases, publications in PubMed, and knowledge of domain experts.
+
+```{r}
+# NOTE: Using BiocFileCache to avoid re-downloading these gene sets everytime 
+#       the report is rendered.
+library(BiocFileCache)
+bfc <- BiocFileCache()
+# NOTE: Creating list of gene sets in this slightly convoluted way so that each 
+#       gene set name is prepended by its origin (e.g. H, C2, or C7).
+msigdb <- do.call(
+  c, 
+  list(
+    H = readRDS(
+      bfcrpath(
+        bfc,
+        "http://bioinf.wehi.edu.au/MSigDB/v7.1/Mm.h.all.v7.1.entrez.rds")),
+    C2 = readRDS(
+      bfcrpath(
+        bfc, 
+        "http://bioinf.wehi.edu.au/MSigDB/v7.1/Mm.c2.all.v7.1.entrez.rds"))))
+
+y_idx <- ids2indices(
+  msigdb, 
+  id = sapply(strsplit(y$genes$NCBI.ENTREZID, "; "), "[[", 1))
+list_of_camera <- lapply(colnames(y_contrast), function(j) {
+  cam <- camera(
+    y = y, 
+    index = y_idx,
+    design = y_design, 
+    contrast = y_contrast[, j])
+  gzout <- gzfile(
+    description = file.path(outdir, "female_B_cells.camera.csv.gz"),
+    open = "wb")
+  write.csv(
+    cam,
+    gzout,
+    row.names = TRUE)
+  close(gzout)
+  cam
+})
+names(list_of_camera) <- colnames(y_contrast)
+```
+
+CSV files of the results are available from [`output/DEGs/female_B_cells`](../output/DEGs/female_B_cells/).
+
+An example of the results are shown below.
+
+```{r}
+head(list_of_camera[[1]]) %>%
+  knitr::kable(
+    caption = '`camera()` produces a table with a row for each gene set (prepended by which MSigDB collection it comes from) and the following columns: **NGenes** (number of genes in set); **Direction** (direction of change); **PValue** (two-tailed p-value); **FDR** (Benjamini and Hochberg FDR adjusted p-value).')
+```
+
+# Session info {.appendix}
+
+<summary>The analysis and this document were prepared using the following software (click triangle to expand)</summary>
+<details>
+
+```{r}
+sessioninfo::session_info()
+```
+
+</details>
+
+# TODOs
+
+- [ ] Standardise colours
