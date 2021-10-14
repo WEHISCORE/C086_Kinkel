@@ -31,6 +31,9 @@ source(here("code/helper_functions.R"))
 
 outdir <- here("output", "DEGs", "female_B_cells")
 dir.create(outdir, recursive = TRUE)
+
+# Some useful colours (copied from HSC analysis)
+genotype_colours <- c("Del" = "#1B9E77", "Het" = "#D95F02")
 ```
 
 ## Load data
@@ -233,8 +236,6 @@ table(y_keep_exprs)
 
 ## Normalization
 
-**TODO** TMM?
-
 Normalization with upper-quartile (UQ) normalization.
 
 ```{r}
@@ -251,7 +252,7 @@ colnames(y_design) <- sub("genotype", "", colnames(y_design))
 ## MDS
 
 ```{r, fig.cap = "MDS plot coloured by `genotype`.", fig.asp = 1}
-plotMDS(y, col = as.integer(factor(y$samples$genotype)))
+plotMDS(y, col = genotype_colours[y$samples$genotype])
 ```
 
 ## DE analysis
@@ -447,7 +448,3 @@ sessioninfo::session_info()
 ```
 
 </details>
-
-# TODOs
-
-- [ ] Standardise colours
