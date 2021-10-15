@@ -276,6 +276,21 @@ summary(y_dt) %>%
   knitr::kable(caption = "Number of DEGs (FDR < 0.05)")
 ```
 
+CSV file of results available from [`output/DEGs/female_B_cells/`](../output/DEGs/female_B_cells/).
+
+```{r}
+gzout <- gzfile(
+  description = file.path(outdir, "female_B_cells.DEGs.csv.gz"),
+  open = "wb")
+write.csv(
+  topTags(y_dgelrt, n = Inf),
+  gzout,
+  # NOTE: quote = TRUE needed because some fields contain commas.
+  quote = TRUE,
+  row.names = FALSE)
+close(gzout)
+```
+
 ```{r, fig.cap = "MD plot highlighting DEGs (red).", fig.asp = 1}
 par(mfrow = c(1, 1))
 plotMD(y_dgelrt)
