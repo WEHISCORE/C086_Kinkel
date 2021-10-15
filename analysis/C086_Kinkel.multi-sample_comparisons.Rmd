@@ -376,8 +376,8 @@ These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs
     - The p-value (ANOVA) is based on about 1500 genes that changed significantly over the time course while the logFC is a separate comparison between FL HSCs (naturally proliferative) and adult HSCs (naturally quiescent).
     - We treat this as a non-directional gene set by ignoring the logFC because the specific comparison is not of interest.
 - **Directional gene sets** (i.e. logFC available from previous data). 
-  - `Male: Het vs. Del`: DEGs from a comparison of male Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah "used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]
-  - `Female: Het vs. Del`: DEGs from a comparison of female Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[Sarah "used SeqMonk/EdgeR to compare Smchd1-del to Smchd1-het, keeping males and females separate" (email from Sarah).]. 
+  - `Male: Het vs. Del`: DEGs from a comparison of male Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[see [`docs/C086_Kinkel.male_B_cells.multi-sample_comparisons.html`(../docs/C086_Kinkel.male_B_cells.multi-sample_comparisons.html)]].
+  - `Female: Het vs. Del`: DEGs from a comparison of female Smchd1-het and Smchd1-del B cells from aged mice (>12 months old)^[see [`docs/C086_Kinkel.female_B_cells.multi-sample_comparisons.html`(../docs/C086_Kinkel.female_B_cells.multi-sample_comparisons.html)]].
   - `Sun (2014)`: DEGs from a comparison of HSCs from young (2mo) and aged (24mo) male mice [@sun2014epigenomic].
   - `Chambers (2007)`: Upregulated DEGs from a comparison of HSCs to an average of all other cell types analysed [@chambers2007hematopoietic].
   - `Gazit (2013)`: Genes with "enriched expression in HSCs"^[My understanding of this terms translates as 'upregulated DEGs'.] compared with all other hematopoietic cell types [@gazit2013transcriptome].
@@ -386,15 +386,13 @@ These are available as Excel files in [`data/sarahs_gene_lists/`](../data/sarahs
     - This is in the spirit of @vizan2020polycomb who do a gene set enrichment analysis using "a merge of differentially expressed genes provided by `Gazit (2013)` and `Chambers (2007)`" but do not explain how they 'merge' these gene lists.
 
 ```{r}
+male_het_vs_del <- read.csv(
+  here("output", "DEGs", "male_B_cells", "male_B_cells.DEGs.csv.gz"))
+female_het_vs_del <- read.csv(
+  here("output", "DEGs", "female_B_cells", "female_B_cells.DEGs.csv.gz"))
 # NOTE: The `as.data.frame()` calls are needed because read_excel() returns a 
 #       tibble but `limma::fry()` does not support tibbles.
 library(readxl)
-male_het_vs_del <- read_excel(
-  here("data", "sarahs_gene_lists", "MaleHetvDel_EdgeR.xlsx"))
-male_het_vs_del <- as.data.frame(male_het_vs_del)
-female_het_vs_del <- read_excel(
-  here("data", "sarahs_gene_lists", "Bcell_female_HetvDel_EdgeR_mRNA.xlsx"))
-female_het_vs_del <- as.data.frame(female_het_vs_del)
 sun_2014 <- read_excel(
   here("data", "sarahs_gene_lists", "Sun_2014_CellStemCell_DE_HSC_aging.xlsx"),
   sheet = "Differentially expressed genes")
@@ -733,8 +731,12 @@ head(list_of_camera[[1]]) %>%
 y_X <- y$genes$ENSEMBL.SEQNAME == "X"
 y_protocadherin <- grepl("Pcdh", rownames(y))
 y_pw <- rownames(y) %in% c("Ndn", "Mkrn3", "Peg12")
-y_male <- male_het_vs_del[, c("Probe", "Differential expression")]
-y_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+y_male <- male_het_vs_del[
+  male_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
+y_female <- male_het_vs_del[
+  female_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
 y_sun <- sun_2014[, c("geneSymbol", "log2FC")]
 y_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
 y_chambers$logFC <- log2(y_chambers$`Fold Difference`)
@@ -1109,8 +1111,12 @@ head(list_of_camera[[1]]) %>%
 ym_X <- ym$genes$ENSEMBL.SEQNAME == "X"
 ym_protocadherin <- grepl("Pcdh", rownames(ym))
 ym_pw <- rownames(ym) %in% c("Ndn", "Mkrn3", "Peg12")
-ym_male <- male_het_vs_del[, c("Probe", "Differential expression")]
-ym_female <- female_het_vs_del[, c("Probe", "Differential expression")]
+ym_male <- male_het_vs_del[
+  male_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
+ym_female <- male_het_vs_del[
+  female_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
 ym_sun <- sun_2014[, c("geneSymbol", "log2FC")]
 ym_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
 ym_chambers$logFC <- log2(ym_chambers$`Fold Difference`)
@@ -1509,8 +1515,12 @@ head(list_of_camera[[1]]) %>%
 yf_X <- yf$genes$ENSEMBL.SEQNAME == "X"
 yf_protocadherin <- grepl("Pcdh", rownames(yf))
 yf_pw <- rownames(yf) %in% c("Ndn", "Mkrn3", "Peg12")
-yf_female <- female_het_vs_del[, c("Probe", "Differential expression")]
-yf_male <- male_het_vs_del[, c("Probe", "Differential expression")]
+yf_male <- male_het_vs_del[
+  male_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
+yf_female <- male_het_vs_del[
+  female_het_vs_del$FDR < 0.05,
+  c("ENSEMBL.SYMBOL", "logFC")]
 yf_sun <- sun_2014[, c("geneSymbol", "log2FC")]
 yf_chambers <- chambers_2007[, c("Gene Symbol", "Fold Difference")]
 yf_chambers$logFC <- log2(yf_chambers$`Fold Difference`)
