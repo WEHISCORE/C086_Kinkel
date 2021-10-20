@@ -1614,7 +1614,7 @@ geneSetTestFiguresForPaper <- function() {
 }
 ```
 
-```{r, fig.asp = 12 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+```{r, fig.asp = 12 / 2, fig.cap = "MD-plot and barcode plot of genes in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
 par(mfrow = c(length(yf_index), 2))
 geneSetTestFiguresForPaper()  
 ```
