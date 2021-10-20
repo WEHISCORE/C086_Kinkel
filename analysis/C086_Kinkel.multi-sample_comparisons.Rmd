@@ -1375,6 +1375,7 @@ heatmapForPaper()
 ```
 
 ```{r, results = "hide"}
+dev.off()
 dir.create(here("output/figures/paper"))
 pdf(here("output/figures/paper/heatmap.pdf"), height = 9, width = 6)
 par(mfrow = c(1, 1))
