@@ -476,45 +476,66 @@ fry(
       caption = "Results of applying `fry()` to the RNA-seq differential expression results using the supplied gene sets. A significant 'Up' P-value means that the differential expression results found in the RNA-seq data are positively correlated with the expression signature from the corresponding gene set. Conversely, a significant 'Down' P-value means that the differential expression log-fold-changes are negatively correlated with the expression signature from the corresponding gene set. A significant 'Mixed' P-value means that the genes in the set tend to be differentially expressed without regard for direction.")
 ```
 
-```{r, fig.asp = 1 / 2, fig.cap = "MD-plot and barcode plot of DEGs in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
-par(mfrow = c(length(y_index), 2))
-for (n in names(y_index)) {
-  if (is.data.frame(y_index[[n]])) {
-    y_status <- rep(0, nrow(y_dgelrt))
-    y_status[rownames(y) %in% y_index[[n]][, 1]] <-
-      sign(y_index[[n]][y_index[[n]][, 1] %in% rownames(y), 2])
-    plotMD(
-      y_dgelrt,
-      status = y_status,
-      hl.col = c("red", "blue"),
-      legend = "bottomright",
-      main = n)
-    abline(h = 0, col = "darkgrey")
-  } else {
-    y_status <- rep("Other", nrow(y_dgelrt))
-    y_status[y_index[[n]]] <- n
-    plotMD(
-      y_dgelrt,
-      status = y_status,
-      values = n,
-      hl.col = "red",
-      legend = "topright",
-      main = n)
-    abline(h = 0, col = "darkgrey")
-  }
-  
-  if (is.data.frame(y_index[[n]])) {
-    barcodeplot(
-      y_dgelrt$table$logFC,
-      rownames(y) %in% y_index[[n]][, 1],
-      gene.weights = y_index[[n]][
-        y_index[[n]][, 1] %in% rownames(y), 2])
-  } else {
-    barcodeplot(
-      y_dgelrt$table$logFC,
-      y_index[[n]])
+```{r}
+geneSetTestFiguresForPaper <- function() {
+  for (n in names(y_index)) {
+    if (is.data.frame(y_index[[n]])) {
+      y_status <- rep(0, nrow(y_dgelrt))
+      y_status[rownames(y) %in% y_index[[n]][, 1]] <-
+        sign(y_index[[n]][y_index[[n]][, 1] %in% rownames(y), 2])
+      plotMD(
+        y_dgelrt,
+        status = y_status,
+        hl.col = c("red", "blue"),
+        legend = "bottomright",
+        main = n)
+      abline(h = 0, col = "darkgrey")
+    } else {
+      y_status <- rep("Other", nrow(y_dgelrt))
+      y_status[y_index[[n]]] <- n
+      plotMD(
+        y_dgelrt,
+        status = y_status,
+        values = n,
+        hl.col = "red",
+        legend = "topright",
+        main = n)
+      abline(h = 0, col = "darkgrey")
+    }
+    
+    if (is.data.frame(y_index[[n]])) {
+      barcodeplot(
+        y_dgelrt$table$logFC,
+        rownames(y) %in% y_index[[n]][, 1],
+        gene.weights = y_index[[n]][
+          y_index[[n]][, 1] %in% rownames(y), 2])
+    } else {
+      barcodeplot(
+        y_dgelrt$table$logFC,
+        y_index[[n]])
+    }
   }
 }
+```
+
+```{r, fig.asp = 1 / 2, fig.cap = "MD-plot and barcode plot of genes in supplied gene sets. Directional gene sets have (1) MD plot points coloured according to the statistical significance of the gene **in the gene set** (2) barcode plot 'weights' given by the logFC of the gene **in the gene set**. For the barcode plot, genes are represented by bars and are ranked from left to right by increasing log-fold change. This forms the barcode-like pattern. The line (or *worm*) above the barcode shows the relative local enrichment of the vertical bars in each part of the plot. The dotted horizontal line indicates neutral enrichment; the worm above the dotted line shows enrichment while the worm below the dotted line shows depletion."}
+par(mfrow = c(length(y_index), 2))
+geneSetTestFiguresForPaper()  
+```
+
+<aside>
+A PDF version of these figures are available in [`output/figures/paper/female.gene_set_tests.pdf`](../output/figures/paper/female.gene_set_tests.pdf).
+</aside>
+
+```{r, results = "hide"}
+dir.create(here("output/figures/paper"))
+pdf(
+  here("output/figures/paper/female.gene_set_tests.pdf"),
+  height = 6,
+  width = 6)
+par(mfrow = c(1, 1))
+geneSetTestFiguresForPaper()
+dev.off()
 ```
 
 # Session info {.appendix}
